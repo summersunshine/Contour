@@ -21,8 +21,13 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 	private Vector<Point>	points;
 	private Vector<Integer> pointXs;
 	private Vector<Integer> pointYs;
+	private Vector<Integer> reverseIndex;
+	private Sample sample;
+	
 //	private Point currpPoint;
 	private int count;
+	
+	private int index;
 	
 	public DrawingPanel()
 	{
@@ -84,36 +89,73 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 	
 	public void drawSample()
 	{
-		Sample sample = new Sample();
-		
-		
-		sample.drawSample((Graphics2D)getGraphics());
+		if (sample==null)
+		{
+			sample = new Sample();
+		}
+
+		getGraphics().clearRect(0, 0, 1200, 200);
+		sample.drawSample((Graphics2D)getGraphics(),index++);
 	}
 	
 	public  void drawSpine(Graphics2D graphics2d)
 	{
 		// TODO Auto-generated method stub
 		
+		//points = Geometry.removeClose(points,10);
 		Vector<Point> contourPoints1 = Geometry.getContourPoints(points, 20.0f,true);
 		Vector<Point> contourPoints2 = Geometry.getContourPoints(points, -20.0f,true);
-		graphics2d.setColor(Color.RED);
-		graphics2d.drawPolyline(getPointX(), getPointY(), points.size());
+		
+		
+		points = Geometry.removeClose(points,10);
+//		reverseIndex = Geometry.getReverseIndex(points);
+//		if (!reverseIndex.isEmpty())
+//		{
+//
+//		}
+		
+		contourPoints1 = Geometry.normalize(contourPoints1);
+		contourPoints1 = Geometry.removeClose(contourPoints1,5);
+		
+		contourPoints2 = Geometry.normalize(contourPoints2);
+		contourPoints2 = Geometry.removeClose(contourPoints2,5);
+		
+		//contourPoints1 = Geometry.removeIntersect(contourPoints1);
+		//contourPoints2 = Geometry.removeIntersect(contourPoints2);
+		
+		
+		
+		//graphics2d.setColor(Color.RED);
+		//graphics2d.drawPolyline(getPointX(), getPointY(), points.size());
 		
 
 		
-		graphics2d.setColor(Color.GREEN);
-		graphics2d.drawPolyline(getPointX(contourPoints1), getPointY(contourPoints1), contourPoints1.size());
-		graphics2d.drawPolyline(getPointX(contourPoints2), getPointY(contourPoints2), contourPoints2.size());
+		//graphics2d.setColor(Color.GREEN);
+		//graphics2d.drawPolyline(getPointX(contourPoints1), getPointY(contourPoints1), contourPoints1.size());
+		//graphics2d.setColor(Color.BLUE);
+		//graphics2d.drawPolyline(getPointX(contourPoints2), getPointY(contourPoints2), contourPoints2.size());
 		
 
 		
 		graphics2d.setColor(Color.BLACK);
 		for (int i = 0; i < points.size(); i++)
 		{
-			//graphics2d.fillRect((int)points.get(i).x-2, (int)points.get(i).y-2, 4, 4);
-			//graphics2d.drawLine((int)points.get(i).x, (int)points.get(i).y, (int)contourPoints1.get(i).x, (int)contourPoints1.get(i).y);
+			graphics2d.setColor(Color.RED);
+			graphics2d.fillRect((int)points.get(i).x-2, (int)points.get(i).y-2, 4, 4);
+		//	graphics2d.drawLine((int)points.get(i).x, (int)points.get(i).y, (int)contourPoints1.get(i).x, (int)contourPoints1.get(i).y);
+
+		//	graphics2d.drawLine((int)points.get(i).x, (int)points.get(i).y, (int)contourPoints2.get(i).x, (int)contourPoints2.get(i).y);
+			//graphics2d.setColor(Color.BLUE);
+			//graphics2d.fillRect((int)contourPoints2.get(i).x-2, (int)contourPoints2.get(i).y-2, 4,4);
+		}
+		for (int i = 0; i < contourPoints1.size(); i++)
+		{
+			graphics2d.setColor(Color.GREEN);
 			graphics2d.fillRect((int)contourPoints1.get(i).x-2, (int)contourPoints1.get(i).y-2, 4, 4);
-			//graphics2d.drawLine((int)points.get(i).x, (int)points.get(i).y, (int)contourPoints2.get(i).x, (int)contourPoints2.get(i).y);
+		}
+		
+		for (int i = 0; i < contourPoints2.size(); i++)
+		{	graphics2d.setColor(Color.BLUE);
 			graphics2d.fillRect((int)contourPoints2.get(i).x-2, (int)contourPoints2.get(i).y-2, 4,4);
 		}
 		
@@ -130,6 +172,7 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 	public void initPoint()
 	{
 		count = 0;
+		reverseIndex = new Vector<Integer>();
 		points = new Vector<Point>();
 		pointXs = new Vector<Integer>();
 		pointYs = new Vector<Integer>();
@@ -138,12 +181,23 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 	public void addPoint(int x,int y)
 	{
 		if (!points.isEmpty() && 
-				points.lastElement().x == x && 
-				points.lastElement().y == y)
+				(points.lastElement().x == x && 
+				points.lastElement().y == y))
 		{
 			return;
 		}
+		
+		if (points.size() > 1 &&
+				(points.get(points.size()-2).x == x && 
+				points.get(points.size()-2).y == y))
+		{
+			return;
+		}
+		
 		points.add(new Point(x,y));
+		
+
+		
 		pointXs.add(x);
 		pointYs.add(y);
 	}

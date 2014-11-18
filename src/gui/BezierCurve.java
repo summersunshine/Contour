@@ -30,10 +30,10 @@ public class BezierCurve
 	 * */
 	public static float bezier3funcX(float percent, Point[] controlP)
 	{
-		float part0 = controlP[0].x * percent * percent * percent;
-		float part1 = 3 * controlP[1].x * percent * percent * (1 - percent);
-		float part2 = 3 * controlP[2].x * percent * (1 - percent) * (1 - percent);
-		float part3 = controlP[3].x * (1 - percent) * (1 - percent) * (1 - percent);
+		float part0 = (float) (controlP[0].x * percent * percent * percent);
+		float part1 = (float) (3 * controlP[1].x * percent * percent * (1 - percent));
+		float part2 = (float) (3 * controlP[2].x * percent * (1 - percent) * (1 - percent));
+		float part3 = (float) (controlP[3].x * (1 - percent) * (1 - percent) * (1 - percent));
 		return part0 + part1 + part2 + part3;
 	}
 
@@ -45,10 +45,10 @@ public class BezierCurve
 	 * */
 	public static float bezier3funcY(float percent, Point[] controlP)
 	{
-		float part0 = controlP[0].y * percent * percent * percent;
-		float part1 = 3 * controlP[1].y * percent * percent * (1 - percent);
-		float part2 = 3 * controlP[2].y * percent * (1 - percent) * (1 - percent);
-		float part3 = controlP[3].y * (1 - percent) * (1 - percent) * (1 - percent);
+		float part0 = (float) (controlP[0].y * percent * percent * percent);
+		float part1 = (float) (3 * controlP[1].y * percent * percent * (1 - percent));
+		float part2 = (float) (3 * controlP[2].y * percent * (1 - percent) * (1 - percent));
+		float part3 = (float) (controlP[3].y * (1 - percent) * (1 - percent) * (1 - percent));
 		return part0 + part1 + part2 + part3;
 	}
 }

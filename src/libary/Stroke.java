@@ -104,7 +104,7 @@ public class Stroke
 		Point[] points = new Point[digitNums];
 		for (int i = 0; i < digitNums; i+=2)
 		{
-			points[i/2] = new Point(floats[i]*600,floats[i+1]*100);
+			points[i/2] = new Point(floats[i]*1200,floats[i+1]*200);
 			
 		}
 		return points;

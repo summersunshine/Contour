@@ -6,11 +6,24 @@ import java.awt.Graphics2D;
 public class Point
 {
 	// x坐标
-	public float x;
+	public double x;
 
 	// y坐标
-	public float y;
+	public double y;
 
+	/**
+	 * 构造函数
+	 * 
+	 * @param x
+	 * @param y
+	 * */
+	public Point(double x, double y)
+	{
+		this.x = x;
+		this.y = y;
+	}
+	
+	
 	/**
 	 * 构造函数
 	 * 
@@ -41,9 +54,9 @@ public class Point
 		this.y = 0;
 	}
 
-	public float length()
+	public double length()
 	{
-		return (float) Math.sqrt(x * x + y * y);
+		return Math.sqrt(x * x + y * y);
 	}
 
 	/**
@@ -104,7 +117,7 @@ public class Point
 	 * 
 	 * @param m
 	 * */
-	Point div(float m)
+	Point div(double m)
 	{
 		return new Point(this.x / m, this.y / m);
 	}
@@ -112,7 +125,7 @@ public class Point
 	/**
 	 * 打印
 	 * */
-	void print()
+	public void print()
 	{
 		System.out.println("x: " + x + " y: " + y);
 	}
@@ -148,7 +161,7 @@ public class Point
 	 * @param point1
 	 * @param point2
 	 * */
-	public static float getDistance(Point point1, Point point2)
+	public static double getDistance(Point point1, Point point2)
 	{
 		return point1.sub(point2).length();
 	}
@@ -175,8 +188,8 @@ public class Point
 	public static Point getPointBetweenTweenPoint(Point point1, Point point2, float percentage1)
 	{
 		float percentage2 = 1 - percentage1;
-		float x = point1.x * percentage1 + point2.x * percentage2;
-		float y = point1.y * percentage1 + point2.y * percentage2;
+		double x = point1.x * percentage1 + point2.x * percentage2;
+		double y = point1.y * percentage1 + point2.y * percentage2;
 		return new Point(x, y);
 	}
 

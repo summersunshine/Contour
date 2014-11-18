@@ -16,9 +16,14 @@ public class Sample
 		
 	}
 	
-	public void drawSample(Graphics2D graphics2d)
+	public void drawSample(Graphics2D graphics2d,int index)
 	{
-		System.out.println("drawSample");
+		//System.out.println("drawSample");
+		
+		String strokePath = SampleConfig.getStrokeTxtPath("charcoal1", index);
+		
+		stroke = new Stroke(strokePath);
+		
 		stroke.drawStroke(graphics2d);
 	}
 	
