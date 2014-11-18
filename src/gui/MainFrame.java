@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -8,26 +9,32 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
+import libary.Sample;
+import config.GuiConfig;
+
 public class MainFrame extends JFrame implements ActionListener
 {
-
+	private Sample sample;
 	private DrawingPanel drawingPanel;
 	private JButton clearButton;
+	private	JButton showButton;
 	
 	public MainFrame()
 	{
 		initSetting();
 		initDrawingPanel();
 		initClearButton();
+		initShowButton();
+		//initSample();
 	}
 	
 	
 	public void initSetting()
 	{
-		this.setSize(Config.FRAME_DIMENSION.width, Config.FRAME_DIMENSION.height);
+		this.setSize(GuiConfig.FRAME_DIMENSION.width, GuiConfig.FRAME_DIMENSION.height);
 		this.setVisible(true);
 		this.setLayout(null);
-		this.setResizable(false);
+		this.setResizable(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setBackground(Color.white);
 	}
@@ -49,6 +56,21 @@ public class MainFrame extends JFrame implements ActionListener
 		
 	}
 	
+	public void initShowButton()
+	{
+		showButton = new JButton("œ‘ æ");
+		showButton.setBounds(100, 0, 100, 50);
+		getContentPane().add(showButton);
+		showButton.addActionListener(this);
+		
+	}
+	
+	private void initSample()
+	{
+		// TODO Auto-generated method stub
+		 sample = new Sample();
+	}
+	
 
 	@Override
 	public void actionPerformed(ActionEvent event)
@@ -57,6 +79,12 @@ public class MainFrame extends JFrame implements ActionListener
 		if (event.getSource() == clearButton)
 		{
 			drawingPanel.clear();
+		}
+		
+		if (event.getSource() == showButton)
+		{
+			drawingPanel.drawSample();
+			//sample.drawSample((Graphics2D)drawingPanel.getGraphics());
 		}
 	}
 	

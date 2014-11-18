@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -10,6 +9,8 @@ import java.util.Vector;
 
 import javax.swing.JPanel;
 
+import libary.Sample;
+import config.GuiConfig;
 import Geometry.Geometry;
 import Geometry.Histogram;
 import Geometry.Point;
@@ -26,7 +27,7 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 	public DrawingPanel()
 	{
 		
-		this.setBounds(Config.DRAWING_RECTANGLE);
+		this.setBounds(GuiConfig.DRAWING_RECTANGLE);
 		this.setVisible(true);
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
@@ -80,12 +81,21 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 		return pointX;
 	}
 	
+	
+	public void drawSample()
+	{
+		Sample sample = new Sample();
+		
+		
+		sample.drawSample((Graphics2D)getGraphics());
+	}
+	
 	public  void drawSpine(Graphics2D graphics2d)
 	{
 		// TODO Auto-generated method stub
 		
-		Vector<Point> contourPoints1 = Geometry.getContourPoints(points, 15.0f,false);
-		Vector<Point> contourPoints2 = Geometry.getContourPoints(points, -15.0f,false);
+		Vector<Point> contourPoints1 = Geometry.getContourPoints(points, 20.0f,true);
+		Vector<Point> contourPoints2 = Geometry.getContourPoints(points, -20.0f,true);
 		graphics2d.setColor(Color.RED);
 		graphics2d.drawPolyline(getPointX(), getPointY(), points.size());
 		
@@ -108,11 +118,11 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 		}
 		
 		contourPoints1.addAll(contourPoints2);
-		Histogram histogram  = new Histogram(contourPoints1, contourPoints1.size()/2);
+		//Histogram histogram  = new Histogram(contourPoints1, contourPoints1.size()/2);
 		
-		histogram.drawCoordinateSystem(graphics2d);
+		//histogram.drawCoordinateSystem(graphics2d);
 		
-		histogram.drawHistogram(graphics2d);
+		//histogram.drawHistogram(graphics2d);
 		
 	}
 	

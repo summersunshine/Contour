@@ -1,5 +1,8 @@
 package Geometry;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+
 public class Point
 {
 	// x坐标
@@ -108,12 +111,35 @@ public class Point
 
 	/**
 	 * 打印
-	 * 
-	 * @param m
 	 * */
 	void print()
 	{
 		System.out.println("x: " + x + " y: " + y);
+	}
+	
+	/**
+	 * 绘制
+	 * @param grphics2d
+	 * @param color
+	 * @param size
+	 * */
+	public void drawPoint(Graphics2D graphics2d,Color color)
+	{
+		drawPoint(graphics2d,color,4);
+	}
+	
+	/**
+	 * 绘制
+	 * @param grphics2d
+	 * @param color
+	 * @param size
+	 * */
+	public void drawPoint(Graphics2D graphics2d,Color color,int size)
+	{
+		print();
+		
+		graphics2d.setColor(color);
+		graphics2d.fillRect((int)x-size/2, (int)y-size/2, size, size);
 	}
 	
 	/**
