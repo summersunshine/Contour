@@ -8,6 +8,24 @@ import javax.print.attribute.standard.Sides;
 
 public class Geometry
 {
+	/**
+	 * 获取两点之间的距离
+	 * 
+	 * @param x1
+	 *            第一个点的X坐标
+	 * @param y1
+	 *            第一个点的y坐标
+	 * @param x2
+	 *            第二个点的X坐标
+	 * @param y2
+	 *            第二个点的y坐标
+	 * */
+	public static int getDistance(int x1, int y1, int x2, int y2)
+	{
+		int x = x1 - x2;
+		int y = y1 - y2;
+		return (int) Math.sqrt(x * x + y * y);
+	}
 	
 	/**
 	 * 判断point1和point2组成的线段与point3和point4组成的线段是否相交
@@ -205,6 +223,7 @@ public class Geometry
 	{
 		Vector<Point> contourPoints = new Vector<Point>();
 		Point contourPoint;
+		float part = 20;
 		double ratio;
 		
 		//beginning
@@ -217,15 +236,13 @@ public class Geometry
 		{
 			if (isTransition)
 			{
-				if (i < points.size()/5)
+				if (i < points.size()/part)
 				{
-					ratio = i*5.0f/points.size();
-					ratio = Math.sin(ratio*Math.PI/2);
+					ratio = i*part/points.size();
 				}
-				else if (i > points.size()*4/5)
+				else if (i > points.size()*(part-1)/part)
 				{
-					ratio = (points.size() - i)*5.0f/points.size();
-					ratio = Math.sin(ratio*Math.PI/2);
+					ratio = (points.size() - i)*part/points.size();
 				}
 				else
 				{
@@ -236,14 +253,11 @@ public class Geometry
 			{
 				ratio = 1;
 			}
-
+			ratio = Math.sin(ratio*Math.PI/2);
 			contourPoint = getContourPoint(points.get(i-1), points.get(i),points.get(i+1), ratio*width);
-			points.get(i-1).print();
-			points.get(i).print();
-			points.get(i+1).print();
-			contourPoint.print();
-			System.out.println("");
 			contourPoints.add(contourPoint);
+
+			
 		}
 		
 		//end
@@ -254,8 +268,7 @@ public class Geometry
 		return contourPoints;
 	}
 	
-//	double distance = halfAngle==0?width:width/(Math.sin(halfAngle));
-//	distance = distance>3*width?3*width:distance;
+
 	
 	public static Point getContourPoint(Point lastPoint,Point currPoint,Point nextPoint,double width)
 	{
@@ -265,10 +278,10 @@ public class Geometry
 		double angle = getAngle(diffPoint1, diffPoint2);
 	
 		double halfAngle = angle/2;
-	//	double distance = width/Math.sin(halfAngle);
+		double distance = width/Math.sin(halfAngle);
 
 		Point rotatePoint = getRotatePoint(diffPoint1, halfAngle);
-		rotatePoint = rotatePoint.div(rotatePoint.length()).mul((float)width);
+		rotatePoint = rotatePoint.div(rotatePoint.length()).mul((float)distance);
 		
 		return currPoint.add(rotatePoint);
 		
@@ -297,7 +310,7 @@ public class Geometry
 		}
 		if (cos < -1)
 		{
-			cos = -1;
+			cos = -1;   
 		}
 		return Math.acos(cos);
 	}

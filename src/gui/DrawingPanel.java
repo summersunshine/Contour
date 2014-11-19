@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import libary.Sample;
 import config.GuiConfig;
 import Geometry.Geometry;
-import Geometry.Histogram;
+import Geometry.ShapeConext;
 import Geometry.Point;
 
 public class DrawingPanel extends JPanel implements MouseListener,MouseMotionListener
@@ -103,27 +103,38 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 		// TODO Auto-generated method stub
 		
 		//points = Geometry.removeClose(points,10);
+		
+		points = Geometry.normalize(points);
+		points = Geometry.removeClose(points,10);
+		
+		
 		Vector<Point> contourPoints1 = Geometry.getContourPoints(points, 20.0f,true);
 		Vector<Point> contourPoints2 = Geometry.getContourPoints(points, -20.0f,true);
 		
+
 		
-		points = Geometry.removeClose(points,10);
-//		reverseIndex = Geometry.getReverseIndex(points);
-//		if (!reverseIndex.isEmpty())
-//		{
-//
-//		}
+		reverseIndex = Geometry.getReverseIndex(points);
+		if (!reverseIndex.isEmpty())
+		{
+			contourPoints1 = Geometry.removeIntersect(contourPoints1,reverseIndex.get(0));
+			contourPoints2 = Geometry.removeIntersect(contourPoints2,reverseIndex.get(0));
+		}
 		
-		contourPoints1 = Geometry.normalize(contourPoints1);
-		contourPoints1 = Geometry.removeClose(contourPoints1,5);
+		//contourPoints1 = Geometry.normalize(contourPoints1);
+		//contourPoints1 = Geometry.removeClose(contourPoints1,5);
 		
-		contourPoints2 = Geometry.normalize(contourPoints2);
-		contourPoints2 = Geometry.removeClose(contourPoints2,5);
+		//contourPoints2 = Geometry.normalize(contourPoints2);
+		//contourPoints2 = Geometry.removeClose(contourPoints2,5);
 		
 		//contourPoints1 = Geometry.removeIntersect(contourPoints1);
 		//contourPoints2 = Geometry.removeIntersect(contourPoints2);
 		
 		
+//		if (!reverseIndex.isEmpty())
+//		{
+//			contourPoints1 = Geometry.removeIntersect(contourPoints1,reverseIndex.get(0));
+//			contourPoints2 = Geometry.removeIntersect(contourPoints2,reverseIndex.get(0));
+//		}
 		
 		//graphics2d.setColor(Color.RED);
 		//graphics2d.drawPolyline(getPointX(), getPointY(), points.size());

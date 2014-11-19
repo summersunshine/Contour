@@ -10,7 +10,7 @@ public class LogPolar
 	public LogPolar(Point point)
 	{
 		
-		p = (float) Math.log(Math.ceil((point.length()/Histogram.ratio)));
+		p = (float) Math.log(Math.ceil((point.length()/ShapeConext.ratio)));
 		angle = (float) (Math.atan2(point.y, point.x)*180/Math.PI);
 		angle = angle < 0?angle + 360:angle;
 	}
