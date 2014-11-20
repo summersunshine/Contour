@@ -1,9 +1,16 @@
 package config;
 
-import java.text.Format;
 
 public class SampleConfig
 {
+	
+	public static boolean isLoadBegin = true;
+	
+	public static final int K = 10;
+	
+	
+	public static final String OUTPUT_PATH = "C:\\Users\\XY\\Desktop\\Output\\";
+	
 	public static final String DATABASE_PATH = "C:\\Users\\XY\\Desktop\\Dataset\\";
 	
 	

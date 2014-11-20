@@ -1,5 +1,7 @@
 package Geometry;
 
+import sample.ShapeConext;
+
 
 public class LogPolar
 {
@@ -9,10 +11,11 @@ public class LogPolar
 	
 	public LogPolar(Point point)
 	{
-		
-		p = (float) Math.log(Math.ceil((point.length()/ShapeConext.ratio)));
+	
+		p = (float) Math.log(Math.ceil((point.length())));
 		angle = (float) (Math.atan2(point.y, point.x)*180/Math.PI);
 		angle = angle < 0?angle + 360:angle;
+		angle = angle==360?0:angle;
 	}
 	
 	

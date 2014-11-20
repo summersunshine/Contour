@@ -2,6 +2,7 @@ package libary;
 
 import java.awt.Graphics2D;
 
+import sample.Stroke;
 import config.SampleConfig;
 
 public class Sample
@@ -11,8 +12,8 @@ public class Sample
 	
 	public Sample()
 	{
-		String strokePath = SampleConfig.getStrokeTxtPath("charcoal1", 0);
-		stroke = new Stroke(strokePath);
+//		String strokePath = SampleConfig.getStrokeTxtPath("charcoal1", 0);
+//		stroke = new Stroke(strokePath);
 		
 	}
 	
@@ -20,11 +21,11 @@ public class Sample
 	{
 		//System.out.println("drawSample");
 		
-		String strokePath = SampleConfig.getStrokeTxtPath("charcoal1", index);
-		
-		stroke = new Stroke(strokePath);
-		
-		stroke.drawStroke(graphics2d);
+//		String strokePath = SampleConfig.getStrokeTxtPath("charcoal1", index);
+//		
+//		stroke = new Stroke(strokePath);
+//		
+//		stroke.drawStroke(graphics2d);
 	}
 	
 	public static void read()

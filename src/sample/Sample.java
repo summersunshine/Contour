@@ -1,8 +1,8 @@
 package sample;
 
+import java.util.Comparator;
 import java.util.Vector;
 
-import Geometry.Feature;
 import Geometry.Point;
 
 public class Sample
@@ -16,10 +16,14 @@ public class Sample
 	public Feature feature;
 	
 
-	public Sample(Vector<Point> points,int index)
+	public Sample(Vector<Point> points,int a,int b)
 	{
-		feature = new Feature(points, index);
+		this.a = a;
+		this.b = b;
+		feature = new Feature(points,a, b);
 	}
+	
+	
 	
 	
 }

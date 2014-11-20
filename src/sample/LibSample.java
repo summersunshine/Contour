@@ -12,9 +12,8 @@ public class LibSample extends Sample
 	
 	public LibSample(Vector<Point> points, int a,int b)
 	{
-		super(points, b);
-		// TODO Auto-generated constructor stub
-		this.a  = a;
+		super(points,a, b);
+//		// TODO Auto-generated constructor stub
 	}
 
 

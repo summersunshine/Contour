@@ -83,7 +83,7 @@ public class MainFrame extends JFrame implements ActionListener
 		
 		if (event.getSource() == showButton)
 		{
-			drawingPanel.drawSample();
+			//drawingPanel.drawSample();
 			//sample.drawSample((Graphics2D)drawingPanel.getGraphics());
 		}
 	}
