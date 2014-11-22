@@ -5,25 +5,36 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.security.MessageDigest;
 import java.util.Vector;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import sample.LibParser;
 import sample.QueryStroke;
 import sample.ShapeConext;
-import libary.Sample;
-import config.GuiConfig;
 import Geometry.Geometry;
 import Geometry.Point;
+import config.GuiConfig;
 
 public class DrawingPanel extends JPanel implements MouseListener,MouseMotionListener
 {
+	//当前点的索引
+	public static int currentIndex;
+	
 	private LibParser libParser;
 	private QueryStroke queryStroke;
-	private Vector<Point>	points;
+	
+	private Vector<Point> points;
 	private Vector<Point> leftContourPoints;
 	private Vector<Point> rightContourPoints;
+	
+	private boolean clearFlag;
+	
+
+	
+	
 	public DrawingPanel()
 	{
 		
@@ -32,6 +43,7 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		
+		this.clearFlag = true;
 		this.initPoint();
 		this.initLibParser();
 	}
@@ -48,48 +60,98 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 		libParser = new LibParser();
 	}
 	
+
 	public void clear()
 	{
+		clearFlag = true;
 		getGraphics().clearRect(0, 0, 1280, 720);
 	}
 	
-	public int [] getPointX(Vector<Point> points)
+	public void moveToPoint()
 	{
-		int [] pointX = new int[points.size()];
+
+		Graphics2D graphics2d = (Graphics2D)getGraphics();
 		
-		for (int i = 0; i < pointX.length; i++)
-		{
-			pointX[i] = (int) points.get(i).x;
-		}
-		return pointX;
+		graphics2d.clearRect(0, 0, 1280, 720);
+		
+		this.drawStrokeSample(graphics2d);
+		
+		this.queryStroke.drawShapeContext(graphics2d, currentIndex);
 	}
 	
-	public int [] getPointY(Vector<Point> points)
+	public void moveToNextPoint(int dir)
 	{
-		int [] pointX = new int[points.size()];
-		
-		for (int i = 0; i < pointX.length; i++)
+		if (clearFlag)
 		{
-			pointX[i] = (int) points.get(i).y;
+			JOptionPane.showMessageDialog(null, "画布为空,画了笔触再说");
+			return;
 		}
-		return pointX;
+		
+		
+		Graphics2D graphics2d = (Graphics2D)getGraphics();
+		
+		graphics2d.clearRect(0, 0, 1280, 720);
+		
+		this.drawStrokeSample(graphics2d);
+		
+		this.currentIndex = (this.currentIndex + dir)%points.size();
+		
+		this.queryStroke.drawShapeContext(graphics2d, currentIndex);
 	}
 	
-	
-	
-	public  void drawSpine(Graphics2D graphics2d)
+	/**
+	 * 设置主路径与轮廓点
+	 * */
+	public void setPoints()
 	{
-		// TODO Auto-generated method stub
-		
-		points = Geometry.normalize(points);
-		points = Geometry.removeClose(points,10);
-		
+		points = Geometry.normalize(points,6);
+		points = Geometry.removeClose(points,6);	
 		
 		leftContourPoints = Geometry.getContourPoints(points, 20.0f,true);
 		rightContourPoints = Geometry.getContourPoints(points, -20.0f,true);
 		
-
 	
+		//依据points的数目
+		MainFrame.getInstance().initScorllBar(points.size());
+	
+	}
+	
+	
+	/**
+	 * 在鼠标释放之后
+	 * 1.重新设置所有的路径与轮廓点
+	 * 2.重绘制这些点
+	 * 3.重新生成所有点的shape context
+	 * 4.绘制第一个点的shape context
+	 * */
+	public void drawAfterMouseRelease(Graphics2D graphics2d)
+	{
+	//如果没有被清除，那么不做处理
+		if (!clearFlag)
+		{
+			return;
+		}
+		
+		this.setPoints();
+
+		this.drawStrokeSample(graphics2d);
+				
+		queryStroke = new QueryStroke(points,rightContourPoints,leftContourPoints);
+		
+		queryStroke.drawShapeContext(graphics2d, 0);
+		
+		libParser.compareWithQueryStroke(queryStroke);
+		
+		clearFlag = false;
+	}
+	
+	
+	/**
+	 * 画笔触的采样点
+	 * */
+	public  void drawStrokeSample(Graphics2D graphics2d)
+	{
+		
 		graphics2d.setColor(Color.BLACK);
 		for (int i = 0; i < points.size(); i++)
 		{
@@ -106,19 +168,13 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 		{	graphics2d.setColor(Color.BLUE);
 			graphics2d.fillRect((int)rightContourPoints.get(i).x-2, (int)rightContourPoints.get(i).y-2, 4,4);
 		}
-		
-		ShapeConext shapeConext = new ShapeConext(points, points.size()/2,0);
-		
-		shapeConext.drawCoordinateSystem(graphics2d);
-		shapeConext.drawHistogram(graphics2d);
-		
-		queryStroke = new QueryStroke(points,rightContourPoints,leftContourPoints);
-		
-		
-		libParser.compareWithQueryStroke(queryStroke);
+
 	}
 	
-	public void addPoint(int x,int y)
+	/**
+	 * 添加新的点
+	 * */
+	private void addPoint(int x,int y)
 	{
 		if (!points.isEmpty() && 
 				(points.lastElement().x == x && 
@@ -140,42 +196,36 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 	@Override
 	public void mouseDragged(MouseEvent event)
 	{
-		// TODO Auto-generated method stub
 		addPoint(event.getX(),event.getY());
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent event)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent event)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent event)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent event)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent event)
 	{
-		// TODO Auto-generated method stub
 		initPoint();
 
 	}
@@ -183,52 +233,6 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 	@Override
 	public void mouseReleased(MouseEvent event)
 	{
-		// TODO Auto-generated method stub	
-		drawSpine((Graphics2D)getGraphics());
+		drawAfterMouseRelease((Graphics2D)getGraphics());
 	}
 }
-
-
-//
-//reverseIndex = Geometry.getReverseIndex(points);
-//if (!reverseIndex.isEmpty())
-//{
-//	contourPoints1 = Geometry.removeIntersect(contourPoints1,reverseIndex.get(0));
-//	contourPoints2 = Geometry.removeIntersect(contourPoints2,reverseIndex.get(0));
-//}
-//
-
-//contourPoints1 = Geometry.normalize(contourPoints1);
-//contourPoints1 = Geometry.removeClose(contourPoints1,5);
-
-//contourPoints2 = Geometry.normalize(contourPoints2);
-//contourPoints2 = Geometry.removeClose(contourPoints2,5);
-
-//contourPoints1 = Geometry.removeIntersect(contourPoints1);
-//contourPoints2 = Geometry.removeIntersect(contourPoints2);
-
-
-//if (!reverseIndex.isEmpty())
-//{
-//	contourPoints1 = Geometry.removeIntersect(contourPoints1,reverseIndex.get(0));
-//	contourPoints2 = Geometry.removeIntersect(contourPoints2,reverseIndex.get(0));
-//}
-
-//graphics2d.setColor(Color.RED);
-//graphics2d.drawPolyline(getPointX(), getPointY(), points.size());
-
-
-
-//graphics2d.setColor(Color.GREEN);
-//graphics2d.drawPolyline(getPointX(contourPoints1), getPointY(contourPoints1), contourPoints1.size());
-//graphics2d.setColor(Color.BLUE);
-//graphics2d.drawPolyline(getPointX(contourPoints2), getPointY(contourPoints2), contourPoints2.size());
-
-
-
-//contourPoints1.addAll(contourPoints2);
-//Histogram histogram  = new Histogram(contourPoints1, contourPoints1.size()/2);
-
-//histogram.drawCoordinateSystem(graphics2d);
-
-//histogram.drawHistogram(graphics2d);

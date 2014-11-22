@@ -4,9 +4,9 @@ package config;
 public class SampleConfig
 {
 	
-	public static boolean isLoadBegin = true;
 	
-	public static final int K = 10;
+	
+	public static final int K = 50;
 	
 	
 	public static final String OUTPUT_PATH = "C:\\Users\\XY\\Desktop\\Output\\";

@@ -21,6 +21,11 @@ public class Cost
 
 	// ¶Ì¶ÎÂäµÄ³Í·£
 	public int es;
+	
+	//¶ËµãµÄ³Í·£
+	public int ee;
+
+	public int totalPenalty;
 
 	public Cost(int a, int b, int i, int distance)
 	{
@@ -28,14 +33,34 @@ public class Cost
 		this.b = b;
 		this.i = i;
 		this.ef = distance;
-	}
-	
-	public void print()
-	{
-		System.out.println("a: " +a + " b: " +b + " i: " + i + " distance " + ef);
-		
+		this.totalPenalty = distance;
 	}
 
+	public void print()
+	{
+		System.out.println("a: " + a + " b: " + b + " penalty " + totalPenalty);
+
+	}
+
+	public void addEe(int ee)
+	{
+		this.ee = ee;
+		this.totalPenalty += ee;
+	}
+	
+	public void addEt(int et)
+	{
+		this.et = et;
+		this.totalPenalty += et;
+	}
+	
+	public void addEs(int es)
+	{
+		this.es = es;
+		this.totalPenalty +=es;
+	}
+
+	@SuppressWarnings("rawtypes")
 	static final class CostComparator implements Comparator
 	{
 		public int compare(Object o1, Object o2)
@@ -43,11 +68,11 @@ public class Cost
 			Cost s1 = (Cost) o1;
 			Cost s2 = (Cost) o2;
 
-			if (s1.ef < s2.ef)
+			if (s1.totalPenalty > s2.totalPenalty)
 			{
 				return 1;
 			}
-			else if(s1.ef > s2.ef)
+			else if (s1.totalPenalty < s2.totalPenalty)
 			{
 				return -1;
 			}
@@ -57,6 +82,5 @@ public class Cost
 			}
 		}
 	}
-	
 
 }

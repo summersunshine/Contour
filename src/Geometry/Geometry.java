@@ -1,9 +1,6 @@
 package Geometry;
 
-import java.io.File;
 import java.util.Vector;
-
-import javax.print.attribute.standard.Sides;
 
 
 public class Geometry
@@ -143,10 +140,6 @@ public class Geometry
 				}
 			}
 		}
-		
-		
-
-		
 		for (int i = 0; i < (end - begin); i++)
 		{
 			points.removeElementAt(begin);
@@ -171,8 +164,10 @@ public class Geometry
 		return originPoints;
 	}
 	
-	public static Vector<Point> normalize(Vector<Point> originPoints)
+	public static Vector<Point> normalize(Vector<Point> originPoints,float maxDistance)
 	{
+		//float maxDistance = 8;
+		
 		Vector<Float> lengths = new Vector<Float>();
 		for (int i = 1; i < originPoints.size(); i++)
 		{
@@ -191,7 +186,7 @@ public class Geometry
 			l = points.lastElement().sub(originPoints.get(i)).length();
 			
 			
-			while (l< 10 && i+count < originPoints.size())
+			while (l< maxDistance && i+count < originPoints.size())
 			{
 				l+=lengths.get(i + count-1).floatValue();
 				count++;
@@ -200,7 +195,7 @@ public class Geometry
 			if (count==0)
 			{
 				Point dir = originPoints.get(i).sub(points.lastElement());
-				dir = dir.div(dir.length()).mul(10);
+				dir = dir.div(dir.length()).mul(maxDistance);
 				points.add(points.lastElement().add(dir));
 			}
 			else

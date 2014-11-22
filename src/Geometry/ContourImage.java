@@ -3,8 +3,6 @@ package Geometry;
 import java.awt.image.BufferedImage;
 import java.util.Vector;
 
-import javax.swing.text.Position;
-
 public class ContourImage
 {
 	

@@ -2,6 +2,7 @@ package Geometry;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.Vector;
 
 public class Point
 {
@@ -149,8 +150,7 @@ public class Point
 	 * */
 	public void drawPoint(Graphics2D graphics2d,Color color,int size)
 	{
-		print();
-		
+
 		graphics2d.setColor(color);
 		graphics2d.fillRect((int)x-size/2, (int)y-size/2, size, size);
 	}
@@ -203,4 +203,44 @@ public class Point
 	{
 		return midPoint.mul(2).sub(point);
 	}
+	
+	/**
+	 * 获取一组点的x坐标
+	 * @param points
+	 * */
+	public int [] getPointX(Vector<Point> points)
+	{
+		int [] pointX = new int[points.size()];
+		
+		for (int i = 0; i < pointX.length; i++)
+		{
+			pointX[i] = (int) points.get(i).x;
+		}
+		return pointX;
+	}
+	
+	/**
+	 * 获取一组点的y坐标
+	 * @param points
+	 * */
+	public int [] getPointY(Vector<Point> points)
+	{
+		int [] pointX = new int[points.size()];
+		
+		for (int i = 0; i < pointX.length; i++)
+		{
+			pointX[i] = (int) points.get(i).y;
+		}
+		return pointX;
+	}
+	
+	public static float getDotProduct(Point pointA,Point pointB)
+	{
+		
+		
+		return 0;
+		
+		
+	}
+	
 }

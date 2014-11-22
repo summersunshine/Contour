@@ -1,35 +1,42 @@
 package gui;
 
+
+
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollBar;
 import javax.swing.UIManager;
 
-import libary.Sample;
 import config.GuiConfig;
 
-public class MainFrame extends JFrame implements ActionListener
+public class MainFrame extends JFrame implements ActionListener, AdjustmentListener
 {
-	private Sample sample;
 	private DrawingPanel drawingPanel;
 	private JButton clearButton;
-	private	JButton showButton;
+	private	JButton lastButton;
+	private JButton nextButton;
+	
+	private JScrollBar indexScrollBar;
+	private JLabel  indexLabel;
 	
 	public MainFrame()
 	{
 		initSetting();
 		initDrawingPanel();
 		initClearButton();
-		initShowButton();
-		//initSample();
+		//initLastButton();
+		//initNextButton();
 	}
 	
 	
-	public void initSetting()
+	private void initSetting()
 	{
 		this.setSize(GuiConfig.FRAME_DIMENSION.width, GuiConfig.FRAME_DIMENSION.height);
 		this.setVisible(true);
@@ -39,7 +46,7 @@ public class MainFrame extends JFrame implements ActionListener
 		this.setBackground(Color.white);
 	}
 	
-	public void initDrawingPanel()
+	private void initDrawingPanel()
 	{
 		drawingPanel = new DrawingPanel();
 		getContentPane().add(drawingPanel);
@@ -47,30 +54,54 @@ public class MainFrame extends JFrame implements ActionListener
 		
 	}
 	
-	public void initClearButton()
+	private void initClearButton()
 	{
 		clearButton = new JButton("清除");
 		clearButton.setBounds(0, 0, 100, 50);
 		getContentPane().add(clearButton);
 		clearButton.addActionListener(this);
+		clearButton.repaint();
+	}
+	
+//	private void initLastButton()
+//	{
+//		lastButton = new JButton("上一点");
+//		lastButton.setBounds(100, 0, 100, 50);
+//		getContentPane().add(lastButton);
+//		lastButton.addActionListener(this);
+//		lastButton.repaint();
+//	}
+//	
+//	private void initNextButton()
+//	{
+//		nextButton = new JButton("下一点");
+//		nextButton.setBounds(200, 0, 100, 50);
+//		getContentPane().add(nextButton);
+//		nextButton.addActionListener(this);
+//		nextButton.repaint();
+//	}
+//	
+	//依据点的数目创建
+	public void initScorllBar(int size)
+	{
+		indexLabel = new JLabel("第0个点");
+		indexLabel.setBounds(300,0,100,50);
+
+		
+		indexScrollBar = new JScrollBar(JScrollBar.HORIZONTAL, 0,1,0,size);
+		indexScrollBar.setBounds(400,0,300,50);
+		indexScrollBar.setUnitIncrement(1);
+		indexScrollBar.setBlockIncrement(1);
+		indexScrollBar.addAdjustmentListener(this);
+
+		getContentPane().add(indexLabel);
+		getContentPane().add(indexScrollBar);
+		indexLabel.repaint();
+		indexScrollBar.repaint();
+		
+		setVisible(true);
 		
 	}
-	
-	public void initShowButton()
-	{
-		showButton = new JButton("显示");
-		showButton.setBounds(100, 0, 100, 50);
-		getContentPane().add(showButton);
-		showButton.addActionListener(this);
-		
-	}
-	
-	private void initSample()
-	{
-		// TODO Auto-generated method stub
-		 sample = new Sample();
-	}
-	
 
 	@Override
 	public void actionPerformed(ActionEvent event)
@@ -79,17 +110,48 @@ public class MainFrame extends JFrame implements ActionListener
 		if (event.getSource() == clearButton)
 		{
 			drawingPanel.clear();
+			
+			this.remove(indexLabel);
+			this.remove(indexScrollBar);
+			this.repaint();
 		}
 		
-		if (event.getSource() == showButton)
+		if (event.getSource() == nextButton)
 		{
-			//drawingPanel.drawSample();
-			//sample.drawSample((Graphics2D)drawingPanel.getGraphics());
+			drawingPanel.moveToNextPoint(1);
+		}
+		
+		if (event.getSource() == lastButton)
+		{
+			drawingPanel.moveToNextPoint(-1);
 		}
 	}
 	
 
+	@Override
+	public void adjustmentValueChanged(AdjustmentEvent event)
+	{
+		// TODO Auto-generated method stub
+		if (event.getSource() == indexScrollBar)
+		{
+			DrawingPanel.currentIndex = event.getValue();
+			indexLabel.setText("第" + DrawingPanel.currentIndex  +"个点");
+			drawingPanel.moveToPoint();
+		}
+		
+	}
 
+	private static MainFrame mainFrame;
+	
+	public static MainFrame getInstance()
+	{
+		if (mainFrame == null)
+		{
+			mainFrame = new MainFrame();
+		}
+		return mainFrame;
+	}
+	
 	public static void main(String args[])
 	{
 		try
@@ -100,24 +162,10 @@ public class MainFrame extends JFrame implements ActionListener
 		{
 		}
 		
-		MainFrame mainFrame  = new MainFrame();
+		MainFrame.getInstance();
 		
 	}
+
+
 }
 
-
-//Point lastPoint = new Point(0,0);
-//Point currPoint = new Point(1,1);
-//Point nextPoint = new Point(2,0);
-//
-//Point contourPoint1 = Geometry.getContourPoint(lastPoint, currPoint, nextPoint, 1);
-//
-//contourPoint1.print();
-//
-//Point contourPoint2 = Geometry.getContourPoint(lastPoint, currPoint, 1);
-//
-//contourPoint2.print();
-//
-//Point diff = contourPoint2.sub(contourPoint1);
-//
-//diff.print();

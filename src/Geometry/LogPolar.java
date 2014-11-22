@@ -1,12 +1,15 @@
 package Geometry;
 
-import sample.ShapeConext;
 
-
+/**
+ * 对数极坐标
+ * */
 public class LogPolar
 {
 
 	public float p;
+	
+	//取值范围 0-360
 	public float angle;
 	
 	public LogPolar(Point point)

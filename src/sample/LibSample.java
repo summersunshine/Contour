@@ -6,15 +6,26 @@ import Geometry.Point;
 
 public class LibSample extends Sample
 {
-	//保存与查询的笔触其他点之间的特征的距离
-	public float [] distance;
-	
-	
-	public LibSample(Vector<Point> points, int a,int b)
+
+	public Point velocity;
+
+	public LibSample(Vector<Point> points, int a, int b)
 	{
-		super(points,a, b);
-//		// TODO Auto-generated constructor stub
+		super(points, a, b);
+		// TODO Auto-generated constructor stub
+
+		this.initVelocity(points, b);
 	}
 
-
+	private void initVelocity(Vector<Point> points, int index)
+	{
+		if (index == 0)
+		{
+			velocity = points.get(1).sub(points.get(0)).normalizePoint();
+		}
+		else
+		{
+			velocity = points.get(index).sub(points.get(index - 1)).normalizePoint();
+		}
+	}
 }

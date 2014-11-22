@@ -1,5 +1,6 @@
 package sample;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -11,69 +12,70 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
-import config.SampleConfig;
 import Geometry.ImgUtil;
 import Geometry.Point;
-import Geometry.Position;
+import config.SampleConfig;
 
 public class LibStroke extends Stroke
 {
-	//数据中每一行的数据量
+	// 数据中每一行的数据量
 	public static final int digitNums = 12;
-	
-//	public static final int width = 1200;
-//	public static final int height = 200;
-	
-	
-	private int num;
-	private String name;
-	private int width;
-	private int height;
-	
-	//库中的第index个笔触
+
+	// 源图像的款
+	public int width;
+	// 源图像的高
+	public int height;
+
+	// 库中的第index个笔触
 	private int index;
-	
-	
+
+	// 输出的文本路径
 	private String txtPathString;
+
+	// 输出的图像路径
 	private String imgPathString;
-	
-	
+
 	public Vector<LibSample> libSamples;
-	
-	public LibStroke(String name,int index)
+
+	public LibStroke(String name, int index)
 	{
 		super();
-		this.num= 0;
-		this.name = name;
 		this.index = index;
 		this.txtPathString = SampleConfig.getStrokeTxtPath(name, index);
 		this.imgPathString = SampleConfig.getStrokeImagePath(name, index);
 		this.readImage();
 		this.readFile();
-		
+		this.createStrokeSampleImage();
 		this.initLibSample();
 	}
-	
+
+	/**
+	 * 初始化库中样例
+	 * */
 	private void initLibSample()
 	{
-		this.libSamples  = new Vector<LibSample>();
-		
+		this.libSamples = new Vector<LibSample>();
+
 		for (int i = 0; i < points.size(); i++)
 		{
 			libSamples.add(new LibSample(points, index, i));
 		}
 	}
-	
+
+	/**
+	 * 读图像
+	 * */
 	public void readImage()
 	{
-		BufferedImage image =  ImgUtil.getImg(imgPathString);
+		BufferedImage image = ImgUtil.getImg(imgPathString);
 		width = image.getWidth();
 		height = image.getHeight();
-		
-//		width = 600;
-//		height = 400;
+
 	}
-	
+
+	/**
+	 * 读坐标文件
+	 * */
 	public void readFile()
 	{
 		File file = new File(txtPathString);
@@ -81,41 +83,41 @@ public class LibStroke extends Stroke
 		{
 			return;
 		}
-		
+
 		FileReader fileReader = null;
 		BufferedReader bufferedReader;
-		
+
 		try
 		{
 			fileReader = new FileReader(txtPathString);
-		} catch (FileNotFoundException e)
+		}
+		catch (FileNotFoundException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		bufferedReader = new BufferedReader(fileReader);
 		try
 		{
 			String line = bufferedReader.readLine();
-			num = Integer.parseInt(line);
-			
+			Integer.parseInt(line);
+
 			line = bufferedReader.readLine();
-			while (line!=null)
+			while (line != null)
 			{
 				addPosition(line);
 				line = bufferedReader.readLine();
 			}
-			
-		} 
+
+		}
 		catch (IOException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	/**
 	 * 依据每一行的数据添加位置
 	 * 
@@ -123,16 +125,20 @@ public class LibStroke extends Stroke
 	 * */
 	private void addPosition(String line)
 	{
-		String [] numsStrings = line.split(" ");
-	
+		String[] numsStrings = line.split(" ");
+
 		setPoints(getFloats(numsStrings));
 	}
-	
-	
-	private float[] getFloats(String [] strings)
+
+	/**
+	 * 将读取的string转换成浮点数
+	 * 
+	 * @param strings
+	 * */
+	private float[] getFloats(String[] strings)
 	{
 		float[] floats = new float[digitNums];
-		for (int i = 0,count = 0; i < strings.length; i++)
+		for (int i = 0, count = 0; i < strings.length; i++)
 		{
 			if (!strings[i].equals(""))
 			{
@@ -141,24 +147,55 @@ public class LibStroke extends Stroke
 		}
 		return floats;
 	}
-	
+
+	/**
+	 * 设置点
+	 * 
+	 * @param floats
+	 * */
 	private void setPoints(float[] floats)
 	{
 
-		points.add(new Point(floats[0]*width,floats[1]*height));
-		rightCountourPoints.add(new Point(floats[2]*width,floats[3]*height));
-		leftCountourPoints.add(new Point(floats[4]*width,floats[5]*height));
+		rightCountourPoints.add(new Point(floats[6] * width, floats[7] * height));
+		points.add(new Point(floats[8] * width, floats[9] * height));
+		leftCountourPoints.add(new Point(floats[10] * width, floats[11] * height));
+
+	}
+
+	/**
+	 * 画笔触的采样图像
+	 * */
+	public void createStrokeSampleImage()
+	{
+		System.out.println("Stroke.drawStroke()");
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		Graphics2D graphics2d = (Graphics2D) image.getGraphics();
+		for (int i = 0; i < points.size(); i++)
+		{
+			points.get(i).drawPoint(graphics2d, Color.RED);
+			rightCountourPoints.get(i).drawPoint(graphics2d, Color.GREEN);
+			leftCountourPoints.get(i).drawPoint(graphics2d, Color.BLUE);
+		}
+
+		File file = new File(SampleConfig.OUTPUT_PATH + index + "\\" + "sample.jpg");
+
+		if (!file.exists())
+		{
+			file.mkdirs();
+		}
+
+		// System.out.println(file.getPath());
+		try
+		{
+			ImageIO.write(image, "JPG", file);
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 	
-//	
-//	public void drawStroke(Graphics2D graphics2d)
-//	{
-//		System.out.println("Stroke.drawStroke()");
-//
-//		for (int i = 0; i < relativePositions.size(); i++)
-//		{
-//			relativePositions.get(i).drawPosition(graphics2d);
-//		}
-//	}
+
 }

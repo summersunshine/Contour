@@ -1,10 +1,11 @@
 package sample;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Panel;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
 
@@ -15,19 +16,36 @@ import Geometry.Point;
 
 public class ShapeConext
 {
+	public static final int TYPE_HISTORY = 0;
+	public static final int TYPE_FUTURE = 1;
+	public static final int TYPE_NORMAL = 2;
 
-	// public static final float ratio = 1;
-	public static final int winSize = 25;
+	// 窗口大小
+	public static final int winSize = 30;
+
+	// 径向分割的区域数目
 	public static final int pBins = 5;
+
+	// 角度方向分割的区域数目
 	public static final int angleBins = 6;
 
-	Point sourcePoint;
-
-	private Vector<LogPolar> logPolars;
-	private Vector<Point> points;
+	// 原点的下标（索引）
 	private int sourceIndex;
 
+	// 原点的坐标
+	private Point sourcePoint;
+
+	// 其他点的对数极坐标
+	private Vector<LogPolar> logPolars;
+
+	// 其他点的xy坐标
+	private Vector<Point> points;
+
+	// 统计数据
 	private int[][] statistics = new int[pBins][angleBins];
+
+	private int type;
+	private Point startPoint;
 
 	/**
 	 * 构造函数
@@ -51,19 +69,27 @@ public class ShapeConext
 
 		if (dir > 0)
 		{
+			type = TYPE_FUTURE;
 			countForFuture();
 		}
 		else if (dir < 0)
 		{
+			type = TYPE_HISTORY;
 			countForHistory();
 		}
 		else
 		{
+			type = TYPE_NORMAL;
 			countForAll();
 		}
 
+		this.startPoint = getStartPoint();
+
 	}
 
+	/**
+	 * 计算当前点之后的shape context
+	 * */
 	private void countForFuture()
 	{
 		int begin = sourceIndex + 1;
@@ -74,6 +100,9 @@ public class ShapeConext
 		}
 	}
 
+	/**
+	 * 计算当前点之前的shape context
+	 * */
 	private void countForHistory()
 	{
 		int begin = sourceIndex - winSize < 0 ? 0 : sourceIndex - winSize;
@@ -84,6 +113,9 @@ public class ShapeConext
 		}
 	}
 
+	/**
+	 * 计算所有点
+	 * */
 	private void countForAll()
 	{
 		for (int i = 0; i < points.size(); i++)
@@ -95,25 +127,62 @@ public class ShapeConext
 		}
 	}
 
+	/**
+	 * 计算下标i的点位于哪个格子中
+	 * */
 	private void count(int i)
 	{
 		LogPolar logPolar = new LogPolar(points.get(i).sub(sourcePoint));
-		// logPolar.print();
 		logPolars.addElement(logPolar);
 
 		int x = (int) (logPolar.p);
-		int y = (int) (logPolar.angle * angleBins / 360);
+		int y = (int) (angleBins - 1 - (int) logPolar.angle * angleBins / 360);
 
 		if (x < pBins)
 		{
-			// System.out.println("x: "+x + " y: " + y);
 			statistics[x][y]++;
 		}
 	}
 
-	public void createHistogramImage(String path)
+	/**
+	 * 将shape context的信息以文本的方式输出到文件中
+	 * 
+	 * @param path
+	 * */
+	public void createShapeContextText(String path)
 	{
-		// graphics2d.drawRect(0, 500, 150, 360);
+		File file = new File(path);
+		try
+		{
+			FileWriter fileWriter = new FileWriter(file);
+
+			for (int i = 0; i < statistics.length; i++)
+			{
+				for (int j = 0; j < statistics[i].length; j++)
+				{
+					fileWriter.write(statistics[statistics.length - i - 1][j] + " ");
+				}
+
+				fileWriter.write("\r\n");
+			}
+
+			fileWriter.close();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * 将shape context的信息以图像的方式输出到文件中
+	 * 
+	 * @param path
+	 * */
+	public void createShapeContextImage(String path)
+	{
 		BufferedImage image = new BufferedImage(30 * angleBins, 30 * pBins, BufferedImage.TYPE_INT_RGB);
 		Graphics2D graphics2d = (Graphics2D) image.getGraphics();
 		for (int i = 0; i < statistics.length; i++)
@@ -142,9 +211,14 @@ public class ShapeConext
 		}
 	}
 
-	public void drawHistogram(Graphics2D graphics2d)
+	/**
+	 * 将shape context绘制出来
+	 * 
+	 * @param graphics2d
+	 * */
+	public void drawShapeContext(Graphics2D graphics2d)
 	{
-		// graphics2d.drawRect(0, 500, 150, 360);
+
 		for (int i = 0; i < statistics.length; i++)
 		{
 			for (int j = 0; j < statistics[i].length; j++)
@@ -153,17 +227,66 @@ public class ShapeConext
 				value = value < 0 ? 0 : value;
 
 				graphics2d.setColor(new Color(value, value, value));
-				graphics2d.fillRect(j * 30, 600 - i * 30, 30, 30);
+				graphics2d.fillRect((int) startPoint.x + j * 30, (int) startPoint.y - i * 30, 30, 30);
 
 			}
 		}
+
+		this.drawDescribe(graphics2d);
 	}
 
+	/**
+	 * 将shape context的文本描述绘制出来
+	 * 
+	 * @param graphics2d
+	 * */
+	public void drawDescribe(Graphics2D graphics2d)
+	{
+		Font f = new Font("宋体", Font.BOLD, 16);
+		Color[] colors = { Color.ORANGE, Color.LIGHT_GRAY };
+		graphics2d.setFont(f);
+		graphics2d.setPaint(colors[0]);
+		graphics2d.drawString(getDescribe(), (int) startPoint.x + 50, (int) startPoint.y + 50);
+	}
+
+	private String getDescribe()
+	{
+		if (type == TYPE_FUTURE)
+		{
+			return "Future";
+		}
+		else if (type == TYPE_HISTORY)
+		{
+			return "HISTORY";
+		}
+		else
+		{
+			return "WHOLE";
+		}
+	}
+
+	private Point getStartPoint()
+	{
+		if (type == TYPE_FUTURE)
+		{
+			return new Point(0, 600);
+		}
+		else
+		{
+			return new Point(0, 400);
+		}
+	}
+
+	/**
+	 * 绘制对数极坐标坐标系
+	 * 
+	 * @param graphics2d
+	 * */
 	public void drawCoordinateSystem(Graphics2D graphics2d)
 	{
 		graphics2d.setColor(new Color(255, 0, 0));
 
-		sourcePoint.print();
+		// sourcePoint.print();
 		for (int i = 1; i <= pBins; i++)
 		{
 			double radius = Math.exp(i) * 2;
