@@ -13,9 +13,11 @@ public class Sample
 	// 属于stroke的第b个样例
 	public int b;
 
-	// 特征
+	// 中心点特征
 	public Feature feature;
+	
 
+	
 	public Sample(Vector<Point> points, int a, int b)
 	{
 		this.a = a;

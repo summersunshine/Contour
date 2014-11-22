@@ -1,25 +1,36 @@
 package sample;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Vector;
 
 import Geometry.Point;
-import config.SampleConfig;
 
-public class QuerySample extends Sample
+public class FullQuerySample extends FullSample
 {
+
 	// 距离其他的采样点的代价
 	public Vector<Cost> costs;
-
-	public QuerySample(Vector<Point> points, int a, int b)
+	
+//	// 距离其他的采样点的代价
+//	public Vector<Cost> leftCosts;
+//	
+//	// 距离其他的采样点的代价
+//	public Vector<Cost> rightCosts;
+	
+	public FullQuerySample(Vector<Point> points, Vector<Point> leftContourPoints, Vector<Point> rightContourPoints, int a, int b)
 	{
-		super(points, a, b);
-
+		super(points, leftContourPoints, rightContourPoints, a, b);
+		// TODO Auto-generated constructor stub
+		
+		
 		this.costs = new Vector<Cost>();
-
+//		
+//		this.leftCosts = new Vector<Cost>();
+//		
+//		this.rightCosts = new Vector<Cost>();
 	}
-
+	
+	
 	/**
 	 * 加上距离数据
 	 * 
@@ -30,12 +41,15 @@ public class QuerySample extends Sample
 		for (int i = 0; i < otherSamples.size(); i++)
 		{
 			float dis = feature.getDistance(otherSamples.get(i).feature);
-
+			float leftDis = leftFeature.getDistance(otherSamples.get(i).leftFeature);
+			float rightDis = leftFeature.getDistance(otherSamples.get(i).rightFeature);
+			
+			dis = (float) Math.sqrt(dis*dis+leftDis*leftDis+rightDis*rightDis);
+			
 			this.costs.addElement(new Cost(otherSamples.get(i).a, otherSamples.get(i).b, b, (int) dis));
 
 		}
 	}
-
 	/**
 	 * 依据totalDistance进行排序
 	 * */
@@ -57,5 +71,6 @@ public class QuerySample extends Sample
 			costs.get(i).print();
 		}
 	}
+
 
 }

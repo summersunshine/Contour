@@ -35,7 +35,7 @@ public class LibStroke extends Stroke
 	// Êä³öµÄÍ¼ÏñÂ·¾¶
 	private String imgPathString;
 
-	public Vector<LibSample> libSamples;
+	public Vector<FullLibSample> libSamples;
 
 	public LibStroke(String name, int index)
 	{
@@ -54,11 +54,11 @@ public class LibStroke extends Stroke
 	 * */
 	private void initLibSample()
 	{
-		this.libSamples = new Vector<LibSample>();
+		this.libSamples = new Vector<FullLibSample>();
 
 		for (int i = 0; i < points.size(); i++)
 		{
-			libSamples.add(new LibSample(points, index, i));
+			libSamples.add(new FullLibSample(points,leftCountourPoints,rightCountourPoints, index, i));
 		}
 	}
 

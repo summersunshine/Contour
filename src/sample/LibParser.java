@@ -97,6 +97,8 @@ public class LibParser
 
 		addTransitionData();
 
+		optimization();
+		
 		drawStrokeSegements();
 	}
 
@@ -162,6 +164,8 @@ public class LibParser
 		
 		return penalty;
 	}
+	
+	
 	
 	public int getEndPenalty(int j,int a,int b)
 	{
@@ -255,10 +259,12 @@ public class LibParser
 	private void createNewStrokeInfo(int a,int b)
 	{
 		count = 0;
+		strokeInfos.lastElement().lastIndex = libStrokes.get(a).points.size()-1;
 		strokeInfos.lastElement().endStroke(currIndex);
 
 		
 		StrokeInfo strokeInfo = new StrokeInfo(currIndex);
+		
 		strokeInfo.add(new C(a, b));
 		strokeInfos.add(strokeInfo);
 	}
@@ -320,7 +326,79 @@ public class LibParser
 			drawStrokeSegement(i);
 		}
 	}
+	
+	public void optimization()
+	{
+		
+//		for (int i = 0; i < strokeInfos.size(); i++)
+//		{
+//			if (strokeInfos.get(i).isReachEnd() && 
+//					i!=strokeInfos.size()-1)
+//			{
+//				strokeInfos.get(i).remove(10);
+//				strokeInfos.get(i+1).addFront(10);
+//			}
+//		}
+//		
+		
+		boolean isShortBegin = false;
+		int beginIndex=0,endIndex=0;
+		for (int i = 0; i < strokeInfos.size(); i++)
+		{
+			if (strokeInfos.get(i).getL()<Penalty.Lmin && !isShortBegin)
+			{
+				isShortBegin = true;
+				beginIndex = i;
+			}
+			
+			if (isShortBegin && (strokeInfos.get(i).getL()>=Penalty.Lmin || i==strokeInfos.size()-1))
+			{
+				isShortBegin = false;
+				endIndex = i;
+				
+				int counts = 0;
+				for (int j = beginIndex; j < endIndex; j++)
+				{
+					counts += strokeInfos.get(j).getL();
+				}
+				
+				if (beginIndex-1>=0)
+				{
+					strokeInfos.get(beginIndex-1).addBack(counts);
+				}
 
+				
+				if (endIndex<strokeInfos.size())
+				{
+					strokeInfos.get(endIndex).addFront(counts);
+				}
+				
+				
+				for (int j = beginIndex; j < endIndex; j++)
+				{
+					strokeInfos.remove(beginIndex);
+				}
+			}
+		}
+	}
+
+//	public void handShortSegement(int i)
+//	{
+//		if(i==0)
+//		{
+//			strokeInfos.get(i).addBack(strokeInfos.get(i));
+//			strokeInfos.remove(0);
+//		}
+//		else if(i<strokeInfos.size()-2)
+//		{
+//			strokeInfos.get(i-1).addBack(strokeInfos.get(i));
+//			strokeInfos.get(i+1).addBack(strokeInfos.get(i));
+//			strokeInfos.remove(i);
+//		}
+//		
+//	}
+	
+	
 	public void drawStrokeSegement(int i)
 	{
 		int index = strokeInfos.get(i).cs.get(0).a;

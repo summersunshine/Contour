@@ -11,7 +11,7 @@ public class QueryStroke extends Stroke
 {
 
 	// ²éÑ¯ÑùÀý
-	public Vector<QuerySample> querySamples;
+	public Vector<FullQuerySample> querySamples;
 
 	/**
 	 * @param points
@@ -33,11 +33,11 @@ public class QueryStroke extends Stroke
 	 * */
 	public void initQuerySample()
 	{
-		this.querySamples = new Vector<QuerySample>();
+		this.querySamples = new Vector<FullQuerySample>();
 
 		for (int i = 0; i < points.size(); i++)
 		{
-			this.querySamples.addElement(new QuerySample(points, -1, i));
+			this.querySamples.addElement(new FullQuerySample(points,rightCountourPoints,leftCountourPoints, -1, i));
 		}
 	}
 
