@@ -57,8 +57,11 @@ public class Feature
 	{
 		float historyDistance = this.historyShapeConext.getDistanceL2(otherFeature.historyShapeConext);
 		float futureDistance = this.futureShapeConext.getDistanceL2(otherFeature.futureShapeConext);
+		float historyAngle = this.historyShapeConext.getAngleDistance(otherFeature.historyShapeConext);
+		float futureAngle = this.futureShapeConext.getAngleDistance(otherFeature.futureShapeConext);
 
-		return (float) Math.sqrt(historyDistance * historyDistance + futureDistance * futureDistance);
+		return (float) ((float) Math.sqrt(historyDistance * historyDistance + futureDistance * futureDistance) + 
+				Math.sqrt(historyAngle * historyAngle + futureAngle * futureAngle));
 	}
 
 	/**

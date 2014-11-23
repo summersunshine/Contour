@@ -11,6 +11,7 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
+import config.SampleConfig;
 import Geometry.LogPolar;
 import Geometry.Point;
 
@@ -44,6 +45,8 @@ public class ShapeConext
 	// 统计数据
 	private int[][] statistics = new int[pBins][angleBins];
 
+	private float averageAngle;
+	private int meaningfulCount;
 	private int type;
 	private Point startPoint;
 
@@ -67,6 +70,10 @@ public class ShapeConext
 
 		this.sourceIndex = sourceIndex;
 
+		this.averageAngle = 0;
+
+		this.meaningfulCount = 0;
+
 		if (dir > 0)
 		{
 			type = TYPE_FUTURE;
@@ -81,6 +88,10 @@ public class ShapeConext
 		{
 			type = TYPE_NORMAL;
 			countForAll();
+		}
+		if (meaningfulCount > 0)
+		{
+			this.averageAngle /= meaningfulCount;
 		}
 
 		this.startPoint = getStartPoint();
@@ -141,7 +152,10 @@ public class ShapeConext
 		if (x < pBins)
 		{
 			statistics[x][y]++;
+			meaningfulCount++;
+			averageAngle += logPolar.angle;
 		}
+
 	}
 
 	/**
@@ -324,14 +338,46 @@ public class ShapeConext
 	public float getDistanceL2(ShapeConext shapeConext)
 	{
 		float distance = 0;
+		int offset = 0;
+		// if (isAngleClose(shapeConext))
+		// {
+		// if (averageAngle > shapeConext.averageAngle)
+		// {
+		// offset = -1;
+		// }
+		// else if (averageAngle + 360-shapeConext.averageAngle<30)
+		// {
+		// offset = -1;
+		// }
+		// else
+		// {
+		// offset = 1;
+		// }
+		// }
+		//
 
 		for (int i = 0; i < statistics.length; i++)
 		{
 			for (int j = 0; j < statistics[i].length; j++)
 			{
-				distance += Math.pow(shapeConext.statistics[i][j] - statistics[i][j], 2);
+				distance += Math.pow(shapeConext.statistics[i][(j + offset + angleBins) % angleBins] - statistics[i][j], 2);
 			}
 		}
 		return (float) Math.sqrt(distance);
+	}
+
+	public boolean isAngleClose(ShapeConext shapeConext)
+	{
+		float diff = Math.abs(shapeConext.averageAngle - averageAngle);
+		diff = diff > 180 ? 360 - diff : diff;
+		return diff < 30;
+	}
+
+	public float getAngleDistance(ShapeConext shapeConext)
+	{
+		float diff = Math.abs(shapeConext.averageAngle - averageAngle);
+		diff = diff > 180 ? 360 - diff : diff;
+		diff/=180;
+		return diff*diff;
 	}
 }

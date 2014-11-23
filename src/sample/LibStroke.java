@@ -25,6 +25,9 @@ public class LibStroke extends Stroke
 	public int width;
 	// 源图像的高
 	public int height;
+	
+	
+	public BufferedImage sourceImage;
 
 	// 库中的第index个笔触
 	private int index;
@@ -35,7 +38,7 @@ public class LibStroke extends Stroke
 	// 输出的图像路径
 	private String imgPathString;
 
-	public Vector<FullLibSample> libSamples;
+	public Vector<LibSample> libSamples;
 
 	public LibStroke(String name, int index)
 	{
@@ -54,11 +57,11 @@ public class LibStroke extends Stroke
 	 * */
 	private void initLibSample()
 	{
-		this.libSamples = new Vector<FullLibSample>();
+		this.libSamples = new Vector<LibSample>();
 
 		for (int i = 0; i < points.size(); i++)
 		{
-			libSamples.add(new FullLibSample(points,leftCountourPoints,rightCountourPoints, index, i));
+			libSamples.add(new LibSample(points, index, i));
 		}
 	}
 
@@ -67,9 +70,9 @@ public class LibStroke extends Stroke
 	 * */
 	public void readImage()
 	{
-		BufferedImage image = ImgUtil.getImg(imgPathString);
-		width = image.getWidth();
-		height = image.getHeight();
+		sourceImage = ImgUtil.getImg(imgPathString);
+		width = sourceImage.getWidth();
+		height = sourceImage.getHeight();
 
 	}
 
@@ -156,9 +159,9 @@ public class LibStroke extends Stroke
 	private void setPoints(float[] floats)
 	{
 
-		rightCountourPoints.add(new Point(floats[6] * width, floats[7] * height));
+		rightContourPoints.add(new Point(floats[6] * width, floats[7] * height));
 		points.add(new Point(floats[8] * width, floats[9] * height));
-		leftCountourPoints.add(new Point(floats[10] * width, floats[11] * height));
+		leftContourPoints.add(new Point(floats[10] * width, floats[11] * height));
 
 	}
 
@@ -173,8 +176,8 @@ public class LibStroke extends Stroke
 		for (int i = 0; i < points.size(); i++)
 		{
 			points.get(i).drawPoint(graphics2d, Color.RED);
-			rightCountourPoints.get(i).drawPoint(graphics2d, Color.GREEN);
-			leftCountourPoints.get(i).drawPoint(graphics2d, Color.BLUE);
+			rightContourPoints.get(i).drawPoint(graphics2d, Color.GREEN);
+			leftContourPoints.get(i).drawPoint(graphics2d, Color.BLUE);
 		}
 
 		File file = new File(SampleConfig.OUTPUT_PATH + index + "\\" + "sample.jpg");
@@ -196,6 +199,5 @@ public class LibStroke extends Stroke
 		}
 
 	}
-	
 
 }

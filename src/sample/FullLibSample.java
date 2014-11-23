@@ -2,26 +2,23 @@ package sample;
 
 import java.util.Vector;
 
-
 import Geometry.Point;
 
 public class FullLibSample extends FullSample
 {
 	public Point velocity;
-	
+
 	public Point leftVelocity;
-	
+
 	public Point rightVelocity;
-	
+
 	public FullLibSample(Vector<Point> points, Vector<Point> leftContourPoints, Vector<Point> rightContourPoints, int a, int b)
 	{
 		super(points, leftContourPoints, rightContourPoints, a, b);
 		// TODO Auto-generated constructor stub
-		
-		this.initVelocity(points,leftContourPoints,rightContourPoints, b);
-	}
 
-	
+		this.initVelocity(points, leftContourPoints, rightContourPoints, b);
+	}
 
 	private void initVelocity(Vector<Point> points, Vector<Point> leftContourPoints, Vector<Point> rightContourPoints, int index)
 	{

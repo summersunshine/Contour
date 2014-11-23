@@ -25,13 +25,17 @@ public class QuerySample extends Sample
 	 * 
 	 * @param otherSamples
 	 * */
-	public void addDistanceData(Vector<FullLibSample> otherSamples)
+	public void addDistanceData(Vector<LibSample> otherSamples)
 	{
-		for (int i = 0; i < otherSamples.size(); i++)
+		int begin = (int) (otherSamples.size() * (percent - 0.15));
+		int end = (int) (otherSamples.size() * (percent + 0.15));
+		begin = begin < 0 ? 0 : begin;
+		end = end > otherSamples.size() ? otherSamples.size() : end;
+		for (int i = begin; i < end; i++)
 		{
 			float dis = feature.getDistance(otherSamples.get(i).feature);
 
-			this.costs.addElement(new Cost(otherSamples.get(i).a, otherSamples.get(i).b, b, (int) dis));
+			this.costs.addElement(new Cost(otherSamples.get(i).a, otherSamples.get(i).b, b, dis));
 
 		}
 	}

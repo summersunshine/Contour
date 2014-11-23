@@ -15,14 +15,15 @@ public class Sample
 
 	// 中心点特征
 	public Feature feature;
-	
 
-	
+	public float percent;
+
 	public Sample(Vector<Point> points, int a, int b)
 	{
 		this.a = a;
 		this.b = b;
-		feature = new Feature(points, a, b);
+		this.feature = new Feature(points, a, b);
+		this.percent = b * 1.0f / (points.size() - 1);
 	}
 
 	/**
@@ -32,4 +33,5 @@ public class Sample
 	{
 		feature.drawShapeContext(graphics2d);
 	}
+
 }

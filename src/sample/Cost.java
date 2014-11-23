@@ -14,20 +14,20 @@ public class Cost
 	public int i;
 
 	// ÌØÕ÷µÄ³Í·£
-	public int ef;
+	public float ef;
 
 	// ×ª»»µÄ³Í·£
-	public int et;
+	public float et;
 
 	// ¶Ì¶ÎÂäµÄ³Í·£
-	public int es;
-	
-	//¶ËµãµÄ³Í·£
-	public int ee;
+	public float es;
 
-	public int totalPenalty;
+	// ¶ËµãµÄ³Í·£
+	public float ee;
 
-	public Cost(int a, int b, int i, int distance)
+	public float totalPenalty;
+
+	public Cost(int a, int b, int i, float distance)
 	{
 		this.a = a;
 		this.b = b;
@@ -42,22 +42,22 @@ public class Cost
 
 	}
 
-	public void addEe(int ee)
+	public void addEe(float ee)
 	{
 		this.ee = ee;
 		this.totalPenalty += ee;
 	}
-	
-	public void addEt(int et)
+
+	public void addEt(float et)
 	{
 		this.et = et;
 		this.totalPenalty += et;
 	}
-	
-	public void addEs(int es)
+
+	public void addEs(float es)
 	{
 		this.es = es;
-		this.totalPenalty +=es;
+		this.totalPenalty += es;
 	}
 
 	@SuppressWarnings("rawtypes")

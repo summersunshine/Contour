@@ -2,7 +2,10 @@ package Geometry;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.Comparator;
 import java.util.Vector;
+
+import sample.Cost;
 
 public class Point
 {
@@ -232,6 +235,35 @@ public class Point
 			pointX[i] = (int) points.get(i).y;
 		}
 		return pointX;
+	}
+	
+	public float getAngle()
+	{
+		return (float) Geometry.getAngle(this);
+	}
+	
+	
+	@SuppressWarnings("rawtypes")
+	static final class AngleComparator implements Comparator
+	{
+		public int compare(Object o1, Object o2)
+		{
+			Point s1 = (Point) o1;
+			Point s2 = (Point) o2;
+
+			if (s1.getAngle() > s2.getAngle())
+			{
+				return 1;
+			}
+			else if (s1.getAngle() < s2.getAngle())
+			{
+				return -1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
 	}
 	
 	public static float getDotProduct(Point pointA,Point pointB)

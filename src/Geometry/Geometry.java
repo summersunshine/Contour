@@ -296,6 +296,25 @@ public class Geometry
 		return cos;
 	}
 	
+	public static double getAngle(Point diffPoint1)
+	{
+//		double cos = (diffPoint1.x)/(diffPoint1.length());
+//		double sin = Math.sqrt(1- cos*cos);
+//		if (cos > 1)
+//		{
+//			cos = 1;
+//		}
+//		if (cos < -1)
+//		{
+//			cos = -1;   
+//		}
+//		return Math.acos(cos);
+//		
+		return Math.atan2(diffPoint1.y, diffPoint1.x);
+		
+	}
+	
+	
 	public static double getAngle(Point diffPoint1,Point diffPoint2)
 	{
 		double cos = (diffPoint1.x*diffPoint2.x + diffPoint1.y*diffPoint2.y)/(diffPoint1.length()*diffPoint2.length());

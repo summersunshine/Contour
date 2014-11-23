@@ -22,6 +22,7 @@ public class LogPolar
 	}
 	
 	
+	
 	public void print()
 	{
 		System.out.println("p: " + p + "angle " + angle);
