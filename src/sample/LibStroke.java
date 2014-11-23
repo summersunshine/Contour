@@ -28,7 +28,11 @@ public class LibStroke extends Stroke
 	
 	
 	public BufferedImage sourceImage;
+	
+	public BufferedImage alphaImage;
 
+	public BufferedImage tightImage;
+	
 	// 库中的第index个笔触
 	private int index;
 
@@ -37,6 +41,11 @@ public class LibStroke extends Stroke
 
 	// 输出的图像路径
 	private String imgPathString;
+	
+	//图像掩码路径
+	private String tightMaskString;
+	
+	private String alphaMaskString;
 
 	public Vector<LibSample> libSamples;
 
@@ -46,6 +55,8 @@ public class LibStroke extends Stroke
 		this.index = index;
 		this.txtPathString = SampleConfig.getStrokeTxtPath(name, index);
 		this.imgPathString = SampleConfig.getStrokeImagePath(name, index);
+		this.tightMaskString = SampleConfig.getStrokeTightMaskPath(name, index);
+		this.alphaMaskString = SampleConfig.getStrokeAlphaMaskPath(name, index);
 		this.readImage();
 		this.readFile();
 		this.createStrokeSampleImage();
@@ -73,7 +84,8 @@ public class LibStroke extends Stroke
 		sourceImage = ImgUtil.getImg(imgPathString);
 		width = sourceImage.getWidth();
 		height = sourceImage.getHeight();
-
+		tightImage = ImgUtil.getImg(tightMaskString);
+		alphaImage = ImgUtil.getImg(alphaMaskString);
 	}
 
 	/**

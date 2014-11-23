@@ -39,4 +39,17 @@ public class SampleConfig
 		String last = String.format("_stroke%02d.png", index);
 		return DATABASE_PATH + SHAPE_PATH + name + "\\" + name + last;
 	}
+	
+	public static String getStrokeTightMaskPath(String name,int index)
+	{
+		String last = String.format("_stroke%02d_tightmask.png", index);
+		return DATABASE_PATH + SHAPE_PATH + name + "\\" + name + last;
+	}
+	
+	public static String getStrokeAlphaMaskPath(String name,int index)
+	{
+		String last = String.format("_stroke%02d_alphamask.png", index);
+		return DATABASE_PATH + SHAPE_PATH + name + "\\" + name + last;
+	}
+	
 }
