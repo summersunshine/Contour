@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,7 +18,7 @@ import javax.swing.UIManager;
 
 import config.GuiConfig;
 
-public class MainFrame extends JFrame implements ActionListener, AdjustmentListener
+public class MainFrame extends JFrame implements ActionListener, AdjustmentListener,MouseMotionListener
 {
 	private DrawingPanel drawingPanel;
 	private JButton clearButton;
@@ -26,16 +28,19 @@ public class MainFrame extends JFrame implements ActionListener, AdjustmentListe
 	private JScrollBar indexScrollBar;
 	private JLabel  indexLabel;
 	
+	
 	public MainFrame()
 	{
 		initSetting();
 		initDrawingPanel();
 		initClearButton();
+	
 		//initLastButton();
 		//initNextButton();
+		this.addMouseMotionListener(this);
 	}
 	
-	
+
 	private void initSetting()
 	{
 		this.setSize(GuiConfig.FRAME_DIMENSION.width, GuiConfig.FRAME_DIMENSION.height);
@@ -164,6 +169,22 @@ public class MainFrame extends JFrame implements ActionListener, AdjustmentListe
 		
 		MainFrame.getInstance();
 		
+	}
+
+
+	@Override
+	public void mouseDragged(MouseEvent arg0)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void mouseMoved(MouseEvent e)
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 

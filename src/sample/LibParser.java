@@ -1,6 +1,7 @@
 package sample;
 
 import geometry.Geometry;
+import geometry.MergeImage;
 import geometry.PixelGrabber;
 import geometry.Point;
 
@@ -24,9 +25,9 @@ public class LibParser
 	public static final int STOKE_NUM = 14;
 
 	// 库中笔触数列
-	public Vector<LibStroke> libStrokes;
+	public static Vector<LibStroke> libStrokes;
 
-	public QueryStroke queryStroke;
+	public static QueryStroke queryStroke;
 
 	public Vector<Segement> segements;
 
@@ -37,13 +38,15 @@ public class LibParser
 	public int currIndex;
 
 	public int count;
+	
+	public Vector<BufferedImage> partImages;
 
 	public LibParser()
 	{
 		this.isRollBack = false;
-
+		this.partImages = new Vector<BufferedImage>();
 		this.initStrokeInfos();
-		initLibStrokes();
+		this.initLibStrokes();
 	}
 
 	public void initStrokeInfos()
@@ -59,10 +62,10 @@ public class LibParser
 	public void initLibStrokes()
 	{
 		System.out.println("LibParser.initLibStrokes() begin");
-		libStrokes = new Vector<LibStroke>();
+		LibParser.libStrokes = new Vector<LibStroke>();
 		for (int i = 0; i < STOKE_NUM; i++)
 		{
-			libStrokes.add(new LibStroke("charcoal1", i));
+			LibParser.libStrokes.add(new LibStroke("charcoal2", i));
 			System.out.println("parse stroke " + i);
 		}
 
@@ -79,13 +82,13 @@ public class LibParser
 	 * */
 	public void compareWithQueryStroke(QueryStroke queryStroke)
 	{
-		this.queryStroke = queryStroke;
+		LibParser.queryStroke = queryStroke;
 
 		this.initStrokeInfos();
 
 		this.addFeatureData();
 
-		this.addBeginData();
+		//this.addBeginData();
 
 		this.addTransitionData();
 
@@ -95,6 +98,7 @@ public class LibParser
 
 		this.drawStrokeSegements("After\\");
 		
+	
 		
 	}
 
@@ -131,11 +135,6 @@ public class LibParser
 
 		for (int j = 0; j < queryStroke.querySamples.get(0).costs.size(); j++)
 		{
-			// int a = queryStroke.querySamples.get(0).costs.get(j).a;
-			// int b = queryStroke.querySamples.get(0).costs.get(j).b;
-			//
-			// int Ee = getEndPenalty(j, a, b);
-			//
 			if (queryStroke.querySamples.get(0).costs.get(j).b != 0)
 			{
 				queryStroke.querySamples.get(0).costs.get(j).addEe(10);
@@ -343,17 +342,9 @@ public class LibParser
 	// 优化序列
 	public void optimization()
 	{
-		boolean isShortBegin = false;
-		int beginIndex = 0, endIndex = 0;
-
-		// //表示最后一段仍然是短段落
-		// if (isShortBegin)
-		// {
-		// handStortSegement(beginIndex,segements.size());
-		// }
-
 		handStortSegement();
 		handEndPoint();
+		
 	}
 
 	public void handEndPoint()
@@ -361,16 +352,30 @@ public class LibParser
 
 		for (int i = 0; i < segements.size(); i++)
 		{
-			if (segements.get(i).isReachEnd() && i != segements.size() - 1)
+			if (i!= segements.size() - 1)
 			{
-				System.out.println(i + "reach end");
-				segements.get(i).removeBack(Penalty.EndArea);
-				segements.get(i + 1).addFront(Penalty.EndArea);
+				if (segements.get(i).isReachEnd())
+				{
+					segements.get(i).removeBack(Penalty.EndArea);
+				}
+				else
+				{
+					segements.get(i).addBack(4);
+				}
+				segements.get(i + 1).addFront(4);
+				continue;
 			}
+			
+			
 
-			if (!segements.get(i).isReachEnd() && i == segements.size() - 1)
+			if (!segements.get(i).isReachEnd() && i == (segements.size() - 1))
 			{
-				segements.get(i).addBack(Penalty.EndArea);
+				segements.get(i).addToEnd();
+			}
+			
+			if (segements.get(i).startIndexOfQuery>=segements.get(i).endIndexOfQuery)
+			{
+				segements.remove(i);
 			}
 
 		}
@@ -383,15 +388,16 @@ public class LibParser
 			if (segements.get(i).isShort())
 			{
 				// 不是最后一个
-				if (i != segements.size() - 1)
+				if (i == segements.size() - 1)
 				{
-					segements.get(i - 1).addBack(segements.get(i).getL());
-					segements.remove(i);
+					segements.get(i).addFront(Penalty.TranArea);
+
 				}
 				// 如果是最后一个，就不删除他了
 				else
 				{
-					segements.get(i).addFront(Penalty.TranArea);
+					segements.get(i - 1).addBack(segements.get(i).getL());
+					segements.remove(i);
 				}
 
 			}
@@ -424,10 +430,13 @@ public class LibParser
 		}
 	}
 
+	
 	public void drawStrokeSegements(String dir)
 	{
 		File file = new File(SampleConfig.OUTPUT_PATH + dir);
 
+		partImages.clear();
+		
 		if (file.exists())
 		{
 			file.delete();
@@ -437,6 +446,9 @@ public class LibParser
 			
 			drawStrokeSegement(i, dir);
 		}
+		
+		
+		saveResultImage(SampleConfig.OUTPUT_PATH + dir + "result.jpg");
 	}
 
 	public void drawStrokeSegement(int i, String dir)
@@ -460,13 +472,16 @@ public class LibParser
 
 		}
 
+
 		
 		saveSampleImage(image, SampleConfig.OUTPUT_PATH + dir + i + "_" + index + "sample.jpg");
 		saveTxt(context, SampleConfig.OUTPUT_PATH + dir + i + "_" + index + ".txt");
 		
-		int start = segements.get(i).cs.firstElement().b;
-		int end = segements.get(i).cs.lastElement().b;
-		saveImage(index, start, end, SampleConfig.OUTPUT_PATH + dir + i + "_" + index + ".jpg");
+		if (dir == "After\\")
+		{
+			saveImage(index, i, SampleConfig.OUTPUT_PATH + dir + i + "_" + index + ".jpg");
+		}
+		
 	}
 
 	private void saveTxt(String content, String path)
@@ -489,10 +504,18 @@ public class LibParser
 
 	}
 
-	private void saveImage(int index,int start,int end, String path)
+	private void saveImage(int index,int i, String path)
 	{
 		LibStroke libStroke = libStrokes.get(index);
+		
+		int start = segements.get(i).cs.firstElement().b;
+		int end = segements.get(i).cs.lastElement().b;
+		
 		BufferedImage image = PixelGrabber.getIamge(libStroke,start,end);
+		
+		image = segements.get(i).rotate(image);
+		
+		partImages.add(image);
 		
 		File file = new File(path);
 
@@ -533,66 +556,20 @@ public class LibParser
 	}
 
 	
+	private void saveResultImage(String path)
+	{
+		BufferedImage image = MergeImage.getImage(partImages);
+		
+		File file = new File(path);
+		try
+		{
+			ImageIO.write(image, "JPG", file);
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 }
-
-// public void handShortSegement(int i)
-// {
-// if(i==0)
-// {
-// strokeInfos.get(i).addBack(strokeInfos.get(i));
-// strokeInfos.remove(0);
-// }
-// else if(i<strokeInfos.size()-2)
-// {
-// strokeInfos.get(i-1).addBack(strokeInfos.get(i));
-// strokeInfos.get(i+1).addBack(strokeInfos.get(i));
-// strokeInfos.remove(i);
-// }
-//
-// }
-
-// 创建一段新的stroke
-// private void addNewPointToStroke(int a,int b)
-// {
-//
-// if (strokeInfos.isEmpty())
-// {
-// initStrokeInfos();
-// }
-//
-// strokeInfos.lastElement().add(new C(a, b));
-// count++;
-// }
-//
-// //回滚到上以stroke
-// private void rollbackLastStrokeInfo()
-// {
-// currIndex = strokeInfos.lastElement().startIndex;
-//
-// for (int j = 0; j < queryStroke.querySamples.get(currIndex).costs.size();
-// j++)
-// {
-// //保障连续性
-// if (queryStroke.querySamples.get(currIndex).costs.get(j).a ==
-// strokeInfos.lastElement().cs.lastElement().a)
-// {
-// //int p = (int) Math.pow(Penalty.Cl + Penalty.Lmin -
-// strokeInfos.lastElement().getL(), 2);
-// int p = (int) Penalty.Cl + Penalty.Lmin - strokeInfos.lastElement().getL();
-// queryStroke.querySamples.get(currIndex).costs.get(j).addEs(-Penalty.Cl);
-// }
-//
-// }
-// queryStroke.querySamples.get(currIndex).sort();
-//
-// strokeInfos.remove(strokeInfos.lastElement());
-//
-// if (strokeInfos.isEmpty())
-// {
-// initStrokeInfos();
-// }
-// else
-// {
-// count = strokeInfos.lastElement().getL();
-// }
-// }

@@ -361,7 +361,7 @@ public class ShapeConext
 		{
 			for (int j = 0; j < statistics[i].length; j++)
 			{
-				distance += Math.pow(shapeConext.statistics[i][(j + offset + angleBins) % angleBins] - statistics[i][j], 2);
+				distance += Math.pow(shapeConext.statistics[i][j] - statistics[i][j], 2);
 			}
 		}
 		return (float) Math.sqrt(distance);

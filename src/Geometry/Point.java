@@ -58,6 +58,11 @@ public class Point
 		this.y = 0;
 	}
 
+	public boolean equal(Point point)
+	{
+		return (int)point.x == (int)x && (int)point.y == (int)y;
+	}
+	
 	public double length()
 	{
 		return Math.sqrt(x * x + y * y);

@@ -298,18 +298,6 @@ public class Geometry
 	
 	public static double getAngle(Point diffPoint1)
 	{
-//		double cos = (diffPoint1.x)/(diffPoint1.length());
-//		double sin = Math.sqrt(1- cos*cos);
-//		if (cos > 1)
-//		{
-//			cos = 1;
-//		}
-//		if (cos < -1)
-//		{
-//			cos = -1;   
-//		}
-//		return Math.acos(cos);
-//		
 		return Math.atan2(diffPoint1.y, diffPoint1.x);
 		
 	}
@@ -317,7 +305,7 @@ public class Geometry
 	
 	public static double getAngle(Point diffPoint1,Point diffPoint2)
 	{
-		double cos = (diffPoint1.x*diffPoint2.x + diffPoint1.y*diffPoint2.y)/(diffPoint1.length()*diffPoint2.length());
+		double cos = getCos(diffPoint1, diffPoint2);
 		if (cos > 1)
 		{
 			cos = 1;
@@ -327,6 +315,11 @@ public class Geometry
 			cos = -1;   
 		}
 		return Math.acos(cos);
+	}
+	
+	public static double getAngle(Point point0,Point point1,Point point2)
+	{
+		return getAngle(point0.sub(point1), point2.sub(point1));
 	}
 	
 	public static Point getContourPointAtBegin(Point endPoint,Point neighbourPoint,double width)

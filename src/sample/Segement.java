@@ -1,7 +1,11 @@
 package sample;
 
 
+import geometry.Geometry;
 import geometry.PixelGrabber;
+import geometry.Point;
+import geometry.RotateImage;
+import geometry.TurningPoint;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -54,6 +58,7 @@ public class Segement
 		int count = 0;
 		while (this.cs.lastElement().b < lastIndexOfLib)
 		{
+			startIndexOfQuery--;
 			this.cs.add(new C(a, b + count + 1));
 			count ++;
 		}
@@ -70,6 +75,7 @@ public class Segement
 		{
 			if (this.cs.lastElement().b < lastIndexOfLib)
 			{
+				endIndexOfQuery++;
 				this.cs.add(new C(a, b + i + 1));
 				System.out.println("add Back a: " + cs.lastElement().a + " b: " + cs.lastElement().b);
 			}
@@ -86,6 +92,7 @@ public class Segement
 		{
 			if (this.cs.firstElement().b > 0)
 			{
+				startIndexOfQuery--;
 				this.cs.add(0, new C(a, b - i - 1));
 				System.out.println("add Front a: " + cs.firstElement().a + " b: " + cs.firstElement().b);
 			}
@@ -98,6 +105,7 @@ public class Segement
 		{
 			if (!this.cs.isEmpty())
 			{
+				endIndexOfQuery--;
 				this.cs.remove(this.cs.lastElement());
 				System.out.println("remove Back a: " + cs.lastElement().a + " b: " + cs.lastElement().b);
 			}
@@ -111,6 +119,7 @@ public class Segement
 		{
 			if (!this.cs.isEmpty())
 			{
+				startIndexOfQuery++;
 				this.cs.remove(this.cs.firstElement());
 				System.out.println("remove Front a: " + cs.firstElement().a + " b: " + cs.firstElement().b);
 
@@ -125,7 +134,9 @@ public class Segement
 		{
 			this.cs.add(strokeInfo.cs.get(i));
 		}
-		endStroke(strokeInfo.endIndexOfQuery);
+
+		
+		this.endIndexOfQuery = strokeInfo.endIndexOfQuery;
 	}
 
 	public void addFront(Segement strokeInfo)
@@ -162,5 +173,74 @@ public class Segement
 	{
 		return getL() < Penalty.Lmin;
 	}
+	
+	
+	public BufferedImage rotate(BufferedImage image)
+	{
+		Vector<Point> queryPoints = getQueryPoints();
+		
+		Vector<Point> libPoints = getLibPoints();
+		
+		Point queryTurningPoint = TurningPoint.getPoint(queryPoints);
+		
+		Point libTurningPoint = TurningPoint.getPoint(libPoints);
+		
+		double queryAngle = Geometry.getAngle(queryTurningPoint.sub(queryPoints.firstElement()));
+		
+		double libAngle = Geometry.getAngle(libTurningPoint.sub(libPoints.firstElement()));
+		
+		if (!queryTurningPoint.equal(queryPoints.lastElement()))
+		{
+			double queryAngle1 = Geometry.getAngle(queryPoints.lastElement().sub(queryTurningPoint));
+			
+			double libAngle1 = Geometry.getAngle(libPoints.lastElement().sub(libTurningPoint));
+			
+			queryAngle = (queryAngle + queryAngle1)/2;
+			libAngle = (libAngle + libAngle1)/2;
+		}
 
+		
+		
+		BufferedImage temp = PixelGrabber.getCloneImage(image);
+		
+		
+		System.out.println("queryAngle : " + queryAngle);
+		System.out.println("libAngle : " + libAngle);
+		
+		temp = RotateImage.getImage(temp,queryPoints.firstElement(),libPoints.firstElement(), queryAngle-libAngle);
+		
+		return temp;
+	}
+	
+	
+	public Vector<Point> getQueryPoints()
+	{
+		Vector<Point> queryPoints = new Vector<Point>();
+		
+		for (int i = startIndexOfQuery; i < endIndexOfQuery ; i++)
+		{
+			if (i < LibParser.queryStroke.points.size())
+			{
+				queryPoints.add(LibParser.queryStroke.points.get(i));
+			}
+			
+		}
+		return queryPoints;
+	}
+	
+	public Vector<Point> getLibPoints()
+	{
+		Vector<Point> libPoints = new Vector<Point>();
+		
+		for (int i = getStartIndexOfLib(); i < getEndIndexOfLib(); i++)
+		{
+			if (i<LibParser.libStrokes.get(getIndexofLibStroke()).points.size())
+			{
+				libPoints.add(LibParser.libStrokes.get(getIndexofLibStroke()).points.get(i));
+			}
+			
+		}
+		return libPoints;
+	}
+	
 }

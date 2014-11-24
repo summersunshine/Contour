@@ -44,8 +44,7 @@ public class PixelGrabber
 			minY = minY < 0 ? 0 : minY;
 			maxY = maxY > image.getHeight()-1 ? image.getHeight() -1: maxY;
 
-//			int width = maxX - minX;
-//			int height = maxY - minY;
+
 			
 			// 循环，判断是否在四边形内
 			for (int y = minY; y <= maxY; y++)
@@ -63,22 +62,37 @@ public class PixelGrabber
 			}
 			
 		}
-		//BufferedImage reverseImage = getReverseImage(image);
+
+//		BufferedImage cloneImage = getCloneImage(libStroke.sourceImage);
+//		
+//		for (int x = 0; x < image.getWidth(); x++)
+//		{
+//			for (int y = 0; y < image.getHeight(); y++)
+//			{
+//				int rgb =image.getRGB(x, y);
+//				if (image.getRGB(x, y) == -16777216)
+//				{
+//					cloneImage.setRGB(x, y, -1);
+//				}
+//			}
+//		}
+//		return cloneImage;
+
+		BufferedImage cloneImage = getCloneImage(libStroke.alphaImage);
 		
 		for (int x = 0; x < image.getWidth(); x++)
 		{
 			for (int y = 0; y < image.getHeight(); y++)
 			{
-				//Color color = new Color(image.getRGB(x, y));
 				int rgb =image.getRGB(x, y);
 				if (image.getRGB(x, y) == -16777216)
 				{
-					libStroke.sourceImage.setRGB(x, y, -1);
+					cloneImage.setRGB(x, y, -16777216);
 				}
 			}
 		}
-		return libStroke.sourceImage;
-
+		return cloneImage;
+		
 	}
 	
 	public static BufferedImage getReverseImage(BufferedImage image)
@@ -100,84 +114,25 @@ public class PixelGrabber
 		return outputImage;
 
 	}
-//	public static BufferedImage getWhiteImage(int width,int height)
-//	{
-//		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-//		
-//		for (int i = 0; i < image.getWidth(); i++)
-//		{
-//			
-//		}
-//	}
 
-//	public static BufferedImage getIamge(LibStroke libStroke,int start,int end)
-//	{
-//		BufferedImage image = new BufferedImage(libStroke.width, libStroke.height, BufferedImage.TYPE_INT_RGB);
-//
-//		Graphics2D graphics2d = (Graphics2D) image.getGraphics();
-//
-//		for (int i = start; i < end - 1; i++)
-//		{
-//			Point point1 = libStroke.leftContourPoints.get(i);
-//			Point point2 = libStroke.leftContourPoints.get(i + 1);
-//
-//			Point point3 = libStroke.rightContourPoints.get(i + 1);
-//			Point point4 = libStroke.rightContourPoints.get(i);
-//
-//			// 依据不同的情况更改添加点的顺序
-//			Vector<Point> polygon = new Vector<Point>();
-//			polygon.add(point1);
-//			polygon.add(point2);
-//			polygon.add(point3);
-//			polygon.add(point4);
-//			
-//			polygon = getClockWisePoints(polygon);
-//			polygon.addElement(polygon.firstElement());
-//			if (point1.x > point2.x)
-//			{
-//				polygon.add(point2);
-//				polygon.add(point1);
-//				polygon.add(point4);
-//				polygon.add(point3);
-//			}
-//			else
-//			{
-//
-//				polygon.add(point1);
-//				polygon.add(point2);
-//				polygon.add(point3);
-//				polygon.add(point4);
-//
-//			}
-//
-//			// 获取所有四个点的最大最小的x与y值
-//			int minX = (int) Math.floor(Math.min(Math.min(Math.min(point1.x, point2.x), point3.x), point4.x));
-//			int maxX =  (int) Math.ceil(Math.max(Math.max(Math.max(point1.x, point2.x), point3.x), point4.x));
-//			int minY =  (int) Math.floor(Math.min(Math.min(Math.min(point1.y, point2.y), point3.y), point4.y));
-//			int maxY = (int) Math.ceil(Math.max(Math.max(Math.max(point1.y, point2.y), point3.y), point4.y));
-//
-//			minX = minX < 0 ? 0 : minX;
-//			maxX = maxX > image.getWidth()-1 ? image.getWidth() -1: maxX;
-//			minY = minY < 0 ? 0 : minY;
-//			maxY = maxY > image.getHeight()-1 ? image.getHeight() -1: maxY;
-//
-//			// 循环，判断是否在四边形内
-//			for (int y = minY; y <= maxY; y++)
-//			{
-//				for (int x = minX; x <= maxX; x++)
-//				{
-//					if (isPointInPolygon(new Point(x, y), polygon))
-//					{
-//						graphics2d.setColor(new Color(libStroke.sourceImage.getRGB(x, y)));
-//						graphics2d.drawRect(x, y, 1, 1);
-//					}
-//				}
-//			}
-//		}
-//
-//		return image;
-//	}
+	public static BufferedImage getCloneImage(BufferedImage image)
+	{
+		int width = image.getWidth();
+		int height = image.getHeight();
 
+		BufferedImage outputImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				outputImage.setRGB(x, y, image.getRGB(x, y));
+			}
+		}
+
+		return outputImage;
+
+	}
 	
 	public static Vector<Point> getClockWisePoints(Vector<Point> points)
 	{

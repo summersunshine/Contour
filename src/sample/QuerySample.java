@@ -28,21 +28,22 @@ public class QuerySample extends Sample
 	 * */
 	public void addDistanceData(Vector<LibSample> otherSamples)
 	{
-		float beginPercent = percent - 0.15f;
-		float endPercent = percent + 0.15f;
+		float range = 0.2f;
+		float beginPercent = percent - range;
+		float endPercent = percent + range;
 
 		if (beginPercent < 0)
 		{
 			beginPercent = 0;
 			endPercent = 2 * percent;
-			endPercent = endPercent<0.15f?0.15f:endPercent;
+			endPercent = endPercent<range?range:endPercent;
 		}
 
 		if (endPercent > 1)
 		{
 			endPercent = 1;
 			beginPercent = 2 * percent - endPercent;
-			beginPercent = beginPercent>0.85f?0.85f:beginPercent;
+			beginPercent = beginPercent>(1-range)?(1-range):beginPercent;
 		}
 
 		int begin = (int) ((otherSamples.size() - 1) * beginPercent);

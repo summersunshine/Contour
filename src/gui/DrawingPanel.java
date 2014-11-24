@@ -11,6 +11,7 @@ import java.awt.event.MouseMotionListener;
 import java.security.MessageDigest;
 import java.util.Vector;
 
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -34,11 +35,11 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 	private boolean clearFlag;
 	
 
-	
+	private JLabel posLabel;
 	
 	public DrawingPanel()
 	{
-		
+		initPosLabel();
 		this.setBounds(GuiConfig.DRAWING_RECTANGLE);
 		this.setVisible(true);
 		this.addMouseListener(this);
@@ -194,6 +195,14 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 		points.add(new Point(x,y));
 	}
 
+	private void initPosLabel()
+	{
+		posLabel = new JLabel();
+		posLabel.setBounds(900,0,100,50);
+		this.add(posLabel);
+		posLabel.repaint();
+	}
+	
 	@Override
 	public void mouseDragged(MouseEvent event)
 	{
@@ -203,7 +212,8 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 	@Override
 	public void mouseMoved(MouseEvent event)
 	{
-		
+		posLabel.setText("x:" + event.getX() + "y:"  + event.getY());
+		posLabel.repaint();
 	}
 
 	@Override
