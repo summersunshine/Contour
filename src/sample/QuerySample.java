@@ -1,10 +1,11 @@
 package sample;
 
+import geometry.Point;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
 
-import Geometry.Point;
 import config.SampleConfig;
 
 public class QuerySample extends Sample
@@ -27,10 +28,26 @@ public class QuerySample extends Sample
 	 * */
 	public void addDistanceData(Vector<LibSample> otherSamples)
 	{
-		int begin = (int) (otherSamples.size() * (percent - 0.15));
-		int end = (int) (otherSamples.size() * (percent + 0.15));
-		begin = begin < 0 ? 0 : begin;
-		end = end > otherSamples.size() ? otherSamples.size() : end;
+		float beginPercent = percent - 0.15f;
+		float endPercent = percent + 0.15f;
+
+		if (beginPercent < 0)
+		{
+			beginPercent = 0;
+			endPercent = 2 * percent;
+			endPercent = endPercent<0.15f?0.15f:endPercent;
+		}
+
+		if (endPercent > 1)
+		{
+			endPercent = 1;
+			beginPercent = 2 * percent - endPercent;
+			beginPercent = beginPercent>0.85f?0.85f:beginPercent;
+		}
+
+		int begin = (int) ((otherSamples.size() - 1) * beginPercent);
+		int end = (int) ((otherSamples.size() - 1) * endPercent);
+
 		for (int i = begin; i < end; i++)
 		{
 			float dis = feature.getDistance(otherSamples.get(i).feature);

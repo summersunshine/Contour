@@ -1,10 +1,11 @@
 package sample;
 
+import geometry.Point;
+
 import java.awt.Graphics2D;
 import java.io.File;
 import java.util.Vector;
 
-import Geometry.Point;
 import config.SampleConfig;
 
 public class Feature

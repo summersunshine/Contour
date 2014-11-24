@@ -1,8 +1,8 @@
 package sample;
 
-import java.util.Vector;
+import geometry.Point;
 
-import Geometry.Point;
+import java.util.Vector;
 
 public class FullLibSample extends FullSample
 {

@@ -1,6 +1,8 @@
 package sample;
 
 
+import geometry.PixelGrabber;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +10,6 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
-import Geometry.PixelGrabber;
 import config.Penalty;
 import config.SampleConfig;
 
@@ -45,6 +46,20 @@ public class Segement
 		return cs.lastElement().b;
 	}
 	
+	
+	public void addToEnd()
+	{
+		int a = this.cs.lastElement().a;
+		int b = this.cs.lastElement().b;
+		int count = 0;
+		while (this.cs.lastElement().b < lastIndexOfLib)
+		{
+			this.cs.add(new C(a, b + count + 1));
+			count ++;
+		}
+
+		
+	}
 
 	public void addBack(int size)
 	{

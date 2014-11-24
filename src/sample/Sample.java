@@ -1,9 +1,9 @@
 package sample;
 
+import geometry.Point;
+
 import java.awt.Graphics2D;
 import java.util.Vector;
-
-import Geometry.Point;
 
 public class Sample
 {

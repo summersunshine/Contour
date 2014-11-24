@@ -1,5 +1,9 @@
 package sample;
 
+import geometry.Geometry;
+import geometry.PixelGrabber;
+import geometry.Point;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -11,9 +15,6 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.lang.model.element.Element;
 
-import Geometry.Geometry;
-import Geometry.PixelGrabber;
-import Geometry.Point;
 import config.Penalty;
 import config.SampleConfig;
 
@@ -88,7 +89,7 @@ public class LibParser
 
 		this.addTransitionData();
 
-		//this.drawStrokeSegements("Before\\");
+		this.drawStrokeSegements("Before\\");
 
 		this.optimization();
 
@@ -447,7 +448,7 @@ public class LibParser
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics2D graphics2d = (Graphics2D) image.getGraphics();
 
-		String context = "";
+		String context = segements.get(i).startIndexOfQuery +" " + segements.get(i).endIndexOfQuery + "\r\n";
 		for (int j = 0; j < segements.get(i).cs.size(); j++)
 		{
 			int a = segements.get(i).cs.get(j).a;

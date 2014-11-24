@@ -1,9 +1,9 @@
 package sample;
 
+import geometry.Point;
+
 import java.util.Collections;
 import java.util.Vector;
-
-import Geometry.Point;
 
 public class FullQuerySample extends FullSample
 {

@@ -1,11 +1,12 @@
 package sample;
 
+import geometry.Geometry;
+import geometry.Point;
+
 import java.awt.Graphics2D;
 import java.util.Vector;
 
 import config.Penalty;
-import Geometry.Geometry;
-import Geometry.Point;
 
 public class QueryStroke extends Stroke
 {

@@ -1,5 +1,8 @@
 package sample;
 
+import geometry.ImgUtil;
+import geometry.Point;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -12,8 +15,6 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
-import Geometry.ImgUtil;
-import Geometry.Point;
 import config.SampleConfig;
 
 public class LibStroke extends Stroke

@@ -1,5 +1,8 @@
 package sample;
 
+import geometry.LogPolar;
+import geometry.Point;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -12,8 +15,6 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 
 import config.SampleConfig;
-import Geometry.LogPolar;
-import Geometry.Point;
 
 public class ShapeConext
 {

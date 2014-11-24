@@ -1,4 +1,4 @@
-package Geometry;
+package geometry;
 
 import java.awt.image.BufferedImage;
 import java.util.Vector;
