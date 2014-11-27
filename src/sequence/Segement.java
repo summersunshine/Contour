@@ -1,4 +1,4 @@
-package sample;
+package sequence;
 
 
 import geometry.Geometry;
@@ -14,6 +14,7 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
+import sample.LibParser;
 import config.Penalty;
 import config.SampleConfig;
 

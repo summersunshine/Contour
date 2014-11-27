@@ -1,4 +1,4 @@
-package sample;
+package stroke;
 
 import geometry.ImgUtil;
 import geometry.Point;
@@ -15,6 +15,7 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
+import sample.LibSample;
 import config.SampleConfig;
 
 public class LibStroke extends Stroke

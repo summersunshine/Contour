@@ -1,4 +1,4 @@
-package sample;
+package feature;
 
 import java.util.Comparator;
 
@@ -61,7 +61,7 @@ public class Cost
 	}
 
 	@SuppressWarnings("rawtypes")
-	static final class CostComparator implements Comparator
+	public static final class CostComparator implements Comparator
 	{
 		public int compare(Object o1, Object o2)
 		{

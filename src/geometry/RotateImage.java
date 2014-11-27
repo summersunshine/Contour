@@ -13,19 +13,14 @@ public class RotateImage
 	{
 		int width = src.getWidth();
 		int height = src.getHeight();
-		//int diagonal = (int) Math.sqrt(width*width+height*height);
-
-
-		
-		
 		BufferedImage res = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
 		
-		Point rotateLibPoint = Geometry.getRotatePoint(libPoint, angle);
-		Point offsetPoint = queryPoint.sub(rotateLibPoint);
-		queryPoint.print();
-		libPoint.print();
-		rotateLibPoint.print();
-		offsetPoint.print();
+//		Point rotateLibPoint = Geometry.getRotatePoint(libPoint, angle);
+		Point offsetPoint = queryPoint.sub(libPoint);
+//		queryPoint.print();
+//		libPoint.print();
+//		rotateLibPoint.print();
+//		offsetPoint.print();
 		
 		Graphics2D g2 = res.createGraphics();
 		// transform
@@ -37,6 +32,9 @@ public class RotateImage
 		g2.drawImage(src, null, null);
 		return res;
 	}
+	
+	
+
 
 	public static Rectangle CalcRotatedSize(Rectangle src, int angel)
 	{

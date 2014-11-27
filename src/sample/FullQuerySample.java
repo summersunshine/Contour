@@ -1,5 +1,6 @@
 package sample;
 
+import feature.Cost;
 import geometry.Point;
 
 import java.util.Collections;

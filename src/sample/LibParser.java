@@ -1,5 +1,7 @@
 package sample;
 
+import feature.Cost;
+import feature.Feature;
 import geometry.Geometry;
 import geometry.MergeImage;
 import geometry.PixelGrabber;
@@ -16,6 +18,10 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.lang.model.element.Element;
 
+import sequence.C;
+import sequence.Segement;
+import stroke.LibStroke;
+import stroke.QueryStroke;
 import config.Penalty;
 import config.SampleConfig;
 
@@ -65,7 +71,7 @@ public class LibParser
 		LibParser.libStrokes = new Vector<LibStroke>();
 		for (int i = 0; i < STOKE_NUM; i++)
 		{
-			LibParser.libStrokes.add(new LibStroke("charcoal2", i));
+			LibParser.libStrokes.add(new LibStroke("charcoal1", i));
 			System.out.println("parse stroke " + i);
 		}
 
@@ -109,7 +115,13 @@ public class LibParser
 	{
 		System.out.println("feature cal begin");
 
-		for (int i = 0; i < queryStroke.querySamples.size(); i++)
+		for (int j = 0; j < libStrokes.size(); j++)
+		{
+			queryStroke.querySamples.get(0).addDistanceData(libStrokes.get(j).libSamples);
+
+		}
+		
+		for (int i = 1; i < queryStroke.querySamples.size(); i++)
 		{
 			for (int j = 0; j < libStrokes.size(); j++)
 			{
@@ -119,8 +131,9 @@ public class LibParser
 
 			queryStroke.querySamples.get(i).sort();
 			queryStroke.querySamples.get(i).printKNN();
+			//addSegements(queryStroke.querySamples.get(i-1).a, queryStroke.querySamples.get(i-1).b);
 		}
-
+		
 		System.out.println("feature cal end");
 	}
 
@@ -139,7 +152,7 @@ public class LibParser
 			{
 				queryStroke.querySamples.get(0).costs.get(j).addEe(10);
 			}
-
+			addSegements(lastCost.a, lastCost.b);
 		}
 
 		queryStroke.querySamples.get(0).sort();
@@ -161,6 +174,7 @@ public class LibParser
 		{
 			lastCost = queryStroke.querySamples.get(currIndex - 1).costs.get(0);
 
+			
 			for (int j = 0; j < queryStroke.querySamples.get(currIndex).costs.size(); j++)
 			{
 				int a = queryStroke.querySamples.get(currIndex).costs.get(j).a;
@@ -173,8 +187,8 @@ public class LibParser
 
 			queryStroke.querySamples.get(currIndex).sort();
 			queryStroke.querySamples.get(currIndex).printKNN();
+			
 			addSegements(lastCost.a, lastCost.b);
-
 		}
 
 		System.out.println("transition cal end");
@@ -228,27 +242,7 @@ public class LibParser
 
 	}
 
-	// public int getEndPenalty(int j,int a,int b)
-	// {
-	// float percent1 = currIndex/(queryStroke.getSampleNumber()-currIndex);
-	// float percent2;
-	//
-	// if (percent1 > 1)
-	// {
-	// percent1 =currIndex/queryStroke.getSampleNumber();
-	//
-	// percent2 = b/libStrokes.get(a).getSampleNumber();
-	//
-	// }
-	// else
-	// {
-	// percent2 = b/(libStrokes.get(a).getSampleNumber()-b);
-	// }
-	// float diff = Math.abs(percent1 - percent2);
-	//
-	// return (int) (Penalty.Ce*diff*diff);
-	// }
-
+	
 	public int getRepeatTime(int b, int index)
 	{
 		int count = 1;
@@ -323,21 +317,6 @@ public class LibParser
 		segements.lastElement().endStroke(currIndex);
 	}
 
-	//
-	// if (segements.get(i).isShort() && !isShortBegin)
-	// {
-	// isShortBegin = true;
-	// beginIndex = i;
-	// }
-	//
-	// if (isShortBegin && !segements.get(i).isShort())
-	// {
-	// isShortBegin = false;
-	// endIndex = i;
-	//
-	// handStortSegement(beginIndex,endIndex);
-	//
-	// }
 
 	// ÓÅ»¯ÐòÁÐ
 	public void optimization()
@@ -357,20 +336,21 @@ public class LibParser
 				if (segements.get(i).isReachEnd())
 				{
 					segements.get(i).removeBack(Penalty.EndArea);
+					segements.get(i + 1).addFront(4);
 				}
-				else
-				{
-					segements.get(i).addBack(4);
-				}
-				segements.get(i + 1).addFront(4);
-				continue;
+//				else
+//				{
+//					segements.get(i).addBack(4);
+//				}
+				//segements.get(i + 1).addFront(4);
+				//continue;
 			}
 			
 			
 
 			if (!segements.get(i).isReachEnd() && i == (segements.size() - 1))
 			{
-				segements.get(i).addToEnd();
+				//segements.get(i).addToEnd();
 			}
 			
 			if (segements.get(i).startIndexOfQuery>=segements.get(i).endIndexOfQuery)
@@ -560,6 +540,14 @@ public class LibParser
 	{
 		BufferedImage image = MergeImage.getImage(partImages);
 		
+		Graphics2D graphics2d = (Graphics2D) image.getGraphics();
+		for (int i = 0; i < queryStroke.points.size(); i++)
+		{
+			queryStroke.points.get(i).drawPoint(graphics2d, Color.RED);
+			queryStroke.rightContourPoints.get(i).drawPoint(graphics2d, Color.GREEN);
+			queryStroke.leftContourPoints.get(i).drawPoint(graphics2d, Color.BLUE);
+		}
+		
 		File file = new File(path);
 		try
 		{
@@ -571,5 +559,7 @@ public class LibParser
 			e.printStackTrace();
 		}
 	}
+	
+
 	
 }

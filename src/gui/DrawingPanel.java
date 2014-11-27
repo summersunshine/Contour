@@ -1,5 +1,6 @@
 package gui;
 
+import feature.ShapeConext;
 import geometry.Geometry;
 import geometry.Point;
 
@@ -16,8 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import sample.LibParser;
-import sample.QueryStroke;
-import sample.ShapeConext;
+import stroke.QueryStroke;
 import config.GuiConfig;
 
 public class DrawingPanel extends JPanel implements MouseListener,MouseMotionListener

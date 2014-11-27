@@ -1,5 +1,6 @@
 package sample;
 
+import feature.Cost;
 import geometry.Point;
 
 import java.util.Collections;
@@ -28,7 +29,7 @@ public class QuerySample extends Sample
 	 * */
 	public void addDistanceData(Vector<LibSample> otherSamples)
 	{
-		float range = 0.2f;
+		float range = 0.25f;
 		float beginPercent = percent - range;
 		float endPercent = percent + range;
 

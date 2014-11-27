@@ -1,4 +1,4 @@
-package sample;
+package feature;
 
 import geometry.LogPolar;
 import geometry.Point;

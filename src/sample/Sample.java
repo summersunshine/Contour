@@ -1,5 +1,6 @@
 package sample;
 
+import feature.Feature;
 import geometry.Point;
 
 import java.awt.Graphics2D;

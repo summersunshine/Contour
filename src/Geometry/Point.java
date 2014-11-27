@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import java.util.Comparator;
 import java.util.Vector;
 
-import sample.Cost;
+import feature.Cost;
 
 public class Point
 {

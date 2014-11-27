@@ -1,4 +1,4 @@
-package sample;
+package sequence;
 
 public class C
 {

@@ -1,4 +1,4 @@
-package sample;
+package stroke;
 
 import geometry.Point;
 
