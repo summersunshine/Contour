@@ -12,9 +12,9 @@ public class FullLibSample extends FullSample
 
 	public Point rightVelocity;
 
-	public FullLibSample(Vector<Point> points, Vector<Point> leftContourPoints, Vector<Point> rightContourPoints, int a, int b)
+	public FullLibSample(Vector<Point> points, Vector<Point> leftContourPoints, Vector<Point> rightContourPoints,double angle, int a, int b)
 	{
-		super(points, leftContourPoints, rightContourPoints, a, b);
+		super(points, leftContourPoints, rightContourPoints,angle, a, b);
 		// TODO Auto-generated constructor stub
 
 		this.initVelocity(points, leftContourPoints, rightContourPoints, b);

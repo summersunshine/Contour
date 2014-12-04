@@ -32,6 +32,7 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 	private Vector<Point> leftContourPoints;
 	private Vector<Point> rightContourPoints;
 	
+	
 	private boolean clearFlag;
 	
 
@@ -112,7 +113,8 @@ public class DrawingPanel extends JPanel implements MouseListener,MouseMotionLis
 		leftContourPoints = Geometry.getContourPoints(points, 20.0f,true);
 		rightContourPoints = Geometry.getContourPoints(points, -20.0f,true);
 		
-	
+		
+		
 		//依据points的数目
 		MainFrame.getInstance().initScorllBar(points.size());
 	

@@ -73,7 +73,41 @@ public class Geometry
 	    return true;  
 	}
 
+	/**
+	 * 获取一组点的中点
+	 * */
+	public static Vector<Point> getDirPoints(Vector<Point> points)
+	{
+		Vector<Point> dirPoints = new Vector<Point>();
+		dirPoints.add(points.get(1).sub(points.get(0)));
+		for (int i = 1; i < points.size() - 1; i++)
+		{
+			Point middlePoint1 = Point.getMidPoint(points.get(i - 1), points.get(i));
+			Point middlePoint2 = Point.getMidPoint(points.get(i + 1), points.get(i));
+			dirPoints.add(middlePoint2.sub(middlePoint1));
+		}
+		dirPoints.add(points.lastElement().sub(points.get(points.size() - 1)));
+		return dirPoints;
+	}
 	
+	/**
+	 * 获取一组点的方向
+	 * */
+	public static Vector<Double> getDir(Vector<Point> points)
+	{
+		Vector<Double> dirPoints = new Vector<Double>();
+		dirPoints.add(getAngle(points.get(0).sub(points.get(1))));
+		for (int i = 1; i < points.size() - 1; i++)
+		{
+			Point middlePoint1 = Point.getMidPoint(points.get(i - 1), points.get(i));
+			Point middlePoint2 = Point.getMidPoint(points.get(i + 1), points.get(i));
+			double angle = getAngle(middlePoint2.sub(middlePoint1));
+			dirPoints.add(angle);
+		}
+		dirPoints.add( getAngle(points.get(points.size() - 1).sub(points.get(points.size() - 2))));
+		return dirPoints;
+	}
+
 	
 	public static Vector<Integer> getReverseIndex(Vector<Point> points)
 	{

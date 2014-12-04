@@ -1,11 +1,14 @@
 package feature;
 
+import geometry.Geometry;
 import geometry.LogPolar;
 import geometry.Point;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
@@ -26,7 +29,7 @@ public class ShapeConext
 	public static final int winSize = 30;
 
 	// 径向分割的区域数目
-	public static final int pBins = 5;
+	public static final int pBins = 6;
 
 	// 角度方向分割的区域数目
 	public static final int angleBins = 6;
@@ -42,6 +45,9 @@ public class ShapeConext
 
 	// 其他点的xy坐标
 	private Vector<Point> points;
+	
+	//参考坐标系的角度
+	private double angle;
 
 	// 统计数据
 	private int[][] statistics = new int[pBins][angleBins];
@@ -61,10 +67,12 @@ public class ShapeConext
 	 *            如果dir>0，只统计sourceIndex之后的点 如果dir<0, 只统计souceIndex之前的点 如果dir=0,
 	 *            则统计所有的点
 	 * */
-	public ShapeConext(Vector<Point> points, int sourceIndex, int dir)
+	public ShapeConext(Vector<Point> points,double angle, int sourceIndex, int dir)
 	{
 		this.logPolars = new Vector<LogPolar>();
 
+		this.angle = angle;
+		
 		this.points = points;
 
 		this.sourcePoint = points.get(sourceIndex);
@@ -144,11 +152,11 @@ public class ShapeConext
 	 * */
 	private void count(int i)
 	{
-		LogPolar logPolar = new LogPolar(points.get(i).sub(sourcePoint));
+		LogPolar logPolar = new LogPolar(points.get(i).sub(sourcePoint),angle);
 		logPolars.addElement(logPolar);
 
 		int x = (int) (logPolar.p);
-		int y = (int) (angleBins - 1 - (int) logPolar.angle * angleBins / 360);
+		int y = (int) (angleBins - 1 - (int) (logPolar.angle * angleBins / 360));
 
 		if (x < pBins)
 		{
@@ -291,6 +299,67 @@ public class ShapeConext
 			return new Point(0, 400);
 		}
 	}
+	
+	
+	/**
+	 * 绘制对数极坐标坐标系
+	 * 
+	 * @param graphics2d
+	 * */
+	public void drawCoordinateSystem()
+	{
+		double radius =  Math.exp(pBins) * 2;
+		
+		BufferedImage image = new BufferedImage((int)radius, (int)radius, BufferedImage.TYPE_INT_ARGB);
+		
+		int halfWidth = image.getWidth()/2;
+		int halfHeight = image.getHeight()/2;
+		
+		for (int y = 0; y < image.getHeight(); y++)
+		{
+			for (int x = 0; x < image.getWidth(); x++)
+			{
+				image.setRGB(x, y, 0x00ffffff);
+			}
+		}
+		
+		Graphics2D graphics2d = image.createGraphics();
+		graphics2d.setStroke(new BasicStroke(3));
+		graphics2d.setColor(new Color(255, 0, 0));
+
+		// sourcePoint.print();
+		for (int i = 1; i <= pBins; i++)
+		{
+			radius = Math.exp(i) * 2;
+			int x = (int) (halfWidth - radius / 2);
+			int y = (int) (halfHeight - radius / 2);
+			graphics2d.drawOval(x, y, (int) radius, (int) radius);
+		}
+
+		for (int i = 0; i < angleBins; i++)
+		{
+			float endX = (float) (Math.exp(pBins) * Math.cos(i * 2f / angleBins * Math.PI));
+			float endY = (float) (Math.exp(pBins) * Math.sin(i * 2f / angleBins * Math.PI));
+			Point endPoint = new Point(endX,endY);
+			graphics2d.drawLine((int) radius/2, (int) radius/2, (int) (endPoint.x + radius/2), (int) (endPoint.y + radius/2));
+		}
+		
+		File file = new File(SampleConfig.OUTPUT_PATH +"coordinate.png");
+		System.out.println(file.getPath());
+		try
+		{
+			ImageIO.write(image, "PNG", file);
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	
 
 	/**
 	 * 绘制对数极坐标坐标系
@@ -312,7 +381,12 @@ public class ShapeConext
 		{
 			float endX = (float) (Math.exp(pBins) * Math.cos(i * 2f / angleBins * Math.PI));
 			float endY = (float) (Math.exp(pBins) * Math.sin(i * 2f / angleBins * Math.PI));
-			graphics2d.drawLine((int) sourcePoint.x, (int) sourcePoint.y, (int) (endX + sourcePoint.x), (int) (endY + sourcePoint.y));
+			Point endPoint = new Point(endX,endY);
+			endPoint = Geometry.getRotatePoint(endPoint, angle);
+			
+			graphics2d.setStroke(new BasicStroke(3));
+			//graphics2d.setColor(new Color(i*30,i*30,i*30));
+			graphics2d.drawLine((int) sourcePoint.x, (int) sourcePoint.y, (int) (endPoint.x + sourcePoint.x), (int) (endPoint.y + sourcePoint.y));
 		}
 	}
 

@@ -34,7 +34,7 @@ public class QueryStroke extends Stroke
 		this.points = points;
 		this.rightContourPoints = rightCountourPoints;
 		this.leftContourPoints = leftCountourPoints;
-
+		this.calDirAngle();
 		this.initQuerySample();
 	}
 
@@ -47,7 +47,7 @@ public class QueryStroke extends Stroke
 
 		for (int i = 0; i < points.size(); i++)
 		{
-			this.querySamples.addElement(new QuerySample(points, -1, i));
+			this.querySamples.addElement(new QuerySample(points,dirAngle.get(i), -1, i));
 		}
 	}
 

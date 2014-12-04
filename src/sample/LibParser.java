@@ -131,7 +131,7 @@ public class LibParser
 
 			queryStroke.querySamples.get(i).sort();
 			queryStroke.querySamples.get(i).printKNN();
-			//addSegements(queryStroke.querySamples.get(i-1).a, queryStroke.querySamples.get(i-1).b);
+			
 		}
 		
 		System.out.println("feature cal end");
@@ -440,12 +440,23 @@ public class LibParser
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics2D graphics2d = (Graphics2D) image.getGraphics();
 
-		String context = segements.get(i).startIndexOfQuery +" " + segements.get(i).endIndexOfQuery + "\r\n";
+		
+		int startIndex = segements.get(i).startIndexOfQuery;
+		String context="";
 		for (int j = 0; j < segements.get(i).cs.size(); j++)
 		{
 			int a = segements.get(i).cs.get(j).a;
 			int b = segements.get(i).cs.get(j).b;
-			context += "a: " + a + " b:" + b + "\r\n";
+			//context += "a: " + a + " b: " + b + "\r\n";
+			context += (int)libStrokes.get(a).points.get(b).x + " " + (int)libStrokes.get(a).points.get(b).y + " " + 
+					(int)queryStroke.points.get(startIndex+j).x + " " + (int)queryStroke.points.get(startIndex+j).y + "\r\n";
+			
+			context += (int)libStrokes.get(a).leftContourPoints.get(b).x + " " + (int)libStrokes.get(a).leftContourPoints.get(b).y + " " + 
+					(int)queryStroke.leftContourPoints.get(startIndex+j).x + " " + (int)queryStroke.leftContourPoints.get(startIndex+j).y + "\r\n";
+			
+			context += (int)libStrokes.get(a).rightContourPoints.get(b).x + " " + (int)libStrokes.get(a).rightContourPoints.get(b).y + " " + 
+					(int)queryStroke.rightContourPoints.get(startIndex+j).x + " " + (int)queryStroke.rightContourPoints.get(startIndex+j).y + "\r\n";
+	
 			libStrokes.get(a).points.get(b).drawPoint(graphics2d, Color.RED);
 			libStrokes.get(a).rightContourPoints.get(b).drawPoint(graphics2d, Color.GREEN);
 			libStrokes.get(a).leftContourPoints.get(b).drawPoint(graphics2d, Color.BLUE);
@@ -455,7 +466,7 @@ public class LibParser
 
 		
 		saveSampleImage(image, SampleConfig.OUTPUT_PATH + dir + i + "_" + index + "sample.jpg");
-		saveTxt(context, SampleConfig.OUTPUT_PATH + dir + i + "_" + index + ".txt");
+		saveTxt(context, SampleConfig.OUTPUT_PATH + dir + i + ".txt");
 		
 		if (dir == "After\\")
 		{
@@ -538,8 +549,8 @@ public class LibParser
 	
 	private void saveResultImage(String path)
 	{
-		BufferedImage image = MergeImage.getImage(partImages);
-		
+		//BufferedImage image = MergeImage.getImage(partImages);
+		BufferedImage image = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
 		Graphics2D graphics2d = (Graphics2D) image.getGraphics();
 		for (int i = 0; i < queryStroke.points.size(); i++)
 		{

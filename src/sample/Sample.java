@@ -13,17 +13,20 @@ public class Sample
 
 	// 属于stroke的第b个样例
 	public int b;
+	
+	//相对旋转点
+	public double angle;
 
 	// 中心点特征
 	public Feature feature;
 
 	public float percent;
 
-	public Sample(Vector<Point> points, int a, int b)
+	public Sample(Vector<Point> points,double angle, int a, int b)
 	{
 		this.a = a;
 		this.b = b;
-		this.feature = new Feature(points, a, b);
+		this.feature = new Feature(points,angle, a, b);
 		this.percent = b * 1.0f / (points.size() - 1);
 	}
 

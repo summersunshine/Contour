@@ -9,9 +9,9 @@ public class LibSample extends Sample
 
 	public Point velocity;
 
-	public LibSample(Vector<Point> points, int a, int b)
+	public LibSample(Vector<Point> points,double angle, int a, int b)
 	{
-		super(points, a, b);
+		super(points,angle, a, b);
 		// TODO Auto-generated constructor stub
 
 		this.initVelocity(points, b);

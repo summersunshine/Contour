@@ -17,6 +17,8 @@ public class Feature
 
 	// 属于stroke的第b个样例
 	public int b;
+	
+	public double angle;
 
 	// 当前点之前的shapeConext
 	public ShapeConext historyShapeConext;
@@ -24,12 +26,13 @@ public class Feature
 	// 当前点之后的shapecontext
 	public ShapeConext futureShapeConext;
 
-	public Feature(Vector<Point> points, int a, int b)
+	public Feature(Vector<Point> points,double angle, int a, int b)
 	{
 		this.a = a;
 		this.b = b;
-		this.historyShapeConext = new ShapeConext(points, b, -1);
-		this.futureShapeConext = new ShapeConext(points, b, 1);
+		this.angle = angle;
+		this.historyShapeConext = new ShapeConext(points,angle, b, -1);
+		this.futureShapeConext = new ShapeConext(points,angle, b, 1);
 
 		if (Feature.isLoadBegin)
 		{
@@ -44,6 +47,7 @@ public class Feature
 	 * */
 	public void drawShapeContext(Graphics2D graphics2d)
 	{
+		this.historyShapeConext.drawCoordinateSystem();
 		this.historyShapeConext.drawCoordinateSystem(graphics2d);
 		this.historyShapeConext.drawShapeContext(graphics2d);
 		this.futureShapeConext.drawShapeContext(graphics2d);

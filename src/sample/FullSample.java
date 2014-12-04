@@ -13,14 +13,14 @@ public class FullSample extends Sample
 	// ÓÒÂÖÀª
 	public Feature rightFeature;
 
-	public FullSample(Vector<Point> points, Vector<Point> leftContourPoints, Vector<Point> rightContourPoints, int a, int b)
+	public FullSample(Vector<Point> points, Vector<Point> leftContourPoints, Vector<Point> rightContourPoints,double angle, int a, int b)
 	{
-		super(points, a, b);
+		super(points,angle, a, b);
 		// TODO Auto-generated constructor stub
 
-		leftFeature = new Feature(leftContourPoints, a, b);
+		leftFeature = new Feature(leftContourPoints,angle, a, b);
 
-		rightFeature = new Feature(rightContourPoints, a, b);
+		rightFeature = new Feature(rightContourPoints,angle, a, b);
 	}
 
 }

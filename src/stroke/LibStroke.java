@@ -61,8 +61,11 @@ public class LibStroke extends Stroke
 		this.alphaMaskString = SampleConfig.getStrokeAlphaMaskPath(name, index);
 		this.readImage();
 		this.readFile();
+		this.calDirAngle();
 		this.createStrokeSampleImage();
 		this.initLibSample();
+		
+		
 	}
 
 	/**
@@ -74,7 +77,7 @@ public class LibStroke extends Stroke
 
 		for (int i = 0; i < points.size(); i++)
 		{
-			libSamples.add(new LibSample(points, index, i));
+			libSamples.add(new LibSample(points,dirAngle.get(i), index, i));
 		}
 	}
 

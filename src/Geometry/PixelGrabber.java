@@ -63,22 +63,7 @@ public class PixelGrabber
 			
 		}
 
-		BufferedImage cloneImage = getCloneImage(libStroke.sourceImage);
-		
-		for (int x = 0; x < image.getWidth(); x++)
-		{
-			for (int y = 0; y < image.getHeight(); y++)
-			{
-				int rgb =image.getRGB(x, y);
-				if (image.getRGB(x, y) == -16777216)
-				{
-					cloneImage.setRGB(x, y, -1);
-				}
-			}
-		}
-		return cloneImage;
-
-//		BufferedImage cloneImage = getCloneImage(libStroke.alphaImage);
+//		BufferedImage cloneImage = getCloneImage(libStroke.sourceImage);
 //		
 //		for (int x = 0; x < image.getWidth(); x++)
 //		{
@@ -87,11 +72,26 @@ public class PixelGrabber
 //				int rgb =image.getRGB(x, y);
 //				if (image.getRGB(x, y) == -16777216)
 //				{
-//					cloneImage.setRGB(x, y, -16777216);
+//					cloneImage.setRGB(x, y, -1);
 //				}
 //			}
 //		}
 //		return cloneImage;
+
+		BufferedImage cloneImage = getCloneImage(libStroke.alphaImage);
+		
+		for (int x = 0; x < image.getWidth(); x++)
+		{
+			for (int y = 0; y < image.getHeight(); y++)
+			{
+				int rgb =image.getRGB(x, y);
+				if (image.getRGB(x, y) == -16777216)
+				{
+					cloneImage.setRGB(x, y, -16777216);
+				}
+			}
+		}
+		return cloneImage;
 		
 	}
 	
