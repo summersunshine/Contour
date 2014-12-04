@@ -1,8 +1,19 @@
-package geometry;
+package util;
 
+import geometry.Geometry;
+import geometry.Point;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Vector;
 
-public class TurningPoint
+import javax.imageio.ImageIO;
+
+import sequence.Segement;
+import stroke.LibStroke;
+
+public class TurningPointUtil
 {
 	public static Point getPoint(Vector<Point> 	points)
 	{
@@ -37,4 +48,9 @@ public class TurningPoint
 		}
 		//return endPoint;
 	}
+	
+	
+
+
+	
 }

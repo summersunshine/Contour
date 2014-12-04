@@ -1,12 +1,5 @@
 package sample;
 
-import feature.Cost;
-import feature.Feature;
-import geometry.Geometry;
-import geometry.MergeImage;
-import geometry.PixelGrabber;
-import geometry.Point;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -16,14 +9,19 @@ import java.io.IOException;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
-import javax.lang.model.element.Element;
 
 import sequence.C;
 import sequence.Segement;
 import stroke.LibStroke;
 import stroke.QueryStroke;
+import util.LibParserUtil;
+import util.PixelGrabberUtil;
 import config.Penalty;
 import config.SampleConfig;
+import feature.Cost;
+import feature.Feature;
+import geometry.Geometry;
+import geometry.Point;
 
 public class LibParser
 {
@@ -98,11 +96,11 @@ public class LibParser
 
 		this.addTransitionData();
 
-		this.drawStrokeSegements("Before\\");
+		LibParserUtil.drawStrokeSegements("Before\\",segements,libStrokes,queryStroke);
 
 		this.optimization();
 
-		this.drawStrokeSegements("After\\");
+		LibParserUtil.drawStrokeSegements("After\\",segements,libStrokes,queryStroke);
 		
 	
 		
@@ -172,17 +170,14 @@ public class LibParser
 
 		for (currIndex = 1; currIndex < queryStroke.querySamples.size(); currIndex++)
 		{
-			lastCost = queryStroke.querySamples.get(currIndex - 1).costs.get(0);
+			lastCost = getQuerySampleCost(currIndex-1,0);
 
 			
 			for (int j = 0; j < queryStroke.querySamples.get(currIndex).costs.size(); j++)
 			{
-				int a = queryStroke.querySamples.get(currIndex).costs.get(j).a;
-				int b = queryStroke.querySamples.get(currIndex).costs.get(j).b;
-				float Et = getTransitionPenalty(j, a, b);
-				// int Ee = getEndPenalty(j, a, b);
+				Cost cost = getQuerySampleCost(currIndex,j);
+				float Et = getTransitionPenalty(cost.a, cost.b);
 				queryStroke.querySamples.get(currIndex).costs.get(j).addEt(Et);
-				// queryStroke.querySamples.get(currIndex).costs.get(j).addEe(Ee);
 			}
 
 			queryStroke.querySamples.get(currIndex).sort();
@@ -194,7 +189,7 @@ public class LibParser
 		System.out.println("transition cal end");
 	}
 
-	public float getTransitionPenalty(int j, int a, int b)
+	public float getTransitionPenalty(int a, int b)
 	{
 
 		float penalty = 0;
@@ -224,24 +219,15 @@ public class LibParser
 
 		return penalty;
 	}
-
-	public int getEndPenalty(int j, int a, int b)
+	
+	private Cost getQuerySampleCost(int index,int rank)
 	{
-		float percent1 = currIndex / queryStroke.getSampleNumber();
-		float percent2 = b / libStrokes.get(a).getSampleNumber();
-		float diff = Math.abs(percent1 - percent2);
-
-		if (percent1 < 0.25 || percent1 > 0.75)
-		{
-			return (int) (Penalty.Ce * diff);
-		}
-		else
-		{
-			return (int) (2 * Penalty.Ce * diff * diff);
-		}
-
+		return queryStroke.querySamples.get(index).costs.get(rank);
 	}
 
+
+
+	/*********************************处理过渡惩罚*************************************************/
 	
 	public int getRepeatTime(int b, int index)
 	{
@@ -260,11 +246,13 @@ public class LibParser
 		return count;
 	}
 
+	
+
 	public float getJumpPenalty(int a, int b, int lastA, int lastB)
 	{
-		Point v1 = libStrokes.get(lastA).libSamples.get(lastB).velocity;
-		Point v2 = libStrokes.get(a).libSamples.get(b).velocity;
-
+		Point v1 = getLibSampleVelocity(lastA, lastB);
+		Point v2 = getLibSampleVelocity(a, b);
+		
 		float ratio = count < Penalty.Lmin ? 1 : Penalty.Lmin / 1.33f / count + 0.25f;
 
 		return (float) ((Penalty.Ct  + Penalty.Cp * (1 - Geometry.getCos(v1, v2)))*ratio);
@@ -273,13 +261,26 @@ public class LibParser
 
 	public int getJumpPenaltyForSameStroke(int a, int b, int lastA, int lastB)
 	{
-		Point v1 = libStrokes.get(lastA).libSamples.get(lastB).velocity;
-		Point v2 = libStrokes.get(a).libSamples.get(b).velocity;
+		Point v1 = getLibSampleVelocity(lastA, lastB);
+		Point v2 = getLibSampleVelocity(a, b);
 
 		return (int) (Penalty.Ct + Penalty.Cp * (1 - Geometry.getCos(v1, v2)));
 
 	}
-
+	
+	private Point getLibSampleVelocity(int a,int b)
+	{
+		return  libStrokes.get(a).libSamples.get(b).velocity;
+	}
+	
+	/*********************************结束过渡惩罚*************************************************/
+	
+	
+	
+	
+	
+	/*********************************处理segement*************************************************/
+	
 	public void addSegements(int lastA, int lastB)
 	{
 		int a = queryStroke.querySamples.get(currIndex).costs.get(0).a;
@@ -317,6 +318,10 @@ public class LibParser
 		segements.lastElement().endStroke(currIndex);
 	}
 
+	/*********************************结束处理segement*************************************************/
+
+	
+	/*********************************开始优化序列*************************************************/
 
 	// 优化序列
 	public void optimization()
@@ -379,11 +384,8 @@ public class LibParser
 					segements.get(i - 1).addBack(segements.get(i).getL());
 					segements.remove(i);
 				}
-
 			}
-
 		}
-
 	}
 
 	public void handStortSegement(int beginIndex, int endIndex)
@@ -410,167 +412,10 @@ public class LibParser
 		}
 	}
 
-	
-	public void drawStrokeSegements(String dir)
-	{
-		File file = new File(SampleConfig.OUTPUT_PATH + dir);
-
-		partImages.clear();
-		
-		if (file.exists())
-		{
-			file.delete();
-		}
-		for (int i = 0; i < segements.size(); i++)
-		{
-			
-			drawStrokeSegement(i, dir);
-		}
-		
-		
-		saveResultImage(SampleConfig.OUTPUT_PATH + dir + "result.jpg");
-	}
-
-	public void drawStrokeSegement(int i, String dir)
-	{
-		int index = segements.get(i).cs.get(0).a;
-		int width = libStrokes.get(index).width;
-		int height = libStrokes.get(index).height;
-
-		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		Graphics2D graphics2d = (Graphics2D) image.getGraphics();
-
-		
-		int startIndex = segements.get(i).startIndexOfQuery;
-		String context="";
-		for (int j = 0; j < segements.get(i).cs.size(); j++)
-		{
-			int a = segements.get(i).cs.get(j).a;
-			int b = segements.get(i).cs.get(j).b;
-			//context += "a: " + a + " b: " + b + "\r\n";
-			context += (int)libStrokes.get(a).points.get(b).x + " " + (int)libStrokes.get(a).points.get(b).y + " " + 
-					(int)queryStroke.points.get(startIndex+j).x + " " + (int)queryStroke.points.get(startIndex+j).y + "\r\n";
-			
-			context += (int)libStrokes.get(a).leftContourPoints.get(b).x + " " + (int)libStrokes.get(a).leftContourPoints.get(b).y + " " + 
-					(int)queryStroke.leftContourPoints.get(startIndex+j).x + " " + (int)queryStroke.leftContourPoints.get(startIndex+j).y + "\r\n";
-			
-			context += (int)libStrokes.get(a).rightContourPoints.get(b).x + " " + (int)libStrokes.get(a).rightContourPoints.get(b).y + " " + 
-					(int)queryStroke.rightContourPoints.get(startIndex+j).x + " " + (int)queryStroke.rightContourPoints.get(startIndex+j).y + "\r\n";
-	
-			libStrokes.get(a).points.get(b).drawPoint(graphics2d, Color.RED);
-			libStrokes.get(a).rightContourPoints.get(b).drawPoint(graphics2d, Color.GREEN);
-			libStrokes.get(a).leftContourPoints.get(b).drawPoint(graphics2d, Color.BLUE);
-
-		}
-
-
-		
-		saveSampleImage(image, SampleConfig.OUTPUT_PATH + dir + i + "_" + index + "sample.jpg");
-		saveTxt(context, SampleConfig.OUTPUT_PATH + dir + i + ".txt");
-		
-		if (dir == "After\\")
-		{
-			saveImage(index, i, SampleConfig.OUTPUT_PATH + dir + i + "_" + index + ".jpg");
-		}
-		
-	}
-
-	private void saveTxt(String content, String path)
-	{
-		File file = new File(path);
-
-		try
-		{
-			FileWriter fileWriter = new FileWriter(file);
-
-			fileWriter.write(content);
-
-			fileWriter.close();
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
-	private void saveImage(int index,int i, String path)
-	{
-		LibStroke libStroke = libStrokes.get(index);
-		
-		int start = segements.get(i).cs.firstElement().b;
-		int end = segements.get(i).cs.lastElement().b;
-		
-		BufferedImage image = PixelGrabber.getIamge(libStroke,start,end);
-		
-		image = segements.get(i).rotate(image);
-		
-		partImages.add(image);
-		
-		File file = new File(path);
-
-		if (!file.exists())
-		{
-			file.mkdirs();
-		}
-
-		try
-		{
-			ImageIO.write(image, "JPG", file);
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	private void saveSampleImage(BufferedImage image, String path)
-	{
-		File file = new File(path);
-
-		if (!file.exists())
-		{
-			file.mkdirs();
-		}
-
-		try
-		{
-			ImageIO.write(image, "JPG", file);
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	/*********************************结束优化序列*************************************************/
 
 	
-	private void saveResultImage(String path)
-	{
-		//BufferedImage image = MergeImage.getImage(partImages);
-		BufferedImage image = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
-		Graphics2D graphics2d = (Graphics2D) image.getGraphics();
-		for (int i = 0; i < queryStroke.points.size(); i++)
-		{
-			queryStroke.points.get(i).drawPoint(graphics2d, Color.RED);
-			queryStroke.rightContourPoints.get(i).drawPoint(graphics2d, Color.GREEN);
-			queryStroke.leftContourPoints.get(i).drawPoint(graphics2d, Color.BLUE);
-		}
-		
-		File file = new File(path);
-		try
-		{
-			ImageIO.write(image, "JPG", file);
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
+
 
 	
 }

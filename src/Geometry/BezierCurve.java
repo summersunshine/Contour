@@ -1,6 +1,5 @@
 package geometry;
 
-import java.util.Vector;
 
 public class BezierCurve
 {

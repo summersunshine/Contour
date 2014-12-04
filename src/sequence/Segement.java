@@ -1,22 +1,12 @@
 package sequence;
 
 
-import geometry.Geometry;
-import geometry.PixelGrabber;
 import geometry.Point;
-import geometry.RotateImage;
-import geometry.TurningPoint;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Vector;
-
-import javax.imageio.ImageIO;
 
 import sample.LibParser;
 import config.Penalty;
-import config.SampleConfig;
 
 public class Segement
 {
@@ -175,43 +165,6 @@ public class Segement
 		return getL() < Penalty.Lmin;
 	}
 	
-	
-	public BufferedImage rotate(BufferedImage image)
-	{
-		Vector<Point> queryPoints = getQueryPoints();
-		
-		Vector<Point> libPoints = getLibPoints();
-		
-		Point queryTurningPoint = TurningPoint.getPoint(queryPoints);
-		
-		Point libTurningPoint = TurningPoint.getPoint(libPoints);
-		
-		double queryAngle = Geometry.getAngle(queryTurningPoint.sub(queryPoints.firstElement()));
-		
-		double libAngle = Geometry.getAngle(libTurningPoint.sub(libPoints.firstElement()));
-		
-		if (!queryTurningPoint.equal(queryPoints.lastElement()))
-		{
-			double queryAngle1 = Geometry.getAngle(queryPoints.lastElement().sub(queryTurningPoint));
-			
-			double libAngle1 = Geometry.getAngle(libPoints.lastElement().sub(libTurningPoint));
-			
-			queryAngle = (queryAngle + queryAngle1)/2;
-			libAngle = (libAngle + libAngle1)/2;
-		}
-
-		
-		
-		BufferedImage temp = PixelGrabber.getCloneImage(image);
-		
-		
-		System.out.println("queryAngle : " + queryAngle);
-		System.out.println("libAngle : " + libAngle);
-		
-		temp = RotateImage.getImage(temp,queryPoints.firstElement(),libPoints.firstElement(), queryAngle-libAngle);
-		
-		return temp;
-	}
 	
 	
 	public Vector<Point> getQueryPoints()

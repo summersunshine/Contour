@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.io.File;
 import java.util.Vector;
 
+import util.ShapeContextUtil;
 import config.SampleConfig;
 
 public class Feature
@@ -19,20 +20,22 @@ public class Feature
 	public int b;
 	
 	public double angle;
+	
+	public double maxR;
 
 	// 当前点之前的shapeConext
-	public ShapeConext historyShapeConext;
+	public ShapeContext historyShapeConext;
 
 	// 当前点之后的shapecontext
-	public ShapeConext futureShapeConext;
+	public ShapeContext futureShapeConext;
 
-	public Feature(Vector<Point> points,double angle, int a, int b)
+	public Feature(Vector<Point> points,double angle,double maxR, int a, int b)
 	{
 		this.a = a;
 		this.b = b;
 		this.angle = angle;
-		this.historyShapeConext = new ShapeConext(points,angle, b, -1);
-		this.futureShapeConext = new ShapeConext(points,angle, b, 1);
+		this.historyShapeConext = new ShapeContext(points,angle,maxR, b, -1);
+		this.futureShapeConext = new ShapeContext(points,angle,maxR, b, 1);
 
 		if (Feature.isLoadBegin)
 		{
@@ -47,10 +50,11 @@ public class Feature
 	 * */
 	public void drawShapeContext(Graphics2D graphics2d)
 	{
-		this.historyShapeConext.drawCoordinateSystem();
-		this.historyShapeConext.drawCoordinateSystem(graphics2d);
-		this.historyShapeConext.drawShapeContext(graphics2d);
-		this.futureShapeConext.drawShapeContext(graphics2d);
+		ShapeContextUtil.drawCoordinateSystem();
+		ShapeContextUtil.drawCoordinateSystem(historyShapeConext,graphics2d);
+		ShapeContextUtil.drawShapeContext(historyShapeConext,graphics2d);
+		ShapeContextUtil.drawShapeContext(futureShapeConext,graphics2d);
+
 	}
 
 	/**
@@ -62,15 +66,9 @@ public class Feature
 	{
 		float historyDistance = this.historyShapeConext.getDistanceL2(otherFeature.historyShapeConext);
 		float futureDistance = this.futureShapeConext.getDistanceL2(otherFeature.futureShapeConext);
-		//float historyAngle = this.historyShapeConext.getAngleDistance(otherFeature.historyShapeConext);
-		//float futureAngle = this.futureShapeConext.getAngleDistance(otherFeature.futureShapeConext);
 
-		float historyAngle = 0;
-		float futureAngle = 0;
 		
-		
-		return (float) ((float) Math.sqrt(historyDistance * historyDistance + futureDistance * futureDistance) + 
-				Math.sqrt(historyAngle * historyAngle + futureAngle * futureAngle));
+		return (float) ((float) Math.sqrt(historyDistance * historyDistance + futureDistance * futureDistance));
 	}
 
 	/**
@@ -84,8 +82,9 @@ public class Feature
 			file.mkdirs();
 		}
 
-		historyShapeConext.createShapeContextImage(SampleConfig.OUTPUT_PATH + a + "\\img\\" + b + "_histroy.jpg");
-		futureShapeConext.createShapeContextImage(SampleConfig.OUTPUT_PATH + a + "\\img\\" + b + "_future.jpg");
+		ShapeContextUtil.createShapeContextImage(historyShapeConext, SampleConfig.OUTPUT_PATH + a + "\\img\\" + b + "_histroy.jpg");
+		ShapeContextUtil.createShapeContextImage(futureShapeConext, SampleConfig.OUTPUT_PATH + a + "\\img\\" + b + "_future.jpg");
+
 	}
 
 	/**
@@ -99,7 +98,9 @@ public class Feature
 			file.mkdirs();
 		}
 
-		historyShapeConext.createShapeContextText(SampleConfig.OUTPUT_PATH + a + "\\txt\\" + b + "_histroy.txt");
-		futureShapeConext.createShapeContextText(SampleConfig.OUTPUT_PATH + a + "\\txt\\" + b + "_future.txt");
+		ShapeContextUtil.createShapeContextText(historyShapeConext, SampleConfig.OUTPUT_PATH + a + "\\img\\" + b + "_histroy.txt");
+		ShapeContextUtil.createShapeContextText(futureShapeConext, SampleConfig.OUTPUT_PATH + a + "\\img\\" + b + "_future.txt");
+
+
 	}
 }

@@ -5,8 +5,6 @@ import java.awt.Graphics2D;
 import java.util.Comparator;
 import java.util.Vector;
 
-import feature.Cost;
-
 public class Point
 {
 	// x×ø±ê
@@ -96,7 +94,7 @@ public class Point
 	 * 
 	 * @param point
 	 * */
-	Point add(Point point)
+	public Point add(Point point)
 	{
 		return new Point(this.x + point.x, this.y + point.y);
 	}
@@ -126,7 +124,7 @@ public class Point
 	 * 
 	 * @param m
 	 * */
-	Point div(double m)
+	public Point div(double m)
 	{
 		return new Point(this.x / m, this.y / m);
 	}
@@ -249,7 +247,7 @@ public class Point
 	
 	
 	@SuppressWarnings("rawtypes")
-	static final class AngleComparator implements Comparator
+	public static final class AngleComparator implements Comparator
 	{
 		public int compare(Object o1, Object o2)
 		{

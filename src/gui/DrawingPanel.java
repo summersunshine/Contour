@@ -1,6 +1,6 @@
 package gui;
 
-import feature.ShapeConext;
+import feature.ShapeContext;
 import geometry.Geometry;
 import geometry.Point;
 

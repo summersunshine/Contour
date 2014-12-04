@@ -1,6 +1,5 @@
 package stroke;
 
-import geometry.ImgUtil;
 import geometry.Point;
 
 import java.awt.Color;
@@ -16,6 +15,8 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 
 import sample.LibSample;
+import util.ImgUtil;
+import util.LibStrokeUtil;
 import config.SampleConfig;
 
 public class LibStroke extends Stroke
@@ -36,7 +37,7 @@ public class LibStroke extends Stroke
 	public BufferedImage tightImage;
 	
 	// 库中的第index个笔触
-	private int index;
+	public int index;
 
 	// 输出的文本路径
 	private String txtPathString;
@@ -62,7 +63,7 @@ public class LibStroke extends Stroke
 		this.readImage();
 		this.readFile();
 		this.calDirAngle();
-		this.createStrokeSampleImage();
+		LibStrokeUtil.createStrokeSampleImage(this);
 		this.initLibSample();
 		
 		
@@ -77,7 +78,7 @@ public class LibStroke extends Stroke
 
 		for (int i = 0; i < points.size(); i++)
 		{
-			libSamples.add(new LibSample(points,dirAngle.get(i), index, i));
+			libSamples.add(new LibSample(points,dirAngle.get(i),averageR, index, i));
 		}
 	}
 
@@ -179,41 +180,6 @@ public class LibStroke extends Stroke
 		rightContourPoints.add(new Point(floats[6] * width, floats[7] * height));
 		points.add(new Point(floats[8] * width, floats[9] * height));
 		leftContourPoints.add(new Point(floats[10] * width, floats[11] * height));
-
-	}
-
-	/**
-	 * 画笔触的采样图像
-	 * */
-	public void createStrokeSampleImage()
-	{
-		System.out.println("Stroke.drawStroke()");
-		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		Graphics2D graphics2d = (Graphics2D) image.getGraphics();
-		for (int i = 0; i < points.size(); i++)
-		{
-			points.get(i).drawPoint(graphics2d, Color.RED);
-			rightContourPoints.get(i).drawPoint(graphics2d, Color.GREEN);
-			leftContourPoints.get(i).drawPoint(graphics2d, Color.BLUE);
-		}
-
-		File file = new File(SampleConfig.OUTPUT_PATH + index + "\\" + "sample.jpg");
-
-		if (!file.exists())
-		{
-			file.mkdirs();
-		}
-
-		// System.out.println(file.getPath());
-		try
-		{
-			ImageIO.write(image, "JPG", file);
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 	}
 
