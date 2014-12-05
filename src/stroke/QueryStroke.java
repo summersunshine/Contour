@@ -35,6 +35,7 @@ public class QueryStroke extends Stroke
 		this.rightContourPoints = rightCountourPoints;
 		this.leftContourPoints = leftCountourPoints;
 		this.calDirAngle();
+		this.setAverageR();
 		this.initQuerySample();
 	}
 

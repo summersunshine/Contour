@@ -17,7 +17,7 @@ public class Stroke
 		this.points = new Vector<Point>();
 		this.rightContourPoints = new Vector<Point>();
 		this.leftContourPoints = new Vector<Point>();
-		this.setAverageR();
+		
 	}
 	
 	public void calDirAngle()

@@ -29,10 +29,13 @@ public class Feature
 	// 当前点之后的shapecontext
 	public ShapeContext futureShapeConext;
 
+	public Vector<Point> points;
+	
 	public Feature(Vector<Point> points,double angle,double maxR, int a, int b)
 	{
 		this.a = a;
 		this.b = b;
+		this.points = points;
 		this.angle = angle;
 		this.historyShapeConext = new ShapeContext(points,angle,maxR, b, -1);
 		this.futureShapeConext = new ShapeContext(points,angle,maxR, b, 1);
@@ -50,7 +53,7 @@ public class Feature
 	 * */
 	public void drawShapeContext(Graphics2D graphics2d)
 	{
-		ShapeContextUtil.drawCoordinateSystem();
+		//ShapeContextUtil.drawCoordinateSystem();
 		ShapeContextUtil.drawCoordinateSystem(historyShapeConext,graphics2d);
 		ShapeContextUtil.drawShapeContext(historyShapeConext,graphics2d);
 		ShapeContextUtil.drawShapeContext(futureShapeConext,graphics2d);
@@ -64,9 +67,41 @@ public class Feature
 	 * */
 	public float getDistance(Feature otherFeature)
 	{
-		float historyDistance = this.historyShapeConext.getDistanceL2(otherFeature.historyShapeConext);
-		float futureDistance = this.futureShapeConext.getDistanceL2(otherFeature.futureShapeConext);
+//		float historyDistance = this.historyShapeConext.getDistanceL2(otherFeature.historyShapeConext);
+//		float futureDistance = this.futureShapeConext.getDistanceL2(otherFeature.futureShapeConext);
 
+		//float historyDistance = this.historyShapeConext.getChiSquare(otherFeature.historyShapeConext);
+		//float futureDistance = this.futureShapeConext.getChiSquare(otherFeature.futureShapeConext);
+		
+		//return (float) ((float) Math.sqrt(historyDistance * historyDistance + futureDistance * futureDistance));
+		
+		return getShapeDistance(otherFeature) + getEndDistance(otherFeature);
+	}
+	
+	public float getShapeDistance(Feature otherFeature)
+	{
+
+		float historyDistance = this.historyShapeConext.getChiSquare(otherFeature.historyShapeConext);
+		float futureDistance = this.futureShapeConext.getChiSquare(otherFeature.futureShapeConext);
+		
+		return (float) ((float) Math.sqrt(historyDistance * historyDistance + futureDistance * futureDistance));
+	}
+	
+	public float getHistoryEndDistance()
+	{
+		return (float) Math.min(1, Math.sqrt(b/ShapeContext.winSize));
+	}
+	
+	public float getFutureEndDistance()
+	{
+		return (float) Math.min(1, Math.sqrt((points.size()-b)/ShapeContext.winSize));
+	}
+	
+	public float getEndDistance(Feature otherFeature)
+	{
+
+		float historyDistance = getHistoryEndDistance() - otherFeature.getHistoryEndDistance();
+		float futureDistance =  getFutureEndDistance() - otherFeature.getFutureEndDistance();
 		
 		return (float) ((float) Math.sqrt(historyDistance * historyDistance + futureDistance * futureDistance));
 	}

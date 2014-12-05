@@ -63,7 +63,8 @@ public class LibStroke extends Stroke
 		this.readImage();
 		this.readFile();
 		this.calDirAngle();
-		LibStrokeUtil.createStrokeSampleImage(this);
+		this.setAverageR();
+		//LibStrokeUtil.createStrokeSampleImage(this);
 		this.initLibSample();
 		
 		

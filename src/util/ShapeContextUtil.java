@@ -59,7 +59,10 @@ public class ShapeContextUtil
 	 * */
 	public static void createShapeContextImage(ShapeContext shapeContext, String path)
 	{
-		BufferedImage image = new BufferedImage(30 * ShapeContext.angleBins, 30 * ShapeContext.pBins, BufferedImage.TYPE_INT_RGB);
+		int width = 30 * ShapeContext.angleBins;
+		int height = 30 * ShapeContext.pBins;
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		
 		Graphics2D graphics2d = (Graphics2D) image.getGraphics();
 		for (int i = 0; i < shapeContext.statistics.length; i++)
 		{
@@ -67,9 +70,12 @@ public class ShapeContextUtil
 			{
 				int value = 245 - shapeContext.statistics[i][j] * 10;
 				value = value < 0 ? 0 : value;
-
 				graphics2d.setColor(new Color(value, value, value));
-				graphics2d.fillRect(j * 30, (ShapeContext.pBins - 1 - i) * 30, 30, 30);
+				
+				
+				int x = j*30;
+				int y = (ShapeContext.pBins - 1 - i) * 30;
+				graphics2d.fillRect(x, y, 30, 30);
 
 			}
 		}
@@ -103,7 +109,9 @@ public class ShapeContextUtil
 				value = value < 0 ? 0 : value;
 
 				graphics2d.setColor(new Color(value, value, value));
-				graphics2d.fillRect((int) shapeContext.startPoint.x + j * 30, (int) shapeContext.startPoint.y - i * 30, 30, 30);
+				int x = (int) shapeContext.startPoint.x + j * 30;
+				int y = (int) shapeContext.startPoint.y - i * 30;
+				graphics2d.fillRect(x, y, 30, 30);
 
 			}
 		}
@@ -122,7 +130,12 @@ public class ShapeContextUtil
 		Color[] colors = { Color.ORANGE, Color.LIGHT_GRAY };
 		graphics2d.setFont(f);
 		graphics2d.setPaint(colors[0]);
-		graphics2d.drawString(shapeContext.getDescribe(), (int) shapeContext.startPoint.x + 50, (int) shapeContext.startPoint.y + 50);
+		
+		
+		String str = shapeContext.getDescribe();
+		int x = (int) shapeContext.startPoint.x + 50;
+		int y = (int) shapeContext.startPoint.y + 50;
+		graphics2d.drawString(str, x, y);
 	}
 
 
@@ -197,16 +210,16 @@ public class ShapeContextUtil
 		graphics2d.setColor(new Color(255, 0, 0));
 
 		// sourcePoint.print();
-		for (int i = 1; i <= ShapeContext.pBins; i++)
+		for (int i = 0; i < ShapeContext.pBins; i++)
 		{
-			double radius = Math.exp(i) * 2;
-			graphics2d.drawOval((int) (shapeContext.sourcePoint.x - radius / 2), (int) (shapeContext.sourcePoint.y - radius / 2), (int) radius, (int) radius);
+			double radius = shapeContext.maxR*Math.pow(0.5f,i);
+			graphics2d.drawOval((int) (shapeContext.sourcePoint.x - radius), (int) (shapeContext.sourcePoint.y - radius), (int)( 2*radius), (int)( 2*radius));
 		}
 
 		for (int i = 0; i < ShapeContext.angleBins; i++)
 		{
-			float endX = (float) (Math.exp(ShapeContext.pBins) * Math.cos(i * 2f / ShapeContext.angleBins * Math.PI));
-			float endY = (float) (Math.exp(ShapeContext.pBins) * Math.sin(i * 2f / ShapeContext.angleBins * Math.PI));
+			float endX = (float) (shapeContext.maxR * Math.cos(i * 2f / ShapeContext.angleBins * Math.PI));
+			float endY = (float) (shapeContext.maxR * Math.sin(i * 2f / ShapeContext.angleBins * Math.PI));
 			Point endPoint = new Point(endX,endY);
 			endPoint = Geometry.getRotatePoint(endPoint, shapeContext.angle);
 			

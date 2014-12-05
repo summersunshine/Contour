@@ -78,6 +78,8 @@ public class ShapeContext
 
 		this.angle = angle;
 		
+		this.maxR = maxR;
+		
 		this.points = points;
 
 		this.sourcePoint = points.get(sourceIndex);
@@ -157,7 +159,8 @@ public class ShapeContext
 	 * */
 	private void count(int i)
 	{
-		LogPolar logPolar = new LogPolar(points.get(i).sub(sourcePoint),angle);
+		Point point = points.get(i).sub(sourcePoint);
+		LogPolar logPolar = new LogPolar(point,angle);
 		logPolars.addElement(logPolar);
 
 		int x = getXIndex(maxR, logPolar.p);
@@ -176,8 +179,8 @@ public class ShapeContext
 	{
 		for (int i = 0; i < pBins; i++)
 		{
-			if (maxR*POW_DOUBLES[i] > maxR &&
-					maxR > maxR*POW_DOUBLES[i+1])
+			if (maxR*POW_DOUBLES[i] > p &&
+					p > maxR*POW_DOUBLES[i+1])
 			{
 				return pBins-i-1;
 			}
@@ -240,23 +243,6 @@ public class ShapeContext
 	public float getDistanceL2(ShapeContext shapeConext)
 	{
 		float distance = 0;
-		int offset = 0;
-		// if (isAngleClose(shapeConext))
-		// {
-		// if (averageAngle > shapeConext.averageAngle)
-		// {
-		// offset = -1;
-		// }
-		// else if (averageAngle + 360-shapeConext.averageAngle<30)
-		// {
-		// offset = -1;
-		// }
-		// else
-		// {
-		// offset = 1;
-		// }
-		// }
-		//
 
 		for (int i = 0; i < statistics.length; i++)
 		{
@@ -267,7 +253,33 @@ public class ShapeContext
 		}
 		return (float) Math.sqrt(distance);
 	}
+	
+	
+	/**
+	 * ¿¨·½¾àÀë
+	 * */
+	public float getChiSquare(ShapeContext shapeConext)
+	{
+		float distance = 0;
+		for (int i = 0; i < statistics.length; i++)
+		{
+			for (int j = 0; j < statistics[i].length; j++)
+			{
+				int diff = shapeConext.statistics[i][j] - statistics[i][j];
+				int sum = shapeConext.statistics[i][j] + statistics[i][j];
+				if (sum!=0)
+				{
+					distance += Math.pow(diff, 2)*1f/sum;
+				}
+				
+			}
+		}
+		return distance;
+		
+	}
+	
 
+	
 	public boolean isAngleClose(ShapeContext shapeConext)
 	{
 		float diff = Math.abs(shapeConext.averageAngle - averageAngle);

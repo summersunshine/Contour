@@ -128,7 +128,7 @@ public class LibParserUtil
 			drawStrokeSegement(i, dir,segements,libStrokes,queryStroke);
 		}
 		
-		
+		LibParserUtil.saveTxt(segements.size() + "\r\n", SampleConfig.OUTPUT_PATH + dir + "num.txt");
 		LibParserUtil.saveResultImage(queryStroke,SampleConfig.OUTPUT_PATH + dir + "result.jpg");
 	}
 
@@ -144,8 +144,9 @@ public class LibParserUtil
 
 		
 		int startIndex = segements.get(i).startIndexOfQuery;
+		int size = segements.get(i).cs.size();
 		String context="";
-		for (int j = 0; j < segements.get(i).cs.size(); j++)
+		for (int j = 0; j < size; j++)
 		{
 			int a = segements.get(i).cs.get(j).a;
 			int b = segements.get(i).cs.get(j).b;
@@ -168,6 +169,7 @@ public class LibParserUtil
 
 		
 		LibParserUtil.saveSampleImage(image, SampleConfig.OUTPUT_PATH + dir + i + "_" + index + "sample.jpg");
+		
 		LibParserUtil.saveTxt(context, SampleConfig.OUTPUT_PATH + dir + i + ".txt");
 		
 		if (dir == "After\\")

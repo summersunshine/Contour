@@ -1,7 +1,8 @@
-/gui/
-/sample/
+/config/
 /feature/
 /geometry/
-/util/
+/gui/
+/sample/
 /sequence/
 /stroke/
+/util/

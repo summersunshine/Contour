@@ -96,7 +96,7 @@ public class LibParser
 
 		this.addTransitionData();
 
-		LibParserUtil.drawStrokeSegements("Before\\",segements,libStrokes,queryStroke);
+		//LibParserUtil.drawStrokeSegements("Before\\",segements,libStrokes,queryStroke);
 
 		this.optimization();
 
@@ -355,7 +355,7 @@ public class LibParser
 
 			if (!segements.get(i).isReachEnd() && i == (segements.size() - 1))
 			{
-				//segements.get(i).addToEnd();
+				segements.get(i).addToEnd();
 			}
 			
 			if (segements.get(i).startIndexOfQuery>=segements.get(i).endIndexOfQuery)
