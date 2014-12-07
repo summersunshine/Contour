@@ -1,5 +1,7 @@
 package util;
 
+import geometry.Point;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -11,45 +13,18 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 
 import config.SampleConfig;
+import sample.LibParser;
 import sequence.Segement;
 import stroke.LibStroke;
 import stroke.QueryStroke;
 
 public class LibParserUtil
 {
-	public  static void saveResultImage(QueryStroke queryStroke,String path)
-	{
-		//BufferedImage image = MergeImage.getImage(partImages);
-		BufferedImage image = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
-		Graphics2D graphics2d = (Graphics2D) image.getGraphics();
-		for (int i = 0; i < queryStroke.points.size(); i++)
-		{
-			queryStroke.points.get(i).drawPoint(graphics2d, Color.RED);
-			queryStroke.rightContourPoints.get(i).drawPoint(graphics2d, Color.GREEN);
-			queryStroke.leftContourPoints.get(i).drawPoint(graphics2d, Color.BLUE);
-		}
-		
-		File file = new File(path);
-		try
-		{
-			ImageIO.write(image, "JPG", file);
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	public static Vector<Vector<Point>> vectors = new Vector<Vector<Point>>(); 
 	
-	
-	public static void saveSampleImage(BufferedImage image, String path)
+	public static void saveImage(BufferedImage image, String path)
 	{
 		File file = new File(path);
-
-		if (!file.exists())
-		{
-			file.mkdirs();
-		}
 
 		try
 		{
@@ -83,33 +58,26 @@ public class LibParserUtil
 		}
 
 	}
-
-	public  static void saveImage(LibStroke libStroke,Segement segement, String path)
+	
+	
+	public  static void saveResultImage(String path)
 	{
-		
-		int start = segement.cs.firstElement().b;
-		int end = segement.cs.lastElement().b;
-		
-		BufferedImage image = PixelGrabberUtil.getIamge(libStroke,start,end);
-		
-		
-		File file = new File(path);
-
-		if (!file.exists())
-		{
-			file.mkdirs();
+		BufferedImage image = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
+		Graphics2D graphics2d = (Graphics2D) image.getGraphics();
+		for (int i = 0; i < LibParser.segements.size(); i++)
+		{			
+			int start = LibParser.segements.get(i).cs.firstElement().b;
+			int end = LibParser.segements.get(i).cs.lastElement().b;
+			
+			int index = LibParser.segements.get(i).getIndexofLibStroke();
+			System.out.println("Stroke Index: " + index);
+			PixelGrabberUtil.drawWarpImage(LibParser.libStrokes.get(index),i,start,end,graphics2d);
+			
 		}
-
-		try
-		{
-			ImageIO.write(image, "JPG", file);
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		saveImage(image,path);
 	}
+	
+	
 	
 	
 	
@@ -117,11 +85,13 @@ public class LibParserUtil
 	{
 		File file = new File(SampleConfig.OUTPUT_PATH + dir);
 
-		
-		if (file.exists())
+		if(!file.exists())
 		{
-			file.delete();
+			file.mkdir();
 		}
+		
+	
+		vectors.clear();
 		for (int i = 0; i < segements.size(); i++)
 		{
 			
@@ -129,7 +99,7 @@ public class LibParserUtil
 		}
 		
 		LibParserUtil.saveTxt(segements.size() + "\r\n", SampleConfig.OUTPUT_PATH + dir + "num.txt");
-		LibParserUtil.saveResultImage(queryStroke,SampleConfig.OUTPUT_PATH + dir + "result.jpg");
+		//LibParserUtil.saveResultImage(queryStroke,SampleConfig.OUTPUT_PATH + dir + "result.jpg");
 	}
 
 	
@@ -142,43 +112,54 @@ public class LibParserUtil
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics2D graphics2d = (Graphics2D) image.getGraphics();
 
+		vectors.add(new Vector<Point>());
 		
 		int startIndex = segements.get(i).startIndexOfQuery;
-		int size = segements.get(i).cs.size();
 		String context="";
-		for (int j = 0; j < size; j++)
+		for (int j = 0; j <  segements.get(i).cs.size(); j++)
 		{
 			int a = segements.get(i).cs.get(j).a;
 			int b = segements.get(i).cs.get(j).b;
-
-			context += (int)libStrokes.get(a).points.get(b).x + " " + (int)libStrokes.get(a).points.get(b).y + " " + 
-					(int)queryStroke.points.get(startIndex+j).x + " " + (int)queryStroke.points.get(startIndex+j).y + "\r\n";
 			
-			context += (int)libStrokes.get(a).leftContourPoints.get(b).x + " " + (int)libStrokes.get(a).leftContourPoints.get(b).y + " " + 
-					(int)queryStroke.leftContourPoints.get(startIndex+j).x + " " + (int)queryStroke.leftContourPoints.get(startIndex+j).y + "\r\n";
+			context += getLineContent(libStrokes,queryStroke,a,b,startIndex+j);
 			
-			context += (int)libStrokes.get(a).rightContourPoints.get(b).x + " " + (int)libStrokes.get(a).rightContourPoints.get(b).y + " " + 
-					(int)queryStroke.rightContourPoints.get(startIndex+j).x + " " + (int)queryStroke.rightContourPoints.get(startIndex+j).y + "\r\n";
-	
-			libStrokes.get(a).points.get(b).drawPoint(graphics2d, Color.RED);
-			libStrokes.get(a).rightContourPoints.get(b).drawPoint(graphics2d, Color.GREEN);
-			libStrokes.get(a).leftContourPoints.get(b).drawPoint(graphics2d, Color.BLUE);
+			drawPoints(graphics2d,libStrokes,a,b);
 
 		}
 
 
 		
-		LibParserUtil.saveSampleImage(image, SampleConfig.OUTPUT_PATH + dir + i + "_" + index + "sample.jpg");
+		LibParserUtil.saveImage(image, SampleConfig.OUTPUT_PATH + dir + i + "_" + index + "sample.jpg");
 		
 		LibParserUtil.saveTxt(context, SampleConfig.OUTPUT_PATH + dir + i + ".txt");
-		
-		if (dir == "After\\")
-		{
-			String path =SampleConfig.OUTPUT_PATH + dir + i + "_" + index + ".jpg";
-			LibParserUtil.saveImage(libStrokes.get(index), segements.get(i), path);
-		}
-		
+
+//		
+	}
+	
+	private static void drawPoints(Graphics2D graphics2d,Vector<LibStroke> libStrokes,int a,int b)
+	{
+
+		libStrokes.get(a).points.get(b).drawPoint(graphics2d, Color.RED);
+		libStrokes.get(a).rightContourPoints.get(b).drawPoint(graphics2d, Color.GREEN);
+		libStrokes.get(a).leftContourPoints.get(b).drawPoint(graphics2d, Color.BLUE);
 	}
 
+	private static String getLineContent(Vector<LibStroke> libStrokes,QueryStroke queryStroke,int a,int b,int queryIndex)
+	{
+		String content = "";
+		content += (int)libStrokes.get(a).points.get(b).x + " " + (int)libStrokes.get(a).points.get(b).y + " " + 
+				(int)queryStroke.points.get(queryIndex).x + " " + (int)queryStroke.points.get(queryIndex).y + "\r\n";
+		
+		content += (int)libStrokes.get(a).leftContourPoints.get(b).x + " " + (int)libStrokes.get(a).leftContourPoints.get(b).y + " " + 
+				(int)queryStroke.leftContourPoints.get(queryIndex).x + " " + (int)queryStroke.leftContourPoints.get(queryIndex).y + "\r\n";
+		
+		content += (int)libStrokes.get(a).rightContourPoints.get(b).x + " " + (int)libStrokes.get(a).rightContourPoints.get(b).y + " " + 
+				(int)queryStroke.rightContourPoints.get(queryIndex).x + " " + (int)queryStroke.rightContourPoints.get(queryIndex).y + "\r\n";
+		
+		vectors.lastElement().add(libStrokes.get(a).leftContourPoints.get(b));
+		vectors.lastElement().add(libStrokes.get(a).rightContourPoints.get(b));
+		return content;
+
+	}
 	
 }

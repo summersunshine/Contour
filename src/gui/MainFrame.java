@@ -16,11 +16,14 @@ import javax.swing.JLabel;
 import javax.swing.JScrollBar;
 import javax.swing.UIManager;
 
+import util.LibParserUtil;
 import config.GuiConfig;
+import config.SampleConfig;
 
 public class MainFrame extends JFrame implements ActionListener, AdjustmentListener,MouseMotionListener
 {
 	private DrawingPanel drawingPanel;
+	private JButton saveButton;
 	private JButton clearButton;
 	private	JButton lastButton;
 	private JButton nextButton;
@@ -34,7 +37,7 @@ public class MainFrame extends JFrame implements ActionListener, AdjustmentListe
 		initSetting();
 		initDrawingPanel();
 		initClearButton();
-	
+		initSaveButton();
 		//initLastButton();
 		//initNextButton();
 		this.addMouseMotionListener(this);
@@ -66,6 +69,16 @@ public class MainFrame extends JFrame implements ActionListener, AdjustmentListe
 		getContentPane().add(clearButton);
 		clearButton.addActionListener(this);
 		clearButton.repaint();
+	}
+	
+	
+	private void initSaveButton()
+	{
+		saveButton = new JButton("±£´æ");
+		saveButton.setBounds(100, 0, 100, 50);
+		getContentPane().add(saveButton);
+		saveButton.addActionListener(this);
+		saveButton.repaint();
 	}
 	
 //	private void initLastButton()
@@ -119,6 +132,10 @@ public class MainFrame extends JFrame implements ActionListener, AdjustmentListe
 			this.remove(indexLabel);
 			this.remove(indexScrollBar);
 			this.repaint();
+		}
+		
+		if (event.getSource()== saveButton) {
+			LibParserUtil.saveResultImage(SampleConfig.OUTPUT_PATH  + "After\\result.jpg");
 		}
 		
 		if (event.getSource() == nextButton)

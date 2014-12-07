@@ -33,7 +33,7 @@ public class LibParser
 
 	public static QueryStroke queryStroke;
 
-	public Vector<Segement> segements;
+	public static Vector<Segement> segements;
 
 	public boolean isRollBack;
 
@@ -56,8 +56,8 @@ public class LibParser
 	public void initStrokeInfos()
 	{
 		this.count = 0;
-		this.segements = new Vector<Segement>();
-		this.segements.add(new Segement(0));
+		segements = new Vector<Segement>();
+		segements.add(new Segement(0));
 	}
 
 	/**
@@ -113,13 +113,8 @@ public class LibParser
 	{
 		System.out.println("feature cal begin");
 
-		for (int j = 0; j < libStrokes.size(); j++)
-		{
-			queryStroke.querySamples.get(0).addDistanceData(libStrokes.get(j).libSamples);
 
-		}
-		
-		for (int i = 1; i < queryStroke.querySamples.size(); i++)
+		for (int i = 0; i < queryStroke.querySamples.size(); i++)
 		{
 			for (int j = 0; j < libStrokes.size(); j++)
 			{
@@ -328,7 +323,24 @@ public class LibParser
 	{
 		handStortSegement();
 		handEndPoint();
+		extent();
 		
+	}
+	
+	public void extent() 
+	{
+		for (int i = 0; i < segements.size(); i++)
+		{
+			if (i!=0) 
+			{
+				segements.get(i).addFront(3);
+			}
+			
+			if (i!= segements.size() - 1)
+			{
+				segements.get(i).addBack(3);
+			}
+		}
 	}
 
 	public void handEndPoint()
@@ -368,6 +380,15 @@ public class LibParser
 
 	public void handStortSegement()
 	{
+		for(int i = 0;i < segements.size();i++)
+		{
+			if(segements.get(i).isEmpty())
+			{
+				segements.remove(i--);
+				
+			}
+		}
+		
 		for (int i = 1; i < segements.size(); i++)
 		{
 			if (segements.get(i).isShort())
@@ -382,35 +403,35 @@ public class LibParser
 				else
 				{
 					segements.get(i - 1).addBack(segements.get(i).getL());
-					segements.remove(i);
+					segements.remove(i--);
 				}
 			}
 		}
 	}
 
-	public void handStortSegement(int beginIndex, int endIndex)
-	{
-		int counts = 0;
-		for (int j = beginIndex; j < endIndex; j++)
-		{
-			counts += segements.get(j).getL();
-		}
-
-		if (beginIndex - 1 >= 0)
-		{
-			segements.get(beginIndex - 1).addBack(counts);
-		}
-
-		if (endIndex < segements.size())
-		{
-			segements.get(endIndex).addFront(counts);
-		}
-
-		for (int j = beginIndex; j < endIndex; j++)
-		{
-			segements.remove(beginIndex);
-		}
-	}
+//	public void handStortSegement(int beginIndex, int endIndex)
+//	{
+//		int counts = 0;
+//		for (int j = beginIndex; j < endIndex; j++)
+//		{
+//			counts += segements.get(j).getL();
+//		}
+//
+//		if (beginIndex - 1 >= 0)
+//		{
+//			segements.get(beginIndex - 1).addBack(counts);
+//		}
+//
+//		if (endIndex < segements.size())
+//		{
+//			segements.get(endIndex).addFront(counts);
+//		}
+//
+//		for (int j = beginIndex; j < endIndex; j++)
+//		{
+//			segements.remove(beginIndex);
+//		}
+//	}
 
 	/*********************************结束优化序列*************************************************/
 

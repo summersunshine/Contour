@@ -165,6 +165,11 @@ public class Segement
 		return getL() < Penalty.Lmin;
 	}
 	
+	public boolean isEmpty()
+	{
+		return startIndexOfQuery>=endIndexOfQuery;
+	}
+	
 	
 	
 	public Vector<Point> getQueryPoints()
