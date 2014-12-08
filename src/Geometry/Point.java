@@ -24,8 +24,7 @@ public class Point
 		this.x = x;
 		this.y = y;
 	}
-	
-	
+
 	/**
 	 * 构造函数
 	 * 
@@ -58,7 +57,12 @@ public class Point
 
 	public boolean equal(Point point)
 	{
-		return (int)point.x == (int)x && (int)point.y == (int)y;
+		return (int) point.x == (int) x && (int) point.y == (int) y;
+	}
+
+	public double lengthSqr()
+	{
+		return x * x + y * y;
 	}
 	
 	public double length()
@@ -136,31 +140,33 @@ public class Point
 	{
 		System.out.println("x: " + x + " y: " + y);
 	}
-	
+
 	/**
 	 * 绘制
+	 * 
 	 * @param grphics2d
 	 * @param color
 	 * @param size
 	 * */
-	public void drawPoint(Graphics2D graphics2d,Color color)
+	public void drawPoint(Graphics2D graphics2d, Color color)
 	{
-		drawPoint(graphics2d,color,4);
+		drawPoint(graphics2d, color, 4);
 	}
-	
+
 	/**
 	 * 绘制
+	 * 
 	 * @param grphics2d
 	 * @param color
 	 * @param size
 	 * */
-	public void drawPoint(Graphics2D graphics2d,Color color,int size)
+	public void drawPoint(Graphics2D graphics2d, Color color, int size)
 	{
 
 		graphics2d.setColor(color);
-		graphics2d.fillRect((int)x-size/2, (int)y-size/2, size, size);
+		graphics2d.fillRect((int) x - size / 2, (int) y - size / 2, size, size);
 	}
-	
+
 	/**
 	 * 获取两个点之间的距离
 	 * 
@@ -209,43 +215,44 @@ public class Point
 	{
 		return midPoint.mul(2).sub(point);
 	}
-	
+
 	/**
 	 * 获取一组点的x坐标
+	 * 
 	 * @param points
 	 * */
-	public int [] getPointX(Vector<Point> points)
+	public int[] getPointX(Vector<Point> points)
 	{
-		int [] pointX = new int[points.size()];
-		
+		int[] pointX = new int[points.size()];
+
 		for (int i = 0; i < pointX.length; i++)
 		{
 			pointX[i] = (int) points.get(i).x;
 		}
 		return pointX;
 	}
-	
+
 	/**
 	 * 获取一组点的y坐标
+	 * 
 	 * @param points
 	 * */
-	public int [] getPointY(Vector<Point> points)
+	public int[] getPointY(Vector<Point> points)
 	{
-		int [] pointX = new int[points.size()];
-		
+		int[] pointX = new int[points.size()];
+
 		for (int i = 0; i < pointX.length; i++)
 		{
 			pointX[i] = (int) points.get(i).y;
 		}
 		return pointX;
 	}
-	
+
 	public float getAngle()
 	{
 		return (float) Geometry.getAngle(this);
 	}
-	
-	
+
 	@SuppressWarnings("rawtypes")
 	public static final class AngleComparator implements Comparator
 	{
@@ -268,14 +275,12 @@ public class Point
 			}
 		}
 	}
-	
-	public static float getDotProduct(Point pointA,Point pointB)
+
+	public static float getDotProduct(Point pointA, Point pointB)
 	{
-		
-		
+
 		return 0;
-		
-		
+
 	}
-	
+
 }

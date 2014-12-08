@@ -1,10 +1,8 @@
 package geometry;
 
-
 public class BezierCurve
 {
 
-	
 	/**
 	 * 三次贝塞尔曲线
 	 * 
@@ -15,14 +13,13 @@ public class BezierCurve
 	{
 		float x = bezier3funcX(percent, controlP);
 		float y = bezier3funcY(percent, controlP);
-		return new Point(x,y);
+		return new Point(x, y);
 	}
-	
-	
+
 	/**
 	 * 三次贝塞尔曲线X
 	 *
- 	 * @param percent
+	 * @param percent
 	 * @param controlP
 	 * */
 	public static float bezier3funcX(float percent, Point[] controlP)

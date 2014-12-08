@@ -23,7 +23,7 @@ public class ImageUtil
 		return outputImage;
 
 	}
-	
+
 	public static BufferedImage getReverseImage(BufferedImage image)
 	{
 		int height = image.getHeight();
@@ -36,7 +36,7 @@ public class ImageUtil
 			for (int x = 0; x < width; x++)
 			{
 				Color color = new Color(image.getRGB(x, y));
-				Color reverseColor = new Color(255-color.getRed(),255-color.getGreen(),255-color.getBlue());
+				Color reverseColor = new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
 				outputImage.setRGB(x, y, reverseColor.getRGB());
 			}
 		}

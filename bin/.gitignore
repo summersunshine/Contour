@@ -1,8 +1,4 @@
-/config/
-/feature/
-/geometry/
-/gui/
-/sample/
-/sequence/
-/stroke/
 /util/
+/tps/
+/geometry/
+/sample/

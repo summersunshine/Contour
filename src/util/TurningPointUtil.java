@@ -15,14 +15,14 @@ import stroke.LibStroke;
 
 public class TurningPointUtil
 {
-	public static Point getPoint(Vector<Point> 	points)
+	public static Point getPoint(Vector<Point> points)
 	{
 		Point beginPoint = points.firstElement();
 		Point endPoint = points.lastElement();
 		Point turningPoint = points.get(1);
-		
+
 		double minAngle = Geometry.getAngle(beginPoint, points.get(1), endPoint);
-		for (int i = 1; i < points.size()-1; i++)
+		for (int i = 1; i < points.size() - 1; i++)
 		{
 			double angle = Geometry.getAngle(beginPoint, points.get(i), endPoint);
 			if (angle < minAngle)
@@ -31,10 +31,8 @@ public class TurningPointUtil
 				minAngle = angle;
 			}
 		}
-		
-		
-		
-		if (minAngle >90 || beginPoint.sub(turningPoint).length() < 50)
+
+		if (minAngle > 90 || beginPoint.sub(turningPoint).length() < 50)
 		{
 			System.out.println("endpoint");
 			endPoint.print();
@@ -46,11 +44,7 @@ public class TurningPointUtil
 			turningPoint.print();
 			return turningPoint;
 		}
-		//return endPoint;
+		// return endPoint;
 	}
-	
-	
 
-
-	
 }

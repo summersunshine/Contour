@@ -2,7 +2,6 @@ package geometry;
 
 import java.util.Vector;
 
-
 public class Geometry
 {
 	/**
@@ -23,7 +22,7 @@ public class Geometry
 		int y = y1 - y2;
 		return (int) Math.sqrt(x * x + y * y);
 	}
-	
+
 	/**
 	 * 判断point1和point2组成的线段与point3和point4组成的线段是否相交
 	 * */
@@ -44,33 +43,33 @@ public class Geometry
 		return flag;
 	}
 
-	static double determinant(double v1, double v2, double v3, double v4)  // 行列式  
-	{  
-	    return (v1*v3-v2*v4);  
-	} 
-	
+	static double determinant(double v1, double v2, double v3, double v4) // 行列式
+	{
+		return (v1 * v3 - v2 * v4);
+	}
+
 	/**
 	 * 判断point1和point2组成的线段与point3和point4组成的线段是否相交
 	 * */
 	public static boolean isIntersect1(Point point1, Point point2, Point point3, Point point4)
 	{
 
-	    double delta = determinant(point2.x-point1.x, point3.x-point4.x, point2.y-point1.y, point3.y-point4.y);  
-	    if ( delta<=(1e-6) && delta>=-(1e-6) )  // delta=0，表示两线段重合或平行  
-	    {  
-	        return false;  
-	    }  
-	    double namenda = determinant(point3.x-point1.x, point3.x-point4.x, point3.y-point1.y, point3.y-point4.y) / delta;  
-	    if ( namenda>1 || namenda<0 )  
-	    {  
-	        return false;  
-	    }  
-	    double miu = determinant(point2.x-point1.x, point3.x-point1.x, point2.y-point1.y, point3.y-point1.y) / delta;  
-	    if ( miu>1 || miu<0 )  
-	    {  
-	        return false;  
-	    }  
-	    return true;  
+		double delta = determinant(point2.x - point1.x, point3.x - point4.x, point2.y - point1.y, point3.y - point4.y);
+		if (delta <= (1e-6) && delta >= -(1e-6)) // delta=0，表示两线段重合或平行
+		{
+			return false;
+		}
+		double namenda = determinant(point3.x - point1.x, point3.x - point4.x, point3.y - point1.y, point3.y - point4.y) / delta;
+		if (namenda > 1 || namenda < 0)
+		{
+			return false;
+		}
+		double miu = determinant(point2.x - point1.x, point3.x - point1.x, point2.y - point1.y, point3.y - point1.y) / delta;
+		if (miu > 1 || miu < 0)
+		{
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -89,7 +88,7 @@ public class Geometry
 		dirPoints.add(points.lastElement().sub(points.get(points.size() - 1)));
 		return dirPoints;
 	}
-	
+
 	/**
 	 * 获取一组点的方向
 	 * */
@@ -104,72 +103,68 @@ public class Geometry
 			double angle = getAngle(middlePoint2.sub(middlePoint1));
 			dirPoints.add(angle);
 		}
-		dirPoints.add( getAngle(points.get(points.size() - 1).sub(points.get(points.size() - 2))));
+		dirPoints.add(getAngle(points.get(points.size() - 1).sub(points.get(points.size() - 2))));
 		return dirPoints;
 	}
 
-	
 	public static Vector<Integer> getReverseIndex(Vector<Point> points)
 	{
-		
+
 		Vector<Integer> reverseIntegers = new Vector<Integer>();
-		for (int i = 1; i < points.size()-1; i++)
+		for (int i = 1; i < points.size() - 1; i++)
 		{
-			Point diffPoint1 = points.get(i).sub(points.get(i-1));
-			Point diffPoint2 = points.get(i).sub(points.get(i+1));
-			if (getCos(diffPoint1, diffPoint2)>0)
+			Point diffPoint1 = points.get(i).sub(points.get(i - 1));
+			Point diffPoint2 = points.get(i).sub(points.get(i + 1));
+			if (getCos(diffPoint1, diffPoint2) > 0)
 			{
 				reverseIntegers.add(i);
 			}
 		}
 		return reverseIntegers;
 	}
-	
-	public static  Vector<Point> removeIntersect(Vector<Point> points)
+
+	public static Vector<Point> removeIntersect(Vector<Point> points)
 	{
-		for (int i = 0 ; i < points.size()-3; i++)
+		for (int i = 0; i < points.size() - 3; i++)
 		{
-			for (int j = points.size()-2 ; j > (i+1); j--)
+			for (int j = points.size() - 2; j > (i + 1); j--)
 			{
 				if (points.get(i).sub(points.get(j)).length() > 40)
 				{
 					continue;
 				}
-				
-				
-				if (isIntersect(points.get(i), points.get(i+1), points.get(j), points.get(j+1)))
+
+				if (isIntersect(points.get(i), points.get(i + 1), points.get(j), points.get(j + 1)))
 				{
 					points.get(i).print();
-					points.get(i+1).print();
+					points.get(i + 1).print();
 					points.get(j).print();
-					points.get(j+1).print();
+					points.get(j + 1).print();
 					System.out.println("i:" + i + " j:" + j);
-					
+
 					int count = j - i;
-					while ((count--)!=0)
+					while ((count--) != 0)
 					{
-						points.removeElementAt(i+1);
+						points.removeElementAt(i + 1);
 					}
 				}
 			}
 		}
-		
+
 		return points;
 	}
-	
-	
 
-	public static  Vector<Point> removeIntersect(Vector<Point> points,int index)
+	public static Vector<Point> removeIntersect(Vector<Point> points, int index)
 	{
-		int begin=0,end=0;
-		for (int i = index -1 ; i > 0; i--)
+		int begin = 0, end = 0;
+		for (int i = index - 1; i > 0; i--)
 		{
-			for (int j = index + 1; j < points.size()-1; j++)
+			for (int j = index + 1; j < points.size() - 1; j++)
 			{
-				if (isIntersect(points.get(i), points.get(i-1), points.get(j), points.get(j+1)))
+				if (isIntersect(points.get(i), points.get(i - 1), points.get(j), points.get(j + 1)))
 				{
 					begin = i;
-					end  = j;
+					end = j;
 					break;
 				}
 			}
@@ -180,16 +175,15 @@ public class Geometry
 		}
 		return points;
 	}
-	
-	
-	public static Vector<Point> removeClose(Vector<Point> originPoints,double disatnce)
+
+	public static Vector<Point> removeClose(Vector<Point> originPoints, double disatnce)
 	{
-		for (int i = 0; i < originPoints.size()-1; i++)
+		for (int i = 0; i < originPoints.size() - 1; i++)
 		{
-			
-			if((float) originPoints.get(i).sub(originPoints.get(i+1)).length() < disatnce)
+
+			if ((float) originPoints.get(i).sub(originPoints.get(i + 1)).length() < disatnce)
 			{
-				Point midPoint = Point.getMidPoint(originPoints.get(i), originPoints.get(i+1));
+				Point midPoint = Point.getMidPoint(originPoints.get(i), originPoints.get(i + 1));
 				originPoints.remove(i);
 				originPoints.remove(i);
 				originPoints.insertElementAt(midPoint, i);
@@ -197,36 +191,35 @@ public class Geometry
 		}
 		return originPoints;
 	}
-	
-	public static Vector<Point> normalize(Vector<Point> originPoints,float maxDistance)
+
+	public static Vector<Point> normalize(Vector<Point> originPoints, float maxDistance)
 	{
-		//float maxDistance = 8;
-		
+		// float maxDistance = 8;
+
 		Vector<Float> lengths = new Vector<Float>();
 		for (int i = 1; i < originPoints.size(); i++)
 		{
-			lengths.add((float) originPoints.get(i).sub(originPoints.get(i-1)).length());
+			lengths.add((float) originPoints.get(i).sub(originPoints.get(i - 1)).length());
 		}
-		
+
 		Vector<Point> points = new Vector<Point>();
-		
+
 		points.add(originPoints.firstElement());
-		
+
 		double l = 0;
 		for (int i = 1; i < originPoints.size();)
 		{
 			int count = 0;
-			
+
 			l = points.lastElement().sub(originPoints.get(i)).length();
-			
-			
-			while (l< maxDistance && i+count < originPoints.size())
+
+			while (l < maxDistance && i + count < originPoints.size())
 			{
-				l+=lengths.get(i + count-1).floatValue();
+				l += lengths.get(i + count - 1).floatValue();
 				count++;
 			}
-			
-			if (count==0)
+
+			if (count == 0)
 			{
 				Point dir = originPoints.get(i).sub(points.lastElement());
 				dir = dir.div(dir.length()).mul(maxDistance);
@@ -234,44 +227,39 @@ public class Geometry
 			}
 			else
 			{
-				points.add(originPoints.get(i+count-1));
-				i = i+ count;
-			}	
+				points.add(originPoints.get(i + count - 1));
+				i = i + count;
+			}
 		}
-		
-		
+
 		points.add(originPoints.lastElement());
 		return points;
 	}
-	
-	
-	
-	
-	
-	public static Vector<Point> getContourPoints(Vector<Point> points,double width,boolean isTransition)
+
+	public static Vector<Point> getContourPoints(Vector<Point> points, double width, boolean isTransition)
 	{
 		Vector<Point> contourPoints = new Vector<Point>();
 		Point contourPoint;
 		float part = 20;
 		double ratio;
-		
-		//beginning
-		ratio = isTransition?0.1:1;
-		contourPoint = getContourPointAtBegin(points.get(0), points.get(1), width*ratio);
+
+		// beginning
+		ratio = isTransition ? 0.1 : 1;
+		contourPoint = getContourPointAtBegin(points.get(0), points.get(1), width * ratio);
 		contourPoints.add(contourPoint);
-		
-		//middle
-		for (int i = 1; i < points.size()-1; i++)
+
+		// middle
+		for (int i = 1; i < points.size() - 1; i++)
 		{
 			if (isTransition)
 			{
-				if (i < points.size()/part)
+				if (i < points.size() / part)
 				{
-					ratio = i*part/points.size();
+					ratio = i * part / points.size();
 				}
-				else if (i > points.size()*(part-1)/part)
+				else if (i > points.size() * (part - 1) / part)
 				{
-					ratio = (points.size() - i)*part/points.size();
+					ratio = (points.size() - i) * part / points.size();
 				}
 				else
 				{
@@ -282,62 +270,58 @@ public class Geometry
 			{
 				ratio = 1;
 			}
-			ratio = Math.sin(ratio*Math.PI/2);
-			contourPoint = getContourPoint(points.get(i-1), points.get(i),points.get(i+1), ratio*width);
+			ratio = Math.sin(ratio * Math.PI / 2);
+			contourPoint = getContourPoint(points.get(i - 1), points.get(i), points.get(i + 1), ratio * width);
 			contourPoints.add(contourPoint);
 
-			
 		}
-		
-		//end
-		ratio = isTransition?0.1:1;
-		contourPoint = getContourPointAtEnd(points.get(points.size()-1), points.get(points.size()-2), width*ratio);
+
+		// end
+		ratio = isTransition ? 0.1 : 1;
+		contourPoint = getContourPointAtEnd(points.get(points.size() - 1), points.get(points.size() - 2), width * ratio);
 		contourPoints.add(contourPoint);
-		
+
 		return contourPoints;
 	}
-	
 
-	
-	public static Point getContourPoint(Point lastPoint,Point currPoint,Point nextPoint,double width)
+	public static Point getContourPoint(Point lastPoint, Point currPoint, Point nextPoint, double width)
 	{
 		Point diffPoint1 = currPoint.sub(lastPoint);
 		Point diffPoint2 = currPoint.sub(nextPoint);
-		
+
 		double angle = getAngle(diffPoint1, diffPoint2);
-	
-		double halfAngle = angle/2;
-		double distance = width/Math.sin(halfAngle);
+
+		double halfAngle = angle / 2;
+		double distance = width / Math.sin(halfAngle);
 
 		Point rotatePoint = getRotatePoint(diffPoint1, halfAngle);
-		rotatePoint = rotatePoint.div(rotatePoint.length()).mul((float)distance);
-		
+		rotatePoint = rotatePoint.div(rotatePoint.length()).mul((float) distance);
+
 		return currPoint.add(rotatePoint);
-		
+
 	}
-	
-	public static Point getRotatePoint(Point point,double angle)
+
+	public static Point getRotatePoint(Point point, double angle)
 	{
-		double x = point.x*Math.cos(angle) - point.y*Math.sin(angle);
-		double y = point.x*Math.sin(angle) + point.y*Math.cos(angle);
-		
-		return new Point((float)(x), (float)(y));
+		double x = point.x * Math.cos(angle) - point.y * Math.sin(angle);
+		double y = point.x * Math.sin(angle) + point.y * Math.cos(angle);
+
+		return new Point((float) (x), (float) (y));
 	}
-	
-	public static double getCos(Point diffPoint1,Point diffPoint2)
+
+	public static double getCos(Point diffPoint1, Point diffPoint2)
 	{
-		double cos = (diffPoint1.x*diffPoint2.x + diffPoint1.y*diffPoint2.y)/(diffPoint1.length()*diffPoint2.length());
+		double cos = (diffPoint1.x * diffPoint2.x + diffPoint1.y * diffPoint2.y) / (diffPoint1.length() * diffPoint2.length());
 		return cos;
 	}
-	
+
 	public static double getAngle(Point diffPoint1)
 	{
 		return Math.atan2(diffPoint1.y, diffPoint1.x);
-		
+
 	}
-	
-	
-	public static double getAngle(Point diffPoint1,Point diffPoint2)
+
+	public static double getAngle(Point diffPoint1, Point diffPoint2)
 	{
 		double cos = getCos(diffPoint1, diffPoint2);
 		if (cos > 1)
@@ -346,109 +330,108 @@ public class Geometry
 		}
 		if (cos < -1)
 		{
-			cos = -1;   
+			cos = -1;
 		}
 		return Math.acos(cos);
 	}
-	
-	public static double getAngle(Point point0,Point point1,Point point2)
+
+	public static double getAngle(Point point0, Point point1, Point point2)
 	{
 		return getAngle(point0.sub(point1), point2.sub(point1));
 	}
-	
-	public static Point getContourPointAtBegin(Point endPoint,Point neighbourPoint,double width)
+
+	public static Point getContourPointAtBegin(Point endPoint, Point neighbourPoint, double width)
 	{
 		Point diffPoint = neighbourPoint.sub(endPoint);
-		
-		Point normalPoint = new Point(diffPoint.y,-diffPoint.x);
-		
+
+		Point normalPoint = new Point(diffPoint.y, -diffPoint.x);
+
 		double length = normalPoint.length();
-		
-		normalPoint = normalPoint.div(length).mul((float)width);
-		
+
+		normalPoint = normalPoint.div(length).mul((float) width);
+
 		return endPoint.sub(normalPoint);
-		
+
 	}
-	
-	public static Point getContourPointAtEnd(Point endPoint,Point neighbourPoint,double width)
+
+	public static Point getContourPointAtEnd(Point endPoint, Point neighbourPoint, double width)
 	{
 		Point diffPoint = neighbourPoint.sub(endPoint);
-		
-		Point normalPoint = new Point(diffPoint.y,-diffPoint.x);
-		
+
+		Point normalPoint = new Point(diffPoint.y, -diffPoint.x);
+
 		double length = normalPoint.length();
-		
-		normalPoint = normalPoint.div(length).mul((float)width);
-		
+
+		normalPoint = normalPoint.div(length).mul((float) width);
+
 		return endPoint.add(normalPoint);
-		
+
 	}
 }
 
-
-
-//public static Vector<Point> normalize(Vector<Point> originPoints)
-//{
-//	Vector<Float> lengths = new Vector<Float>();
-//	float totalLength = 0;
-//	for (int i = 1; i < originPoints.size(); i++)
-//	{
-//		lengths.add((float) originPoints.get(i).sub(originPoints.get(i-1)).length());
-//		totalLength +=lengths.lastElement();
-//	}
-//	
-//	int pointNum = (int) (totalLength/10);
-//	Vector<Point> points = new Vector<Point>();
-//	
-//	points.add(originPoints.firstElement());
-//	
-//	float l = 0;
-//	float lastl = 0;
-//	boolean isEnd = false;
-//	for (int i = 0; i < originPoints.size()-1; i++)
-//	{
+// public static Vector<Point> normalize(Vector<Point> originPoints)
+// {
+// Vector<Float> lengths = new Vector<Float>();
+// float totalLength = 0;
+// for (int i = 1; i < originPoints.size(); i++)
+// {
+// lengths.add((float) originPoints.get(i).sub(originPoints.get(i-1)).length());
+// totalLength +=lengths.lastElement();
+// }
 //
-//		int count = 0;
-//		lastl = l;
-//		while (true)
-//		{
-//			if (count +i >= originPoints.size())
-//			{
-//				isEnd = true;
-//				break;
-//			}
-//			
-//			l += lengths.get(count+i).floatValue();
-//			
-//			if (l>10)
-//			{
-//				break;
-//			}
-//			
-//			count ++;
-//			lastl =l;
-//		}
-//		
-//		if (isEnd)
-//		{
-//			points.add(originPoints.lastElement());
-//			break;
-//		}
-//		else
-//		{
-//			float percentage1 = (10f-lastl)/(l-lastl);
-//			Point point1 = originPoints.get(i+count+1);
-//			Point point2 = originPoints.get(i+count);
-//			Point newPoint = Point.getPointBetweenTweenPoint(point1, point2, percentage1);
-//			
-//			points.add(newPoint);
-//		}
+// int pointNum = (int) (totalLength/10);
+// Vector<Point> points = new Vector<Point>();
 //
-//		l = l-10;
-//		i = count + i + 1;
-//		
-//	}
-//	points.add(originPoints.lastElement());
-//	return points;
-//}
+// points.add(originPoints.firstElement());
+//
+// float l = 0;
+// float lastl = 0;
+// boolean isEnd = false;
+// for (int i = 0; i < originPoints.size()-1; i++)
+// {
+//
+// int count = 0;
+// lastl = l;
+// while (true)
+// {
+// if (count +i >= originPoints.size())
+// {
+// isEnd = true;
+// break;
+// }
+//
+// l += lengths.get(count+i).floatValue();
+//
+// if (l>10)
+// {
+// break;
+// }
+//
+// count ++;
+// lastl =l;
+// }
+//
+// if (isEnd)
+// {
+// points.add(originPoints.lastElement());
+// break;
+// }
+// else
+// {
+// float percentage1 = (10f-lastl)/(l-lastl);
+// Point point1 = originPoints.get(i+count+1);
+// Point point2 = originPoints.get(i+count);
+// Point newPoint = Point.getPointBetweenTweenPoint(point1, point2,
+// percentage1);
+//
+// points.add(newPoint);
+// }
+//
+// l = l-10;
+// i = count + i + 1;
+//
+// }
+// points.add(originPoints.lastElement());
+// return points;
+// }
 

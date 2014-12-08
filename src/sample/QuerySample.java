@@ -14,9 +14,9 @@ public class QuerySample extends Sample
 	// 距离其他的采样点的代价
 	public Vector<Cost> costs;
 
-	public QuerySample(Vector<Point> points,double angle,double averageR, int a, int b)
+	public QuerySample(Vector<Point> points, double angle, double averageR, int a, int b)
 	{
-		super(points,angle,averageR, a, b);
+		super(points, angle, averageR, a, b);
 
 		this.costs = new Vector<Cost>();
 
@@ -37,14 +37,14 @@ public class QuerySample extends Sample
 		{
 			beginPercent = 0;
 			endPercent = 2 * percent;
-			endPercent = endPercent<range?range:endPercent;
+			endPercent = endPercent < range ? range : endPercent;
 		}
 
 		if (endPercent > 1)
 		{
 			endPercent = 1;
 			beginPercent = 2 * percent - endPercent;
-			beginPercent = beginPercent>(1-range)?(1-range):beginPercent;
+			beginPercent = beginPercent > (1 - range) ? (1 - range) : beginPercent;
 		}
 
 		int begin = (int) ((otherSamples.size() - 1) * beginPercent);

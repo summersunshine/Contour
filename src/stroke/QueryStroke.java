@@ -48,7 +48,7 @@ public class QueryStroke extends Stroke
 
 		for (int i = 0; i < points.size(); i++)
 		{
-			this.querySamples.addElement(new QuerySample(points,dirAngle.get(i),averageR, -1, i));
+			this.querySamples.addElement(new QuerySample(points, dirAngle.get(i), averageR, -1, i));
 		}
 	}
 
@@ -99,8 +99,5 @@ public class QueryStroke extends Stroke
 			querySamples.get(i).sort();
 		}
 	}
-	
-	
-
 
 }

@@ -38,7 +38,8 @@ public class Cost
 
 	public void print()
 	{
-		//System.out.println("a: " + a + " b: " + b + " penalty " + totalPenalty);
+		// System.out.println("a: " + a + " b: " + b + " penalty " +
+		// totalPenalty);
 		System.out.println("a: " + a + " b: " + b + " feature " + ef + " transition " + et + "");
 	}
 

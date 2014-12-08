@@ -1,6 +1,5 @@
 package sequence;
 
-
 import geometry.Point;
 
 import java.util.Vector;
@@ -24,24 +23,21 @@ public class Segement
 		this.startIndexOfQuery = startIndex;
 	}
 
-	
 	public int getIndexofLibStroke()
 	{
 		return cs.firstElement().a;
 	}
-	
-	
+
 	public int getStartIndexOfLib()
 	{
 		return cs.firstElement().b;
 	}
-	
+
 	public int getEndIndexOfLib()
 	{
 		return cs.lastElement().b;
 	}
-	
-	
+
 	public void addToEnd()
 	{
 		int a = this.cs.lastElement().a;
@@ -51,10 +47,9 @@ public class Segement
 		{
 			startIndexOfQuery--;
 			this.cs.add(new C(a, b + count + 1));
-			count ++;
+			count++;
 		}
 
-		
 	}
 
 	public void addBack(int size)
@@ -126,7 +121,6 @@ public class Segement
 			this.cs.add(strokeInfo.cs.get(i));
 		}
 
-		
 		this.endIndexOfQuery = strokeInfo.endIndexOfQuery;
 	}
 
@@ -164,42 +158,40 @@ public class Segement
 	{
 		return getL() < Penalty.Lmin;
 	}
-	
+
 	public boolean isEmpty()
 	{
-		return startIndexOfQuery>=endIndexOfQuery;
+		return startIndexOfQuery >= endIndexOfQuery;
 	}
-	
-	
-	
+
 	public Vector<Point> getQueryPoints()
 	{
 		Vector<Point> queryPoints = new Vector<Point>();
-		
-		for (int i = startIndexOfQuery; i < endIndexOfQuery ; i++)
+
+		for (int i = startIndexOfQuery; i < endIndexOfQuery; i++)
 		{
 			if (i < LibParser.queryStroke.points.size())
 			{
 				queryPoints.add(LibParser.queryStroke.points.get(i));
 			}
-			
+
 		}
 		return queryPoints;
 	}
-	
+
 	public Vector<Point> getLibPoints()
 	{
 		Vector<Point> libPoints = new Vector<Point>();
-		
+
 		for (int i = getStartIndexOfLib(); i < getEndIndexOfLib(); i++)
 		{
-			if (i<LibParser.libStrokes.get(getIndexofLibStroke()).points.size())
+			if (i < LibParser.libStrokes.get(getIndexofLibStroke()).points.size())
 			{
 				libPoints.add(LibParser.libStrokes.get(getIndexofLibStroke()).points.get(i));
 			}
-			
+
 		}
 		return libPoints;
 	}
-	
+
 }

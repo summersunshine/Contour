@@ -49,9 +49,7 @@ public class ShapeContextUtil
 		}
 
 	}
-	
-	
-	
+
 	/**
 	 * 将shape context的信息以图像的方式输出到文件中
 	 * 
@@ -62,7 +60,7 @@ public class ShapeContextUtil
 		int width = 30 * ShapeContext.angleBins;
 		int height = 30 * ShapeContext.pBins;
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		
+
 		Graphics2D graphics2d = (Graphics2D) image.getGraphics();
 		for (int i = 0; i < shapeContext.statistics.length; i++)
 		{
@@ -71,9 +69,8 @@ public class ShapeContextUtil
 				int value = 245 - shapeContext.statistics[i][j] * 10;
 				value = value < 0 ? 0 : value;
 				graphics2d.setColor(new Color(value, value, value));
-				
-				
-				int x = j*30;
+
+				int x = j * 30;
 				int y = (ShapeContext.pBins - 1 - i) * 30;
 				graphics2d.fillRect(x, y, 30, 30);
 
@@ -98,7 +95,7 @@ public class ShapeContextUtil
 	 * 
 	 * @param graphics2d
 	 * */
-	public static void drawShapeContext(ShapeContext shapeContext,Graphics2D graphics2d)
+	public static void drawShapeContext(ShapeContext shapeContext, Graphics2D graphics2d)
 	{
 
 		for (int i = 0; i < shapeContext.statistics.length; i++)
@@ -116,7 +113,7 @@ public class ShapeContextUtil
 			}
 		}
 
-		drawDescribe(shapeContext,graphics2d);
+		drawDescribe(shapeContext, graphics2d);
 	}
 
 	/**
@@ -124,22 +121,19 @@ public class ShapeContextUtil
 	 * 
 	 * @param graphics2d
 	 * */
-	public static void drawDescribe(ShapeContext shapeContext,Graphics2D graphics2d)
+	public static void drawDescribe(ShapeContext shapeContext, Graphics2D graphics2d)
 	{
 		Font f = new Font("宋体", Font.BOLD, 16);
 		Color[] colors = { Color.ORANGE, Color.LIGHT_GRAY };
 		graphics2d.setFont(f);
 		graphics2d.setPaint(colors[0]);
-		
-		
+
 		String str = shapeContext.getDescribe();
 		int x = (int) shapeContext.startPoint.x + 50;
 		int y = (int) shapeContext.startPoint.y + 50;
 		graphics2d.drawString(str, x, y);
 	}
 
-
-	
 	/**
 	 * 绘制对数极坐标坐标系
 	 * 
@@ -147,13 +141,13 @@ public class ShapeContextUtil
 	 * */
 	public static void drawCoordinateSystem()
 	{
-		double radius =  Math.exp(ShapeContext.pBins) * 2;
-		
-		BufferedImage image = new BufferedImage((int)radius, (int)radius, BufferedImage.TYPE_INT_ARGB);
-		
-		int halfWidth = image.getWidth()/2;
-		int halfHeight = image.getHeight()/2;
-		
+		double radius = Math.exp(ShapeContext.pBins) * 2;
+
+		BufferedImage image = new BufferedImage((int) radius, (int) radius, BufferedImage.TYPE_INT_ARGB);
+
+		int halfWidth = image.getWidth() / 2;
+		int halfHeight = image.getHeight() / 2;
+
 		for (int y = 0; y < image.getHeight(); y++)
 		{
 			for (int x = 0; x < image.getWidth(); x++)
@@ -161,7 +155,7 @@ public class ShapeContextUtil
 				image.setRGB(x, y, 0x00ffffff);
 			}
 		}
-		
+
 		Graphics2D graphics2d = image.createGraphics();
 		graphics2d.setStroke(new BasicStroke(3));
 		graphics2d.setColor(new Color(255, 0, 0));
@@ -179,11 +173,11 @@ public class ShapeContextUtil
 		{
 			float endX = (float) (Math.exp(ShapeContext.pBins) * Math.cos(i * 2f / ShapeContext.angleBins * Math.PI));
 			float endY = (float) (Math.exp(ShapeContext.pBins) * Math.sin(i * 2f / ShapeContext.angleBins * Math.PI));
-			Point endPoint = new Point(endX,endY);
-			graphics2d.drawLine((int) radius/2, (int) radius/2, (int) (endPoint.x + radius/2), (int) (endPoint.y + radius/2));
+			Point endPoint = new Point(endX, endY);
+			graphics2d.drawLine((int) radius / 2, (int) radius / 2, (int) (endPoint.x + radius / 2), (int) (endPoint.y + radius / 2));
 		}
-		
-		File file = new File(SampleConfig.OUTPUT_PATH +"coordinate.png");
+
+		File file = new File(SampleConfig.OUTPUT_PATH + "coordinate.png");
 		System.out.println(file.getPath());
 		try
 		{
@@ -194,38 +188,37 @@ public class ShapeContextUtil
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
 	}
-	
-	
 
 	/**
 	 * 绘制对数极坐标坐标系
 	 * 
 	 * @param graphics2d
 	 * */
-	public static  void drawCoordinateSystem(ShapeContext shapeContext,Graphics2D graphics2d)
+	public static void drawCoordinateSystem(ShapeContext shapeContext, Graphics2D graphics2d)
 	{
 		graphics2d.setColor(new Color(255, 0, 0));
 
 		// sourcePoint.print();
 		for (int i = 0; i < ShapeContext.pBins; i++)
 		{
-			double radius = shapeContext.maxR*Math.pow(0.5f,i);
-			graphics2d.drawOval((int) (shapeContext.sourcePoint.x - radius), (int) (shapeContext.sourcePoint.y - radius), (int)( 2*radius), (int)( 2*radius));
+			double radius = shapeContext.maxR * Math.pow(0.5f, i);
+			graphics2d.drawOval((int) (shapeContext.sourcePoint.x - radius), (int) (shapeContext.sourcePoint.y - radius), (int) (2 * radius),
+					(int) (2 * radius));
 		}
 
 		for (int i = 0; i < ShapeContext.angleBins; i++)
 		{
 			float endX = (float) (shapeContext.maxR * Math.cos(i * 2f / ShapeContext.angleBins * Math.PI));
 			float endY = (float) (shapeContext.maxR * Math.sin(i * 2f / ShapeContext.angleBins * Math.PI));
-			Point endPoint = new Point(endX,endY);
+			Point endPoint = new Point(endX, endY);
 			endPoint = Geometry.getRotatePoint(endPoint, shapeContext.angle);
-			
+
 			graphics2d.setStroke(new BasicStroke(3));
-			//graphics2d.setColor(new Color(i*30,i*30,i*30));
-			graphics2d.drawLine((int) shapeContext.sourcePoint.x, (int) shapeContext.sourcePoint.y, (int) (endPoint.x + shapeContext.sourcePoint.x), (int) (endPoint.y + shapeContext.sourcePoint.y));
+			// graphics2d.setColor(new Color(i*30,i*30,i*30));
+			graphics2d.drawLine((int) shapeContext.sourcePoint.x, (int) shapeContext.sourcePoint.y, (int) (endPoint.x + shapeContext.sourcePoint.x),
+					(int) (endPoint.y + shapeContext.sourcePoint.y));
 		}
 	}
 

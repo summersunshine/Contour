@@ -21,8 +21,8 @@ import config.SampleConfig;
 
 public class ShapeContext
 {
-	public static final double [] POW_DOUBLES = {1.0,0.5,0.25,0.125,0.0625,0.03125,0.015625};
-	
+	public static final double[] POW_DOUBLES = { 1.0, 0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625 };
+
 	public static final int TYPE_HISTORY = 0;
 	public static final int TYPE_FUTURE = 1;
 	public static final int TYPE_NORMAL = 2;
@@ -47,11 +47,10 @@ public class ShapeContext
 
 	// 其他点的xy坐标
 	private Vector<Point> points;
-	
-	
+
 	public double maxR;
-	
-	//参考坐标系的角度
+
+	// 参考坐标系的角度
 	public double angle;
 
 	// 统计数据
@@ -72,14 +71,14 @@ public class ShapeContext
 	 *            如果dir>0，只统计sourceIndex之后的点 如果dir<0, 只统计souceIndex之前的点 如果dir=0,
 	 *            则统计所有的点
 	 * */
-	public ShapeContext(Vector<Point> points,double angle,double maxR, int sourceIndex, int dir)
+	public ShapeContext(Vector<Point> points, double angle, double maxR, int sourceIndex, int dir)
 	{
 		this.logPolars = new Vector<LogPolar>();
 
 		this.angle = angle;
-		
+
 		this.maxR = maxR;
-		
+
 		this.points = points;
 
 		this.sourcePoint = points.get(sourceIndex);
@@ -160,7 +159,7 @@ public class ShapeContext
 	private void count(int i)
 	{
 		Point point = points.get(i).sub(sourcePoint);
-		LogPolar logPolar = new LogPolar(point,angle);
+		LogPolar logPolar = new LogPolar(point, angle);
 		logPolars.addElement(logPolar);
 
 		int x = getXIndex(maxR, logPolar.p);
@@ -175,19 +174,17 @@ public class ShapeContext
 
 	}
 
-	private int getXIndex(double maxR,double p)
+	private int getXIndex(double maxR, double p)
 	{
 		for (int i = 0; i < pBins; i++)
 		{
-			if (maxR*POW_DOUBLES[i] > p &&
-					p > maxR*POW_DOUBLES[i+1])
+			if (maxR * POW_DOUBLES[i] > p && p > maxR * POW_DOUBLES[i + 1])
 			{
-				return pBins-i-1;
+				return pBins - i - 1;
 			}
 		}
 		return pBins;
 	}
-
 
 	public String getDescribe()
 	{
@@ -216,9 +213,6 @@ public class ShapeContext
 			return new Point(0, 400);
 		}
 	}
-	
-	
-
 
 	/**
 	 * 曼哈顿距离
@@ -253,8 +247,7 @@ public class ShapeContext
 		}
 		return (float) Math.sqrt(distance);
 	}
-	
-	
+
 	/**
 	 * 卡方距离
 	 * */
@@ -267,19 +260,17 @@ public class ShapeContext
 			{
 				int diff = shapeConext.statistics[i][j] - statistics[i][j];
 				int sum = shapeConext.statistics[i][j] + statistics[i][j];
-				if (sum!=0)
+				if (sum != 0)
 				{
-					distance += Math.pow(diff, 2)*1f/sum;
+					distance += Math.pow(diff, 2) * 1f / sum;
 				}
-				
+
 			}
 		}
 		return distance;
-		
-	}
-	
 
-	
+	}
+
 	public boolean isAngleClose(ShapeContext shapeConext)
 	{
 		float diff = Math.abs(shapeConext.averageAngle - averageAngle);
@@ -291,7 +282,7 @@ public class ShapeContext
 	{
 		float diff = Math.abs(shapeConext.averageAngle - averageAngle);
 		diff = diff > 180 ? 360 - diff : diff;
-		diff/=180;
-		return diff*diff;
+		diff /= 180;
+		return diff * diff;
 	}
 }

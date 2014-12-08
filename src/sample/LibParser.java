@@ -42,7 +42,7 @@ public class LibParser
 	public int currIndex;
 
 	public int count;
-	
+
 	public Vector<BufferedImage> partImages;
 
 	public LibParser()
@@ -69,7 +69,7 @@ public class LibParser
 		LibParser.libStrokes = new Vector<LibStroke>();
 		for (int i = 0; i < STOKE_NUM; i++)
 		{
-			LibParser.libStrokes.add(new LibStroke("charcoal1", i));
+			LibParser.libStrokes.add(new LibStroke("oil2", i));
 			System.out.println("parse stroke " + i);
 		}
 
@@ -92,18 +92,16 @@ public class LibParser
 
 		this.addFeatureData();
 
-		//this.addBeginData();
+		// this.addBeginData();
 
 		this.addTransitionData();
 
-		//LibParserUtil.drawStrokeSegements("Before\\",segements,libStrokes,queryStroke);
+		// LibParserUtil.drawStrokeSegements("Before\\",segements,libStrokes,queryStroke);
 
 		this.optimization();
 
-		LibParserUtil.drawStrokeSegements("After\\",segements,libStrokes,queryStroke);
-		
-	
-		
+		LibParserUtil.drawStrokeSegements("After\\", segements, libStrokes, queryStroke);
+
 	}
 
 	/**
@@ -112,7 +110,6 @@ public class LibParser
 	public void addFeatureData()
 	{
 		System.out.println("feature cal begin");
-
 
 		for (int i = 0; i < queryStroke.querySamples.size(); i++)
 		{
@@ -124,9 +121,9 @@ public class LibParser
 
 			queryStroke.querySamples.get(i).sort();
 			queryStroke.querySamples.get(i).printKNN();
-			
+
 		}
-		
+
 		System.out.println("feature cal end");
 	}
 
@@ -165,19 +162,18 @@ public class LibParser
 
 		for (currIndex = 1; currIndex < queryStroke.querySamples.size(); currIndex++)
 		{
-			lastCost = getQuerySampleCost(currIndex-1,0);
+			lastCost = getQuerySampleCost(currIndex - 1, 0);
 
-			
 			for (int j = 0; j < queryStroke.querySamples.get(currIndex).costs.size(); j++)
 			{
-				Cost cost = getQuerySampleCost(currIndex,j);
+				Cost cost = getQuerySampleCost(currIndex, j);
 				float Et = getTransitionPenalty(cost.a, cost.b);
 				queryStroke.querySamples.get(currIndex).costs.get(j).addEt(Et);
 			}
 
 			queryStroke.querySamples.get(currIndex).sort();
 			queryStroke.querySamples.get(currIndex).printKNN();
-			
+
 			addSegements(lastCost.a, lastCost.b);
 		}
 
@@ -214,16 +210,14 @@ public class LibParser
 
 		return penalty;
 	}
-	
-	private Cost getQuerySampleCost(int index,int rank)
+
+	private Cost getQuerySampleCost(int index, int rank)
 	{
 		return queryStroke.querySamples.get(index).costs.get(rank);
 	}
 
+	/********************************* 处理过渡惩罚 *************************************************/
 
-
-	/*********************************处理过渡惩罚*************************************************/
-	
 	public int getRepeatTime(int b, int index)
 	{
 		int count = 1;
@@ -241,16 +235,14 @@ public class LibParser
 		return count;
 	}
 
-	
-
 	public float getJumpPenalty(int a, int b, int lastA, int lastB)
 	{
 		Point v1 = getLibSampleVelocity(lastA, lastB);
 		Point v2 = getLibSampleVelocity(a, b);
-		
+
 		float ratio = count < Penalty.Lmin ? 1 : Penalty.Lmin / 1.33f / count + 0.25f;
 
-		return (float) ((Penalty.Ct  + Penalty.Cp * (1 - Geometry.getCos(v1, v2)))*ratio);
+		return (float) ((Penalty.Ct + Penalty.Cp * (1 - Geometry.getCos(v1, v2))) * ratio);
 
 	}
 
@@ -262,20 +254,16 @@ public class LibParser
 		return (int) (Penalty.Ct + Penalty.Cp * (1 - Geometry.getCos(v1, v2)));
 
 	}
-	
-	private Point getLibSampleVelocity(int a,int b)
+
+	private Point getLibSampleVelocity(int a, int b)
 	{
-		return  libStrokes.get(a).libSamples.get(b).velocity;
+		return libStrokes.get(a).libSamples.get(b).velocity;
 	}
-	
-	/*********************************结束过渡惩罚*************************************************/
-	
-	
-	
-	
-	
-	/*********************************处理segement*************************************************/
-	
+
+	/********************************* 结束过渡惩罚 *************************************************/
+
+	/********************************* 处理segement *************************************************/
+
 	public void addSegements(int lastA, int lastB)
 	{
 		int a = queryStroke.querySamples.get(currIndex).costs.get(0).a;
@@ -313,10 +301,9 @@ public class LibParser
 		segements.lastElement().endStroke(currIndex);
 	}
 
-	/*********************************结束处理segement*************************************************/
+	/********************************* 结束处理segement *************************************************/
 
-	
-	/*********************************开始优化序列*************************************************/
+	/********************************* 开始优化序列 *************************************************/
 
 	// 优化序列
 	public void optimization()
@@ -324,19 +311,19 @@ public class LibParser
 		handStortSegement();
 		handEndPoint();
 		extent();
-		
+
 	}
-	
-	public void extent() 
+
+	public void extent()
 	{
 		for (int i = 0; i < segements.size(); i++)
 		{
-			if (i!=0) 
+			if (i != 0)
 			{
 				segements.get(i).addFront(3);
 			}
-			
-			if (i!= segements.size() - 1)
+
+			if (i != segements.size() - 1)
 			{
 				segements.get(i).addBack(3);
 			}
@@ -348,29 +335,27 @@ public class LibParser
 
 		for (int i = 0; i < segements.size(); i++)
 		{
-			if (i!= segements.size() - 1)
+			if (i != segements.size() - 1)
 			{
 				if (segements.get(i).isReachEnd())
 				{
 					segements.get(i).removeBack(Penalty.EndArea);
 					segements.get(i + 1).addFront(4);
 				}
-//				else
-//				{
-//					segements.get(i).addBack(4);
-//				}
-				//segements.get(i + 1).addFront(4);
-				//continue;
+				// else
+				// {
+				// segements.get(i).addBack(4);
+				// }
+				// segements.get(i + 1).addFront(4);
+				// continue;
 			}
-			
-			
 
 			if (!segements.get(i).isReachEnd() && i == (segements.size() - 1))
 			{
 				segements.get(i).addToEnd();
 			}
-			
-			if (segements.get(i).startIndexOfQuery>=segements.get(i).endIndexOfQuery)
+
+			if (segements.get(i).startIndexOfQuery >= segements.get(i).endIndexOfQuery)
 			{
 				segements.remove(i);
 			}
@@ -380,15 +365,15 @@ public class LibParser
 
 	public void handStortSegement()
 	{
-		for(int i = 0;i < segements.size();i++)
+		for (int i = 0; i < segements.size(); i++)
 		{
-			if(segements.get(i).isEmpty())
+			if (segements.get(i).isEmpty())
 			{
 				segements.remove(i--);
-				
+
 			}
 		}
-		
+
 		for (int i = 1; i < segements.size(); i++)
 		{
 			if (segements.get(i).isShort())
@@ -409,34 +394,30 @@ public class LibParser
 		}
 	}
 
-//	public void handStortSegement(int beginIndex, int endIndex)
-//	{
-//		int counts = 0;
-//		for (int j = beginIndex; j < endIndex; j++)
-//		{
-//			counts += segements.get(j).getL();
-//		}
-//
-//		if (beginIndex - 1 >= 0)
-//		{
-//			segements.get(beginIndex - 1).addBack(counts);
-//		}
-//
-//		if (endIndex < segements.size())
-//		{
-//			segements.get(endIndex).addFront(counts);
-//		}
-//
-//		for (int j = beginIndex; j < endIndex; j++)
-//		{
-//			segements.remove(beginIndex);
-//		}
-//	}
+	// public void handStortSegement(int beginIndex, int endIndex)
+	// {
+	// int counts = 0;
+	// for (int j = beginIndex; j < endIndex; j++)
+	// {
+	// counts += segements.get(j).getL();
+	// }
+	//
+	// if (beginIndex - 1 >= 0)
+	// {
+	// segements.get(beginIndex - 1).addBack(counts);
+	// }
+	//
+	// if (endIndex < segements.size())
+	// {
+	// segements.get(endIndex).addFront(counts);
+	// }
+	//
+	// for (int j = beginIndex; j < endIndex; j++)
+	// {
+	// segements.remove(beginIndex);
+	// }
+	// }
 
-	/*********************************结束优化序列*************************************************/
+	/********************************* 结束优化序列 *************************************************/
 
-	
-
-
-	
 }

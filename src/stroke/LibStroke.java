@@ -28,14 +28,13 @@ public class LibStroke extends Stroke
 	public int width;
 	// 源图像的高
 	public int height;
-	
-	
+
 	public BufferedImage sourceImage;
-	
+
 	public BufferedImage alphaImage;
 
 	public BufferedImage tightImage;
-	
+
 	// 库中的第index个笔触
 	public int index;
 
@@ -44,10 +43,10 @@ public class LibStroke extends Stroke
 
 	// 输出的图像路径
 	private String imgPathString;
-	
-	//图像掩码路径
+
+	// 图像掩码路径
 	private String tightMaskString;
-	
+
 	private String alphaMaskString;
 
 	public Vector<LibSample> libSamples;
@@ -64,10 +63,9 @@ public class LibStroke extends Stroke
 		this.readFile();
 		this.calDirAngle();
 		this.setAverageR();
-		//LibStrokeUtil.createStrokeSampleImage(this);
+		// LibStrokeUtil.createStrokeSampleImage(this);
 		this.initLibSample();
-		
-		
+
 	}
 
 	/**
@@ -79,7 +77,7 @@ public class LibStroke extends Stroke
 
 		for (int i = 0; i < points.size(); i++)
 		{
-			libSamples.add(new LibSample(points,dirAngle.get(i),averageR, index, i));
+			libSamples.add(new LibSample(points, dirAngle.get(i), averageR, index, i));
 		}
 	}
 
