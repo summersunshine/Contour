@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.Vector;
 
+import config.Global;
 import sample.LibParser;
 import stroke.LibStroke;
 import tps.TPSMorpher;
@@ -69,10 +70,7 @@ public class PixelGrabberUtil
 			{
 				for (int x = minX; x <= maxX; x++)
 				{
-					// int or = libStroke.tightImage.getRGB(x,
-					// y)|image.getRGB(x, y);
-
-					if (libStroke.tightImage.getRGB(x, y) == -16777216)
+					if (libStroke.tightImage.getRGB(x, y) == Global.WHITE_VALUE)
 					{
 						strokeGraphics2d.setColor(new Color(255, 255, 255));
 						strokeGraphics2d.drawRect(x, y, 1, 1);
@@ -83,86 +81,14 @@ public class PixelGrabberUtil
 
 		}
 
-		// BufferedImage cloneImage = getCloneImage(libStroke.sourceImage);
-		//
-		// for (int x = 0; x < image.getWidth(); x++)
-		// {
-		// for (int y = 0; y < image.getHeight(); y++)
-		// {
-		// int rgb =image.getRGB(x, y);
-		// if (image.getRGB(x, y) == -16777216)
-		// {
-		// cloneImage.setRGB(x, y, -1);
-		// }
-		// }
-		// }
-		// return cloneImage;
-
-		// BufferedImage cloneImage =
-		// ImageUtil.getCloneImage(libStroke.alphaImage);
-		//
-		// for (int x = 0; x < image.getWidth(); x++)
-		// {
-		// for (int y = 0; y < image.getHeight(); y++)
-		// {
-		// if (image.getRGB(x, y) == -16777216)
-		// {
-		// cloneImage.setRGB(x, y, -16777216);
-		// }
-		// }
-		// }
-		// return cloneImage;
 
 		BufferedImage cloneImage = ImageUtil.getCloneImage(libStroke.alphaImage);
-		//
-		// for (int x = minX2; x < maxX2; x++)
-		// {
-		// for (int y = minY2; y < maxY2; y++)
-		// {
-		// if (strokeImage.getRGB(x, y) == -16777216)
-		// {
-		// cloneImage.setRGB(x, y, -16777216);
-		// }
-		//
-		// if(cloneImage.getRGB(x, y)!= -16777216)
-		// {
-		// points.add(new Point(x,y));
-		// }
-		// }
-		// }
 
-		// Vector<Point> contourPoints = new Vector<Point>();
-		// int startIndex = LibParser.segements.get(index).startIndexOfQuery;
-		// for (int i = 0; i < LibParser.segements.get(index).cs.size(); i++)
-		// {
-		// //int b = LibParser.segements.get(index).cs.get(i).b;
-		// int b = LibParser.segements.get(index).cs.get(i).b;
-		// contourPoints.add(libStroke.leftContourPoints.get(b));
-		// contourPoints.add(libStroke.rightContourPoints.get(b));
-		// }
-
-		//double[][] matrix = MatrixReader.getMaxtrix(index);
-		// WarpingImage.drawImage(cloneImage,LibParserUtil.vectors.get(index),
-		// LibParserUtil.vectors.get(index), matrix, graphics2d);
-		//WarpingImage.drawImage(cloneImage, points, LibParserUtil.vectors.get(index), matrix, graphics2d);
-		
 		TPSMorpher tpsMorpher = new TPSMorpher(LibParserUtil.vectors.get(index), 0.15, 1);
 		Vector<CoordDiff> sample =  tpsMorpher.morphPoints(points);
 		WarpingImage.drawImage(cloneImage, sample, graphics2d);
 	}
 
-	// public void drawResult(LibStroke libStroke,int index,Graphics2D
-	// graphics2d)
-	// {
-	// Vector<Point> contourPoints = new Vector<Point>();
-	// contourPoints.addAll(libStroke.leftContourPoints);
-	// contourPoints.addAll(libStroke.rightContourPoints);
-	// double [][] matrix = MatrixReader.getMaxtrix(index);
-	//
-	// WarpingImage.drawImage(cloneImage, points, contourPoints, matrix,
-	// graphics2d);
-	// }
-	//
 
 	@SuppressWarnings("unchecked")
 	public static Vector<Point> getClockWisePoints(Vector<Point> points)
@@ -190,10 +116,6 @@ public class PixelGrabberUtil
 
 		return points;
 
-		// for (int i = 0; i < points.size(); i++)
-		// {
-		// Geometry.getAngle(points.get(i).sub(midPoint));
-		// }
 
 	}
 
