@@ -2,9 +2,29 @@ package util;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class ImageUtil
 {
+	public static void saveImage(BufferedImage image, String path)
+	{
+		File file = new File(path);
+
+		try
+		{
+			ImageIO.write(image, "JPG", file);
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	
 	public static BufferedImage getCloneImage(BufferedImage image)
 	{
 		int width = image.getWidth();

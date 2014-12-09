@@ -301,6 +301,24 @@ public class Geometry
 
 	}
 
+	public static boolean isLeftSide(Point beginPoint, Point endPoint, Point testPoint)
+	{
+		double dy = endPoint.y - beginPoint.y;
+		double dx = beginPoint.x - endPoint.x;
+		double c = endPoint.x * beginPoint.y - beginPoint.x * endPoint.y;
+		double d = dy * testPoint.x + dx * testPoint.y + c;
+		return d < -0.00001;
+	}
+
+	public static boolean isRightSide(Point beginPoint, Point endPoint, Point testPoint)
+	{
+		double dy = endPoint.y - beginPoint.y;
+		double dx = beginPoint.x - endPoint.x;
+		double c = endPoint.x * beginPoint.y - beginPoint.x * endPoint.y;
+		double d = dy * testPoint.x + dx * testPoint.y + c;
+		return d > 0.00001;
+	}
+
 	public static Point getRotatePoint(Point point, double angle)
 	{
 		double x = point.x * Math.cos(angle) - point.y * Math.sin(angle);

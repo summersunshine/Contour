@@ -25,20 +25,6 @@ public class LibParserUtil
 	
 	public static Vector<Vector<CoordDiff>> vectors = new Vector<Vector<CoordDiff>>();
 
-	public static void saveImage(BufferedImage image, String path)
-	{
-		File file = new File(path);
-
-		try
-		{
-			ImageIO.write(image, "JPG", file);
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 	public static void saveTxt(String content, String path)
 	{
@@ -74,7 +60,7 @@ public class LibParserUtil
 			PixelGrabberUtil.drawWarpImage(LibParser.libStrokes.get(index), i, start, end, graphics2d);
 
 		}
-		saveImage(image, path);
+		ImageUtil.saveImage(image, path);
 	}
 
 	public static void drawStrokeSegements(String dir, Vector<Segement> segements, Vector<LibStroke> libStrokes, QueryStroke queryStroke)
@@ -124,7 +110,7 @@ public class LibParserUtil
 
 		}
 
-		LibParserUtil.saveImage(image, SampleConfig.OUTPUT_PATH + dir + i + "_" + index + "sample.jpg");
+		ImageUtil.saveImage(image, SampleConfig.OUTPUT_PATH + dir + i + "_" + index + "sample.jpg");
 
 		LibParserUtil.saveTxt(context, SampleConfig.OUTPUT_PATH + dir + i + ".txt");
 

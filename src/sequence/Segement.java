@@ -63,7 +63,7 @@ public class Segement
 			{
 				endIndexOfQuery++;
 				this.cs.add(new C(a, b + i + 1));
-				System.out.println("add Back a: " + cs.lastElement().a + " b: " + cs.lastElement().b);
+				//System.out.println("add Back a: " + cs.lastElement().a + " b: " + cs.lastElement().b);
 			}
 
 		}
@@ -80,7 +80,7 @@ public class Segement
 			{
 				startIndexOfQuery--;
 				this.cs.add(0, new C(a, b - i - 1));
-				System.out.println("add Front a: " + cs.firstElement().a + " b: " + cs.firstElement().b);
+				//System.out.println("add Front a: " + cs.firstElement().a + " b: " + cs.firstElement().b);
 			}
 		}
 	}
@@ -93,7 +93,7 @@ public class Segement
 			{
 				endIndexOfQuery--;
 				this.cs.remove(this.cs.lastElement());
-				System.out.println("remove Back a: " + cs.lastElement().a + " b: " + cs.lastElement().b);
+				//System.out.println("remove Back a: " + cs.lastElement().a + " b: " + cs.lastElement().b);
 			}
 
 		}
@@ -107,7 +107,7 @@ public class Segement
 			{
 				startIndexOfQuery++;
 				this.cs.remove(this.cs.firstElement());
-				System.out.println("remove Front a: " + cs.firstElement().a + " b: " + cs.firstElement().b);
+				//System.out.println("remove Front a: " + cs.firstElement().a + " b: " + cs.firstElement().b);
 
 			}
 

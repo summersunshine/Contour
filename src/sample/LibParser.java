@@ -69,7 +69,7 @@ public class LibParser
 		LibParser.libStrokes = new Vector<LibStroke>();
 		for (int i = 0; i < STOKE_NUM; i++)
 		{
-			LibParser.libStrokes.add(new LibStroke("oil2", i));
+			LibParser.libStrokes.add(new LibStroke("charcoal2", i));
 			System.out.println("parse stroke " + i);
 		}
 
@@ -120,7 +120,7 @@ public class LibParser
 			}
 
 			queryStroke.querySamples.get(i).sort();
-			queryStroke.querySamples.get(i).printKNN();
+			//queryStroke.querySamples.get(i).printKNN();
 
 		}
 
@@ -146,7 +146,7 @@ public class LibParser
 		}
 
 		queryStroke.querySamples.get(0).sort();
-		queryStroke.querySamples.get(0).printKNN();
+		//queryStroke.querySamples.get(0).printKNN();
 
 		System.out.println("begin cal end");
 	}
@@ -172,7 +172,7 @@ public class LibParser
 			}
 
 			queryStroke.querySamples.get(currIndex).sort();
-			queryStroke.querySamples.get(currIndex).printKNN();
+			//queryStroke.querySamples.get(currIndex).printKNN();
 
 			addSegements(lastCost.a, lastCost.b);
 		}

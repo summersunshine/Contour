@@ -1,5 +1,8 @@
 package gui;
 
+import edge.EdgeDetector;
+import edge.MaskGenerator;
+import edge.UniformSample;
 import feature.ShapeContext;
 import geometry.Geometry;
 import geometry.Point;
@@ -9,6 +12,7 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.security.MessageDigest;
 import java.util.Vector;
 
@@ -18,7 +22,10 @@ import javax.swing.JPanel;
 
 import sample.LibParser;
 import stroke.QueryStroke;
+import util.ImageUtil;
+import util.LibParserUtil;
 import config.GuiConfig;
+import config.SampleConfig;
 
 public class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener
 {
@@ -101,11 +108,22 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	 * */
 	public void setPoints()
 	{
-		points = Geometry.normalize(points, 6);
-		points = Geometry.removeClose(points, 6);
+		points = UniformSample.normalize(points, 6);
+		//points = Geometry.removeClose(points, 6);
 
-		leftContourPoints = Geometry.getContourPoints(points, 20.0f, true);
-		rightContourPoints = Geometry.getContourPoints(points, -20.0f, true);
+		BufferedImage maskImage = MaskGenerator.getImage(points);
+		ImageUtil.saveImage(maskImage, SampleConfig.OUTPUT_PATH + "After\\mask.jpg");
+		
+		
+		
+		BufferedImage contourImage = EdgeDetector.getImage(maskImage);
+		ImageUtil.saveImage(contourImage, SampleConfig.OUTPUT_PATH + "After\\contour.jpg");
+		
+		EdgeDetector.getEdgePoints(contourImage, points);
+		leftContourPoints = EdgeDetector.leftCountourPoints;
+		rightContourPoints  = EdgeDetector.rightCountourPoints;
+		//leftContourPoints = Geometry.getContourPoints(points, 20.0f, true);
+		//rightContourPoints = Geometry.getContourPoints(points, -20.0f, true);
 
 		// 依据points的数目
 		MainFrame.getInstance().initScorllBar(points.size());

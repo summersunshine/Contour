@@ -55,6 +55,16 @@ public class Point
 		this.y = 0;
 	}
 
+	public int getIntX()
+	{
+		return (int)x;
+	}
+	
+	public int getIntY()
+	{
+		return (int)y;
+	}
+	
 	public boolean equal(Point point)
 	{
 		return (int) point.x == (int) x && (int) point.y == (int) y;
@@ -118,7 +128,7 @@ public class Point
 	 * 
 	 * @param m
 	 * */
-	Point mul(float m)
+	public Point mul(float m)
 	{
 		return new Point(m * this.x, m * this.y);
 	}
