@@ -113,32 +113,6 @@ public class TPSMorpher
 	}
 	
 	
-	public Vector<CoordDiff> morphCoordDiff(Vector<CoordDiff> coordDiffs)
-	{
-		for (int i = 0; i < coordDiffs.size(); i++)
-		{
-			int m = matrixV.getRowDimension() - 3;
-			
-			double x = coordDiffs.get(i).x;
-			double y = coordDiffs.get(i).y;
-			double dx = matrixV.get(m + 0, 0) + matrixV.get(m + 1, 0) * x + matrixV.get(m + 2, 0) * y;
-			double dy = matrixV.get(m + 0, 1) + matrixV.get(m + 1, 1) * x + matrixV.get(m + 2, 1) * y;
-			System.out.print("dx: " + dx + "dy: " + dy);
-			for (int j = 0; j < m; j++)
-			{
-				double offsetX = samples.get(j).x - coordDiffs.get(i).x;
-				double offsetY = samples.get(j).y - coordDiffs.get(i).y;
-				double d = baseFunc(offsetX * offsetX + offsetY * offsetY);
-				dx += matrixV.get(j, 0) * d;
-				dy += matrixV.get(j, 1) * d;
-			}
-
-			CoordDiff coordDiff = new CoordDiff(coordDiffs.get(i), new Point(dx,dy));
-			coordDiffs.set(i, coordDiff);
-		}
-		return coordDiffs;
-	}
-	
 
 	
 	public Vector<CoordDiff> morphPoints(Vector<Point> points)
