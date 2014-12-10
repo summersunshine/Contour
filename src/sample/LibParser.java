@@ -1,23 +1,15 @@
 package sample;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Vector;
-
-import javax.imageio.ImageIO;
 
 import sequence.C;
 import sequence.Segement;
 import stroke.LibStroke;
 import stroke.QueryStroke;
 import util.LibParserUtil;
-import util.PixelGrabberUtil;
+import config.Global;
 import config.Penalty;
-import config.SampleConfig;
 import feature.Cost;
 import feature.Feature;
 import geometry.Geometry;
@@ -69,7 +61,7 @@ public class LibParser
 		LibParser.libStrokes = new Vector<LibStroke>();
 		for (int i = 0; i < STOKE_NUM; i++)
 		{
-			LibParser.libStrokes.add(new LibStroke("charcoal2", i));
+			LibParser.libStrokes.add(new LibStroke(Global.Libary, i));
 			System.out.println("parse stroke " + i);
 		}
 
@@ -92,11 +84,9 @@ public class LibParser
 
 		this.addFeatureData();
 
-		// this.addBeginData();
 
 		this.addTransitionData();
 
-		// LibParserUtil.drawStrokeSegements("Before\\",segements,libStrokes,queryStroke);
 
 		this.optimization();
 
@@ -342,12 +332,6 @@ public class LibParser
 					segements.get(i).removeBack(Penalty.EndArea);
 					segements.get(i + 1).addFront(4);
 				}
-				// else
-				// {
-				// segements.get(i).addBack(4);
-				// }
-				// segements.get(i + 1).addFront(4);
-				// continue;
 			}
 
 			if (!segements.get(i).isReachEnd() && i == (segements.size() - 1))

@@ -1,9 +1,8 @@
-package util;
+package edge;
 
 import geometry.CoordDiff;
 import geometry.Geometry;
 import geometry.Point;
-import geometry.Point.AngleComparator;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -11,18 +10,57 @@ import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.Vector;
 
-import config.Global;
 import sample.LibParser;
 import stroke.LibStroke;
 import tps.TPSMorpher;
+import util.ColorUtil;
+import util.ImageUtil;
+import util.LibParserUtil;
+import config.Global;
 
 /**
  * 抓取像素
  * */
-public class PixelGrabberUtil
+public class PixelGrabber
 {
+	public static final Point[] OFFSET_POINTS = {new Point(1,0),new Point(0,1),new Point(-1,0),new Point(0,-1)};
+	
+	public static Vector<Point> points = new Vector<Point>();
 
-	public static void drawWarpImage(LibStroke libStroke, int index, int start, int end, Graphics2D graphics2d)
+	public static boolean [][]flag = new boolean[Global.width][Global.height];
+	
+	
+	public static BufferedImage resultImage;
+	
+	public static void saveResultImage(String path,boolean isAlphaMerge)
+	{
+		flag = new boolean[Global.width][Global.height];
+		
+		resultImage = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
+		Graphics2D graphics2d = (Graphics2D) resultImage.getGraphics();
+		for (int i = 0; i < LibParser.segements.size(); i++)
+		{
+			int start = LibParser.segements.get(i).cs.firstElement().b;
+			int end = LibParser.segements.get(i).cs.lastElement().b;
+			int index = LibParser.segements.get(i).getIndexofLibStroke();
+			LibStroke libStroke = LibParser.libStrokes.get(index);
+			Vector<CoordDiff> coordDiffs = LibParserUtil.vectors.get(i);
+			setSamplePoints(libStroke,index,start,end);
+			drawWarpingImage(libStroke.alphaImage,coordDiffs,graphics2d,isAlphaMerge);
+		}
+		
+		
+		ImageUtil.saveImage(resultImage, path);
+		
+		
+		
+	}
+
+	
+	/**
+	 *抓到需要绘制的点
+	 * */
+	public static void setSamplePoints(LibStroke libStroke, int index, int start, int end)
 	{
 		BufferedImage strokeImage = new BufferedImage(libStroke.width, libStroke.height, BufferedImage.TYPE_INT_RGB);
 		Graphics2D strokeGraphics2d = strokeImage.createGraphics();
@@ -40,7 +78,7 @@ public class PixelGrabberUtil
 
 		System.out.println("index: " + index + " start : " + start + " end : " + end + " libStroke.leftContourPoints : " + libStroke.leftContourPoints);
 
-		Vector<Point> points = new Vector<Point>();
+		points.clear();
 		for (int i = start + 1; i < end - 1; i++)
 		{
 			Point point1 = libStroke.leftContourPoints.get(i);
@@ -70,10 +108,10 @@ public class PixelGrabberUtil
 			{
 				for (int x = minX; x <= maxX; x++)
 				{
-					if (libStroke.tightImage.getRGB(x, y) == Global.WHITE_VALUE)
+					if (libStroke.tightImage.getRGB(x, y) == Global.BLACK_VALUE)
 					{
 						strokeGraphics2d.setColor(new Color(255, 255, 255));
-						strokeGraphics2d.drawRect(x, y, 1, 1);
+						strokeGraphics2d.fillRect(x, y, 1, 1);
 						points.add(new Point(x, y));
 					}
 				}
@@ -81,13 +119,65 @@ public class PixelGrabberUtil
 
 		}
 
-
-		BufferedImage cloneImage = ImageUtil.getCloneImage(libStroke.alphaImage);
-
-		TPSMorpher tpsMorpher = new TPSMorpher(LibParserUtil.vectors.get(index), 0.15, 1);
-		Vector<CoordDiff> sample =  tpsMorpher.morphPoints(points);
-		WarpingImage.drawImage(cloneImage, sample, graphics2d);
+		
+		
 	}
+	
+	
+	
+	public static void drawWarpingImage(BufferedImage alphaImage,Vector<CoordDiff> coordDiffs,Graphics2D graphics2d,boolean isAlphaMerge)
+	{
+		// TODO Auto-generated method stub
+		BufferedImage image = ImageUtil.getCloneImage(alphaImage);
+
+		TPSMorpher tpsMorpher = new TPSMorpher(coordDiffs, 0.15, 1);
+		Vector<CoordDiff> samples =  tpsMorpher.morphPoints(points);
+
+		for (int i = 0; i < samples.size(); i++)
+		{
+			CoordDiff  sampleCoordDiff = samples.get(i);
+			
+			int x= sampleCoordDiff.getIntX();
+			int y = sampleCoordDiff.getIntY();
+			int x2 = sampleCoordDiff.getIntX2();
+			int y2 = sampleCoordDiff.getIntY2();
+
+			
+			if (flag[x2][y2] && isAlphaMerge)
+			{
+				Color color1 = new Color(resultImage.getRGB(x2, y2));
+				Color color2 = new Color(image.getRGB(x,y));
+				graphics2d.setColor(ColorUtil.getAlphaMergeColor(color1, color2));
+			}
+			else
+			{
+				flag[x2][y2] = true;
+				graphics2d.setColor(new Color(image.getRGB(x,y)));
+			}
+			if (isAlphaMerge)
+			{
+				graphics2d.drawRect(x2,y2, 1, 1);
+			}
+			else
+			{
+				graphics2d.fillRect(x2,y2, 1, 1);	
+			}
+			
+//			for (int j = 0; j < OFFSET_POINTS.length; j++)
+//			{
+//				int xx = (int) (x2 + OFFSET_POINTS[j].x);
+//				int yy = (int) (y2 + OFFSET_POINTS[j].y);
+//				if (!flag[xx][yy])
+//				{
+//					flag[xx][yy] = true;
+//					graphics2d.drawRect(xx,yy,1,1);
+//				}
+//				
+//			}
+		}
+		
+	}
+	
 
 
 	@SuppressWarnings("unchecked")

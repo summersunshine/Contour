@@ -2,8 +2,6 @@ package stroke;
 
 import geometry.Point;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,11 +10,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
 
-import javax.imageio.ImageIO;
-
 import sample.LibSample;
-import util.ImgUtil;
-import util.LibStrokeUtil;
+import util.ImageUtil;
 import config.SampleConfig;
 
 public class LibStroke extends Stroke
@@ -86,11 +81,11 @@ public class LibStroke extends Stroke
 	 * */
 	public void readImage()
 	{
-		sourceImage = ImgUtil.getImg(imgPathString);
+		sourceImage = ImageUtil.getImage(imgPathString);
 		width = sourceImage.getWidth();
 		height = sourceImage.getHeight();
-		tightImage = ImgUtil.getImg(tightMaskString);
-		alphaImage = ImgUtil.getImg(alphaMaskString);
+		tightImage = ImageUtil.getImage(tightMaskString);
+		alphaImage = ImageUtil.getImage(alphaMaskString);
 	}
 
 	/**

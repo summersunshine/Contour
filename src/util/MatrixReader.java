@@ -1,7 +1,6 @@
 package util;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,11 +10,10 @@ public class MatrixReader
 
 	public static String FILE_PATH = "C:\\Users\\XY\\Desktop\\OutPut\\After\\matrix";
 
+	@SuppressWarnings("resource")
 	public static double[][] getMaxtrix(int index)
 	{
 		String path = FILE_PATH + index + ".txt";
-
-		File file = new File(path);
 
 		FileReader fileReader = null;
 		BufferedReader bufferedReader;

@@ -1,7 +1,7 @@
 package util;
 
+import edge.PixelGrabber;
 import geometry.CoordDiff;
-import geometry.Point;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -11,13 +11,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
 
-import javax.imageio.ImageIO;
-
-import config.SampleConfig;
-import sample.LibParser;
 import sequence.Segement;
 import stroke.LibStroke;
 import stroke.QueryStroke;
+import config.Global;
+import config.SampleConfig;
 
 public class LibParserUtil
 {
@@ -46,22 +44,6 @@ public class LibParserUtil
 
 	}
 
-	public static void saveResultImage(String path)
-	{
-		BufferedImage image = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
-		Graphics2D graphics2d = (Graphics2D) image.getGraphics();
-		for (int i = 0; i < LibParser.segements.size(); i++)
-		{
-			int start = LibParser.segements.get(i).cs.firstElement().b;
-			int end = LibParser.segements.get(i).cs.lastElement().b;
-
-			int index = LibParser.segements.get(i).getIndexofLibStroke();
-			System.out.println("Stroke Index: " + index);
-			PixelGrabberUtil.drawWarpImage(LibParser.libStrokes.get(index), i, start, end, graphics2d);
-
-		}
-		ImageUtil.saveImage(image, path);
-	}
 
 	public static void drawStrokeSegements(String dir, Vector<Segement> segements, Vector<LibStroke> libStrokes, QueryStroke queryStroke)
 	{
@@ -80,10 +62,12 @@ public class LibParserUtil
 		}
 
 		saveTxt(segements.size() + "\r\n", SampleConfig.OUTPUT_PATH + dir + "num.txt");
-		// LibParserUtil.saveResultImage(queryStroke,SampleConfig.OUTPUT_PATH +
-		// dir + "result.jpg");
+		//PixelGrabber.saveResultImage(SampleConfig.OUTPUT_PATH + "After\\alpha1.jpg",false);
+		PixelGrabber.saveResultImage(SampleConfig.OUTPUT_PATH + "After\\alpha.jpg",true);
 		
-		saveResultImage(SampleConfig.OUTPUT_PATH + "After\\result.jpg");
+		BufferedImage resultImage = ImageUtil.getConverterImage(PixelGrabber.resultImage, Global.BRUSH_COLOR);
+		ImageUtil.saveImage(resultImage, SampleConfig.OUTPUT_PATH + "After\\result.jpg");
+		
 	}
 
 	public static void drawStrokeSegement(int i, String dir, Vector<Segement> segements, Vector<LibStroke> libStrokes, QueryStroke queryStroke)
@@ -114,7 +98,6 @@ public class LibParserUtil
 
 		LibParserUtil.saveTxt(context, SampleConfig.OUTPUT_PATH + dir + i + ".txt");
 
-		//
 	}
 
 	private static void drawPoints(Graphics2D graphics2d, Vector<LibStroke> libStrokes, int a, int b)

@@ -7,8 +7,30 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import config.Global;
+
 public class ImageUtil
 {
+	
+	/**
+	 * 通过文件名读取图像,保留alpha通道
+	 * 
+	 * @param fileName
+	 * */
+	public static BufferedImage getImage(String fileName)
+	{
+		BufferedImage bufferedImage = null;
+		try
+		{
+			bufferedImage = ImageIO.read(new File(fileName));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return bufferedImage;
+	}
+	
 	public static void saveImage(BufferedImage image, String path)
 	{
 		File file = new File(path);
@@ -63,4 +85,102 @@ public class ImageUtil
 		return outputImage;
 
 	}
+	
+
+	public static BufferedImage getConverterImage(BufferedImage alphaMaskImage,Color brushColor)
+	{
+		//double L = 80;
+		double [] brushLAB = ColorUtil.RGB2Lab2(brushColor);
+		
+		System.out.println(brushLAB[0]);
+		System.out.println(brushLAB[1]);
+		System.out.println(brushLAB[2]);
+		
+		for (int y = 0; y < Global.height; y++)
+		{
+			for (int x = 0; x < Global.width; x++)
+			{
+//				Color color = new Color(alphaMaskImage.getRGB(x, y));
+//				double [] LAB = ColorUtil.RGB2Lab2(color);
+//			
+//				double L = (color.getRed()+color.getGreen() + color.getBlue())*100/255/3;
+//				double alpha = (100-L)/100;
+//				LAB[0] = 100-L;
+//				LAB[1] = alpha*brushLAB[1];
+//				LAB[2] = alpha*brushLAB[2];
+//				Color newColor =  ColorUtil.Lab2RGB2(LAB);
+//				alphaMaskImage.setRGB(x, y,newColor.getRGB());
+				
+				Color color = new Color(alphaMaskImage.getRGB(x, y));
+				double alpha = (color.getRed()+color.getGreen() + color.getBlue())/255f/3;
+//				int r = (int) (brushColor.getRed()*alpha + (1-alpha)*(255-brushColor.getRed()));
+//				int g = (int) (brushColor.getGreen()*alpha + (1-alpha)*(255-brushColor.getGreen()));
+//				int b = (int) (brushColor.getBlue()*alpha + (1-alpha)*(255-brushColor.getBlue()));
+				int r = (int) (255-brushColor.getRed()*alpha);
+				int g = (int) (255-brushColor.getGreen()*alpha);
+				int b = (int) (255-brushColor.getBlue()*alpha);
+				
+				alphaMaskImage.setRGB(x, y,ImageUtil.getRGB(r, g, b));
+			}
+		}
+		return alphaMaskImage;
+		
+	}
+	
+	
+	
+	///////////////////////////////////////////////下面都是打酱油的/////////////////////////////////////////
+	public static int[] getSplitRGB(int rgb)
+	{
+		int[] rgbs = new int[3];
+		rgbs[0] = (rgb & 0xff0000) >> 16;
+		rgbs[1] = (rgb & 0xff00) >> 8;
+		rgbs[2] = (rgb & 0xff);
+		return rgbs;
+	}
+	
+	public static int getRGB(int r, int g, int b)
+	{
+		r = r << 16;
+		g = g << 8;
+
+		return (r | g | b);
+	}
+
+	public static float clamp(float c, float value)
+	{
+		if (c < 0)
+			return 0;
+		if (c > value)
+			return value;
+		return c;
+	}
+
+	public static int clamp(int c, int value)
+	{
+		if (c < 0)
+			return 0;
+		if (c > value)
+			return value;
+		return c;
+	}
+
+	public static float clamp(float c)
+	{
+		if (c < 0)
+			return 0;
+		if (c > 255)
+			return 255;
+		return c;
+	}
+
+	public static int clampIn255(int c)
+	{
+		if (c < 0)
+			return 0;
+		if (c > 255)
+			return 255;
+		return c;
+	}
+	
 }

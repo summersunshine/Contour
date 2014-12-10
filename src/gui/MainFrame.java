@@ -14,9 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JScrollBar;
 import javax.swing.UIManager;
 
-import util.LibParserUtil;
 import config.GuiConfig;
-import config.SampleConfig;
 
 public class MainFrame extends JFrame implements ActionListener, AdjustmentListener, MouseMotionListener
 {
@@ -130,7 +128,7 @@ public class MainFrame extends JFrame implements ActionListener, AdjustmentListe
 
 		if (event.getSource() == saveButton)
 		{
-			LibParserUtil.saveResultImage(SampleConfig.OUTPUT_PATH + "After\\result.jpg");
+		//	LibParserUtil.saveResultImage(SampleConfig.OUTPUT_PATH + "After\\result.jpg");
 		}
 
 		if (event.getSource() == nextButton)

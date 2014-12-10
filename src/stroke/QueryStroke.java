@@ -4,18 +4,11 @@ import feature.Cost;
 import geometry.Geometry;
 import geometry.Point;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Vector;
-
-import javax.imageio.ImageIO;
 
 import sample.QuerySample;
 import config.Penalty;
-import config.SampleConfig;
 
 public class QueryStroke extends Stroke
 {

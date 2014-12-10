@@ -3,8 +3,6 @@ package gui;
 import edge.EdgeDetector;
 import edge.MaskGenerator;
 import edge.UniformSample;
-import feature.ShapeContext;
-import geometry.Geometry;
 import geometry.Point;
 
 import java.awt.Color;
@@ -13,7 +11,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.security.MessageDigest;
 import java.util.Vector;
 
 import javax.swing.JLabel;
@@ -23,7 +20,6 @@ import javax.swing.JPanel;
 import sample.LibParser;
 import stroke.QueryStroke;
 import util.ImageUtil;
-import util.LibParserUtil;
 import config.GuiConfig;
 import config.SampleConfig;
 
@@ -98,7 +94,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 
 		this.drawStrokeSample(graphics2d);
 
-		this.currentIndex = (this.currentIndex + dir) % points.size();
+		DrawingPanel.currentIndex = (DrawingPanel.currentIndex + dir) % points.size();
 
 		this.queryStroke.drawShapeContext(graphics2d, currentIndex);
 	}
@@ -112,12 +108,12 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 		//points = Geometry.removeClose(points, 6);
 
 		BufferedImage maskImage = MaskGenerator.getImage(points);
-		ImageUtil.saveImage(maskImage, SampleConfig.OUTPUT_PATH + "After\\mask.jpg");
+		//ImageUtil.saveImage(maskImage, SampleConfig.OUTPUT_PATH + "After\\mask.jpg");
 		
 		
 		
 		BufferedImage contourImage = EdgeDetector.getImage(maskImage);
-		ImageUtil.saveImage(contourImage, SampleConfig.OUTPUT_PATH + "After\\contour.jpg");
+		//ImageUtil.saveImage(contourImage, SampleConfig.OUTPUT_PATH + "After\\contour.jpg");
 		
 		EdgeDetector.getEdgePoints(contourImage, points);
 		leftContourPoints = EdgeDetector.leftCountourPoints;

@@ -11,7 +11,6 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 
 import config.Global;
-import config.SampleConfig;
 
 public class MaskGenerator
 {

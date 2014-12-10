@@ -27,5 +27,15 @@ public class CoordDiff extends Point
 		this.y2 = y+dy;
 
 	}
-
+	
+	public int getIntX2()
+	{
+		return (int)x2;
+	}
+	
+	public int getIntY2()
+	{
+		return (int)y2;
+	}
+	
 }

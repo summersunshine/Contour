@@ -9,12 +9,9 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 import java.util.Vector;
 
-import javax.xml.bind.annotation.XmlElementDecl.GLOBAL;
-
+import util.ImageUtil;
 import config.Global;
 import config.SampleConfig;
-import util.ImageUtil;
-import util.ImgUtil;
 
 public class EdgeDetector
 {
@@ -27,6 +24,8 @@ public class EdgeDetector
 	public static Vector<Point> leftCountourPoints = new Vector<Point>();
 	public static Vector<Point> rightCountourPoints = new Vector<Point>();
 
+	
+	
 	/**
 	 * ªÒ»°±ﬂ‘µºÏ≤‚ÕºœÒ
 	 * 
@@ -48,7 +47,7 @@ public class EdgeDetector
 			{
 				int gray = getValue(imageMatrix, x, y, LAPLACE_MASK);
 
-				outputImage.setRGB(x, y, ImgUtil.getRGB(gray, gray, gray));
+				outputImage.setRGB(x, y, ImageUtil.getRGB(gray, gray, gray));
 
 			}
 		}
@@ -83,7 +82,7 @@ public class EdgeDetector
 		makeContourSizeSame();
 		twiceSample();
 		
-		//drawAndSaveImage(edgeImage);
+		drawAndSaveImage(edgeImage);
 
 
 		System.out.println(leftCountourPoints.size());
@@ -258,12 +257,15 @@ public class EdgeDetector
 		double rateX = dx / num;
 		double rateY = dy / num;
 
-		firstPoint.print();
-		secondPoint.print();
 
 		for (int i = 0; i < 2*Global.BRUSH_WDITH; i++)
 		{
 			Point point = firstPoint.add(new Point(i * rateX, i * rateY));
+//			if (i%Global.SAMPLE_DIST==(Global.SAMPLE_DIST-1))
+//			{
+//				points.add(point);
+//			}
+			
 			for (int j = 0; j < OFFSET_POINTS.length; j++)
 			{
 				Point testPoint = point.add(OFFSET_POINTS[j]);
@@ -317,7 +319,7 @@ public class EdgeDetector
 				sum += imageMatrix[x + i][y + j].getRed() * Mask[i + 1][j + 1];
 			}
 		}
-		sum = ImgUtil.clampIn255(sum);
+		sum = ImageUtil.clampIn255(sum);
 
 		return sum;
 	}

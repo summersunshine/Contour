@@ -1,23 +1,9 @@
 package feature;
 
-import geometry.Geometry;
 import geometry.LogPolar;
 import geometry.Point;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Vector;
-
-import javax.imageio.ImageIO;
-
-import config.SampleConfig;
 
 public class ShapeContext
 {

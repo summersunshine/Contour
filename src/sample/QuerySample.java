@@ -1,13 +1,10 @@
 package sample;
 
-import feature.Cost;
-import geometry.Point;
-
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Vector;
 
-import config.SampleConfig;
+import feature.Cost;
+import geometry.Point;
 
 public class QuerySample extends Sample
 {
