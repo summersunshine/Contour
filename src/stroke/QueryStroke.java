@@ -3,6 +3,7 @@ package stroke;
 import feature.Cost;
 import geometry.Geometry;
 import geometry.Point;
+import geometry.SamplePoint;
 
 import java.awt.Graphics2D;
 import java.util.Vector;
@@ -15,22 +16,43 @@ public class QueryStroke extends Stroke
 
 	// 查询样例
 	public Vector<QuerySample> querySamples;
+	
+	private Vector<Double>	angleDoubles;
 
 	/**
 	 * @param points
 	 * @param rightCountourPoints
 	 * @param leftCountourPoints
 	 * */
-	public QueryStroke(Vector<Point> points, Vector<Point> rightCountourPoints, Vector<Point> leftCountourPoints)
+//	public QueryStroke(Vector<Point> points, Vector<Point> rightCountourPoints, Vector<Point> leftCountourPoints)
+//	{
+//		super();
+//		this.points = points;
+//		this.rightContourPoints = rightCountourPoints;
+//		this.leftContourPoints = leftCountourPoints;
+//		this.calDirAngle();
+//		this.setAverageR();
+//		this.initQuerySample();
+//	}
+	
+	
+	/**
+	 * @param points
+	 * @param rightCountourPoints
+	 * @param leftCountourPoints
+	 * */
+	public QueryStroke(Vector<Point> points,Vector<Double> angleDoubles, Vector<Point> rightCountourPoints, Vector<Point> leftCountourPoints)
 	{
 		super();
 		this.points = points;
+		this.angleDoubles = angleDoubles;
 		this.rightContourPoints = rightCountourPoints;
 		this.leftContourPoints = leftCountourPoints;
 		this.calDirAngle();
 		this.setAverageR();
 		this.initQuerySample();
 	}
+	
 
 	/**
 	 * 初始化查询样例
@@ -41,7 +63,8 @@ public class QueryStroke extends Stroke
 
 		for (int i = 0; i < points.size(); i++)
 		{
-			this.querySamples.addElement(new QuerySample(points, dirAngle.get(i), averageR, -1, i));
+			//double angle = angleDoubles.get(i).doubleValue();
+			this.querySamples.addElement(new QuerySample(points,dirAngle.get(i), averageR, -1, i));
 		}
 	}
 

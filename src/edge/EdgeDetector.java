@@ -146,7 +146,7 @@ public class EdgeDetector
 				}
 			}
 			
-			System.out.println(leftPoint.sub(rightPoint).length());
+			//System.out.println(leftPoint.sub(rightPoint).length());
 		}
 		
 

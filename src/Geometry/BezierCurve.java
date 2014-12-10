@@ -15,6 +15,30 @@ public class BezierCurve
 		float y = bezier3funcY(percent, controlP);
 		return new Point(x, y);
 	}
+	
+	public static double berzier3Angle(float percent, Point[] controlP)
+	{
+		double x= bezierDerivativeX(percent, controlP);
+		double y = bezierDerivativeY(percent,controlP);
+		return Math.atan2(y, x);
+	}
+	
+	public static double bezierDerivativeX(float percent, Point[] controlP)
+	{
+		double part0 = 3*(1-percent)*(1-percent)*(controlP[2].x-controlP[3].x);
+		double part1 = 6*(1-percent)*percent*(controlP[1].x-controlP[2].x);
+		double part2 = 6*percent*percent*percent*(controlP[0].x-controlP[1].x);
+		return part0 + part1 + part2;
+	}
+	
+	public static double bezierDerivativeY(float percent, Point[] controlP)
+	{
+		double part0 = 3*(1-percent)*(1-percent)*(controlP[2].y-controlP[3].y);
+		double part1 = 6*(1-percent)*percent*(controlP[1].y-controlP[2].y);
+		double part2 = 6*percent*percent*percent*(controlP[0].y-controlP[1].y);
+		return part0 + part1 + part2;
+	}
+	
 
 	/**
 	 * Èý´Î±´Èû¶ûÇúÏßX

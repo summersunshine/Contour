@@ -76,7 +76,7 @@ public class PixelGrabber
 		int minY2 = (int) Math.floor(Math.min(Math.min(Math.min(point12.y, point22.y), point32.y), point42.y));
 		int maxY2 = (int) Math.ceil(Math.max(Math.max(Math.max(point12.y, point22.y), point32.y), point42.y));
 
-		System.out.println("index: " + index + " start : " + start + " end : " + end + " libStroke.leftContourPoints : " + libStroke.leftContourPoints);
+//		System.out.println("index: " + index + " start : " + start + " end : " + end + " libStroke.leftContourPoints : " + libStroke.leftContourPoints);
 
 		points.clear();
 		for (int i = start + 1; i < end - 1; i++)

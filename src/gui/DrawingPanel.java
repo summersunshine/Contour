@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import sample.LibParser;
 import stroke.QueryStroke;
 import util.ImageUtil;
+import util.SpinePoints;
 import config.GuiConfig;
 import config.SampleConfig;
 
@@ -32,6 +33,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	private QueryStroke queryStroke;
 
 	private Vector<Point> points;
+	private Vector<Double> angleDoubles;
 	private Vector<Point> leftContourPoints;
 	private Vector<Point> rightContourPoints;
 
@@ -55,6 +57,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	private void initPoint()
 	{
 		points = new Vector<Point>();
+		angleDoubles = new Vector<Double>();
 	}
 
 	private void initLibParser()
@@ -104,7 +107,10 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	 * */
 	public void setPoints()
 	{
-		points = UniformSample.normalize(points, 6);
+		SpinePoints spinePoints = new SpinePoints(points);
+		points = spinePoints.spinePoints;
+		angleDoubles = spinePoints.angleDoubles;
+		//points = UniformSample.normalize(points, 6);
 		//points = Geometry.removeClose(points, 6);
 
 		BufferedImage maskImage = MaskGenerator.getImage(points);
@@ -142,7 +148,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 
 		this.drawStrokeSample(graphics2d);
 
-		queryStroke = new QueryStroke(points, rightContourPoints, leftContourPoints);
+		queryStroke = new QueryStroke(points,angleDoubles, rightContourPoints, leftContourPoints);
 
 		queryStroke.drawShapeContext(graphics2d, 0);
 

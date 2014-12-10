@@ -110,36 +110,13 @@ public class LibParser
 			}
 
 			queryStroke.querySamples.get(i).sort();
-			//queryStroke.querySamples.get(i).printKNN();
+			queryStroke.querySamples.get(i).printKNN();
 
 		}
 
 		System.out.println("feature cal end");
 	}
 
-	/**
-	 * 处理起始的端点问题 数据
-	 * 
-	 * @param otherSamples
-	 * */
-	public void addBeginData()
-	{
-		System.out.println("begin cal begin");
-
-		for (int j = 0; j < queryStroke.querySamples.get(0).costs.size(); j++)
-		{
-			if (queryStroke.querySamples.get(0).costs.get(j).b != 0)
-			{
-				queryStroke.querySamples.get(0).costs.get(j).addEe(10);
-			}
-			addSegements(lastCost.a, lastCost.b);
-		}
-
-		queryStroke.querySamples.get(0).sort();
-		//queryStroke.querySamples.get(0).printKNN();
-
-		System.out.println("begin cal end");
-	}
 
 	/**
 	 * 加上Transition 数据
@@ -162,7 +139,7 @@ public class LibParser
 			}
 
 			queryStroke.querySamples.get(currIndex).sort();
-			//queryStroke.querySamples.get(currIndex).printKNN();
+			queryStroke.querySamples.get(currIndex).printKNN();
 
 			addSegements(lastCost.a, lastCost.b);
 		}
@@ -298,8 +275,8 @@ public class LibParser
 	// 优化序列
 	public void optimization()
 	{
-		handStortSegement();
-		handEndPoint();
+		//handStortSegement();
+		//handEndPoint();
 		extent();
 
 	}

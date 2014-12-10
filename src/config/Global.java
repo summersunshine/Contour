@@ -10,11 +10,11 @@ public class Global
 	public static final int WHITE_VALUE = -1;
 	public static final int BLACK_VALUE = -16777216;
 	
-	public static int SAMPLE_DIST = 6;
+	public static int SAMPLE_DIST = 10;
 	
-	public static float BRUSH_WDITH = 20;
+	public static float BRUSH_WDITH = 30;
 	
-	public static Color BRUSH_COLOR = new Color(0, 255, 255);
+	public static Color BRUSH_COLOR = new Color(255, 255, 255);
 	
-	public static String Libary = "marker1";
+	public static String Libary = "pencil";
 }
