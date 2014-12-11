@@ -1,10 +1,7 @@
 package sample;
 
-import java.awt.image.BufferedImage;
 import java.util.Vector;
 
-import sequence.C;
-import sequence.Segement;
 import sequence.SegementInfo;
 import stroke.LibStroke;
 import stroke.QueryStroke;
@@ -25,13 +22,10 @@ public class LibParser
 
 	public static QueryStroke			queryStroke;
 
-	public static Vector<Segement>		segements;
-
 	public static Vector<SegementInfo>	segementInfos;
 
 	private SegementInfo				currSegementInfo;
 
-	public boolean						isRollBack;
 
 	public Cost							lastCost;
 
@@ -39,12 +33,8 @@ public class LibParser
 
 	public int							count;
 
-	public Vector<BufferedImage>		partImages;
-
 	public LibParser()
 	{
-		this.isRollBack = false;
-		this.partImages = new Vector<BufferedImage>();
 		this.initStrokeInfos();
 		this.initLibStrokes();
 	}
@@ -52,13 +42,8 @@ public class LibParser
 	public void initStrokeInfos()
 	{
 		this.count = 0;
-		segements = new Vector<Segement>();
-		segements.add(new Segement(0));
-
+		this.currSegementInfo = null;
 		segementInfos = new Vector<SegementInfo>();
-
-		// segementInfos.add(new SegementInfo(strokeId, startLibIndex,
-		// startQueryIndex))
 	}
 
 	/**
@@ -66,7 +51,7 @@ public class LibParser
 	 * */
 	public void initLibStrokes()
 	{
-		System.out.println("LibParser.initLibStrokes() begin");
+		// System.out.println("LibParser.initLibStrokes() begin");
 		LibParser.libStrokes = new Vector<LibStroke>();
 		for (int i = 0; i < STOKE_NUM; i++)
 		{
@@ -75,7 +60,7 @@ public class LibParser
 		}
 
 		Feature.isLoadBegin = false;
-		System.out.println("LibParser.initLibStrokes() end");
+		// System.out.println("LibParser.initLibStrokes() end");
 	}
 
 	/**
@@ -97,7 +82,7 @@ public class LibParser
 
 		this.optimization();
 
-		LibParserUtil.drawStrokeSegements("After\\", segements, libStrokes, queryStroke);
+		LibParserUtil.drawStrokeSegements("After\\");
 
 	}
 
@@ -139,8 +124,6 @@ public class LibParser
 
 		for (currIndex = 1; currIndex < queryStroke.querySamples.size(); currIndex++)
 		{
-			lastCost = getQuerySampleCost(currIndex - 1, 0);
-
 			for (int j = 0; j < queryStroke.querySamples.get(currIndex).costs.size(); j++)
 			{
 				Cost cost = getQuerySampleCost(currIndex, j);
@@ -152,8 +135,10 @@ public class LibParser
 			queryStroke.querySamples.get(currIndex).printKNN();
 
 			addSegements(lastCost.a, lastCost.b);
-		}
 
+			lastCost = getQuerySampleCost(currIndex, 0);
+		}
+		createNewSegements(lastCost.a, lastCost.b, currIndex);
 		System.out.println("transition cal end");
 	}
 
@@ -262,12 +247,9 @@ public class LibParser
 	{
 		count = 0;
 
-		Segement segement = new Segement(currIndex);
-		segement.add(new C(a, b));
-		segements.add(segement);
-
 		if (currSegementInfo != null)
 		{
+
 			segementInfos.add(currSegementInfo);
 		}
 
@@ -279,12 +261,6 @@ public class LibParser
 	private void addSegementPoints(int a, int b, int queryIndex)
 	{
 		count++;
-
-		// 每次都要更新一下最后一个点的信息
-		segements.lastElement().add(new C(a, b));
-		segements.lastElement().lastIndexOfLib = libStrokes.get(a).points.size() - 1;
-		segements.lastElement().endStroke(currIndex);
-
 		currSegementInfo.addBack(1);
 
 	}
@@ -304,21 +280,6 @@ public class LibParser
 
 	public void extent()
 	{
-		for (int i = 0; i < segements.size(); i++)
-		{
-			if (i != 0)
-			{
-				segements.get(i).addFront(Penalty.TranArea);
-				// segementInfos.get(i).addFront(Penalty.TranArea);
-
-			}
-
-			if (i != segements.size() - 1)
-			{
-				segements.get(i).addBack(Penalty.TranArea);
-				// segementInfos.get(i).addBack(Penalty.TranArea);
-			}
-		}
 
 		for (int i = 0; i < segementInfos.size(); i++)
 		{
@@ -328,7 +289,7 @@ public class LibParser
 
 			}
 
-			if (i != segements.size() - 1)
+			if (i != segementInfos.size() - 1)
 			{
 				segementInfos.get(i).addBack(Penalty.TranArea);
 			}
@@ -338,84 +299,50 @@ public class LibParser
 	public void handEndPoint()
 	{
 
-		for (int i = 0; i < segements.size(); i++)
+		for (int i = 0; i < segementInfos.size(); i++)
 		{
-			if (i != segements.size() - 1)
+			if (i != segementInfos.size() - 1)
 			{
-				if (segements.get(i).isReachEnd())
+				if (segementInfos.get(i).isReachEnd())
 				{
-					segements.get(i).removeBack(Penalty.EndArea);
-					segements.get(i + 1).addFront(4);
+					// segementInfos.get(i).removeBack(Penalty.EndArea);
+					segementInfos.get(i + 1).addFront(4);
 				}
 			}
 
-			if (!segements.get(i).isReachEnd() && i == (segements.size() - 1))
+			if (!segementInfos.get(i).isReachEnd() && i == (segementInfos.size() - 1))
 			{
-				segements.get(i).addToEnd();
+				segementInfos.get(i).addBack();
 			}
 
-			if (segements.get(i).startIndexOfQuery >= segements.get(i).endIndexOfQuery)
-			{
-				segements.remove(i);
-			}
 
 		}
 	}
 
 	public void handStortSegement()
 	{
-		for (int i = 0; i < segements.size(); i++)
-		{
-			if (segements.get(i).isEmpty())
-			{
-				segements.remove(i--);
 
-			}
-		}
-
-		for (int i = 1; i < segements.size(); i++)
+		for (int i = 1; i < segementInfos.size(); i++)
 		{
-			if (segements.get(i).isShort())
+			if (segementInfos.get(i).isShort())
 			{
 				// 不是最后一个
-				if (i == segements.size() - 1)
+				if (i == segementInfos.size() - 1)
 				{
-					segements.get(i).addFront(Penalty.TranArea);
+					segementInfos.get(i).addFront(Penalty.TranArea);
 
 				}
 				// 如果是最后一个，就不删除他了
 				else
 				{
-					segements.get(i - 1).addBack(segements.get(i).getL());
-					segements.remove(i--);
+					segementInfos.get(i - 1).addBack(segementInfos.get(i).getSize());
+					segementInfos.remove(i--);
 				}
 			}
 		}
 	}
 
-	// public void handStortSegement(int beginIndex, int endIndex)
-	// {
-	// int counts = 0;
-	// for (int j = beginIndex; j < endIndex; j++)
-	// {
-	// counts += segements.get(j).getL();
-	// }
-	//
-	// if (beginIndex - 1 >= 0)
-	// {
-	// segements.get(beginIndex - 1).addBack(counts);
-	// }
-	//
-	// if (endIndex < segements.size())
-	// {
-	// segements.get(endIndex).addFront(counts);
-	// }
-	//
-	// for (int j = beginIndex; j < endIndex; j++)
-	// {
-	// segements.remove(beginIndex);
-	// }
-	// }
+
 
 	/********************************* 结束优化序列 *************************************************/
 

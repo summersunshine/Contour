@@ -6,6 +6,7 @@ import geometry.Point;
 import java.util.Vector;
 
 import sample.LibParser;
+import config.Penalty;
 
 public class SegementInfo
 {
@@ -67,10 +68,20 @@ public class SegementInfo
 		this.coordDiffs = new Vector<CoordDiff>();
 	}
 
+	private boolean isStartIndexLegal()
+	{
+		return startLibIndex > 0 && startQueryIndex > 0;
+	}
+
+	private boolean isEndIndexLegal()
+	{
+		return endLibIndex < libIndexSize - 1 && endQueryIndex < queryIndexSize - 1;
+	}
+
 	public void addFront()
 	{
 
-		while (startLibIndex > 0 && startQueryIndex > 0)
+		while (isStartIndexLegal())
 		{
 			startLibIndex--;
 			startQueryIndex--;
@@ -84,7 +95,7 @@ public class SegementInfo
 	public void addBack()
 	{
 
-		while (endLibIndex < libIndexSize - 1 && endQueryIndex < queryIndexSize - 1)
+		while (isEndIndexLegal())
 		{
 			endLibIndex++;
 			endQueryIndex++;
@@ -100,7 +111,7 @@ public class SegementInfo
 		{
 			startLibIndex--;
 			startQueryIndex--;
-			if (startLibIndex > 0 && startQueryIndex > 0)
+			if (isStartIndexLegal())
 			{
 				addLibPoint(strokeId, startLibIndex, FRONT);
 				addQueryPoint(startQueryIndex, FRONT);
@@ -118,7 +129,7 @@ public class SegementInfo
 		{
 			endLibIndex++;
 			endQueryIndex++;
-			if (endLibIndex < libIndexSize - 1 && endQueryIndex < queryIndexSize - 1)
+			if (isEndIndexLegal())
 			{
 				addLibPoint(strokeId, endLibIndex, BACK);
 				addQueryPoint(endQueryIndex, BACK);
@@ -128,6 +139,25 @@ public class SegementInfo
 			{
 				break;
 			}
+		}
+	}
+
+	public void removeBack(int num)
+	{
+		while (num-- > 0)
+		{
+			// endLibIndex--;
+			// endQueryIndex--;
+			// if (isEndIndexLegal())
+			// {
+			// addLibPoint(strokeId, endLibIndex, BACK);
+			// addQueryPoint(endQueryIndex, BACK);
+			//
+			// }
+			// else
+			// {
+			// break;
+			// }
 		}
 	}
 
@@ -230,5 +260,21 @@ public class SegementInfo
 				segementInfos.get(i).frontEndOverLayIndex = 0;
 			}
 		}
+	}
+
+	public int getSize()
+	{
+		return endLibIndex - startLibIndex;
+	}
+
+	public boolean isShort()
+	{
+		return getSize() < Penalty.Lmin;
+	}
+
+	public boolean isReachEnd()
+	{
+		return Math.abs(endLibIndex - libIndexSize) <= Penalty.EndArea;
+
 	}
 }
