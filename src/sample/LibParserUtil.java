@@ -1,4 +1,4 @@
-package util;
+package sample;
 
 import edge.PixelGrabber;
 import geometry.CoordDiff;
@@ -14,6 +14,7 @@ import java.util.Vector;
 import sequence.Segement;
 import stroke.LibStroke;
 import stroke.QueryStroke;
+import util.ImageUtil;
 import config.Global;
 import config.SampleConfig;
 
@@ -62,11 +63,16 @@ public class LibParserUtil
 		}
 
 		saveTxt(segements.size() + "\r\n", SampleConfig.OUTPUT_PATH + dir + "num.txt");
-		//PixelGrabber.saveResultImage(SampleConfig.OUTPUT_PATH + "After\\alpha1.jpg",false);
-		PixelGrabber.saveResultImage(SampleConfig.OUTPUT_PATH + "After\\alpha.jpg",true);
+		PixelGrabber.saveResultImage(SampleConfig.OUTPUT_PATH + "After\\alpha",true);
 		
-		BufferedImage resultImage = ImageUtil.getConverterImage(PixelGrabber.resultImage, Global.BRUSH_COLOR);
-		ImageUtil.saveImage(resultImage, SampleConfig.OUTPUT_PATH + "After\\result.jpg");
+		BufferedImage resultFalseImage = ImageUtil.getConverterImage(PixelGrabber.alphaImage, Global.BRUSH_COLOR);
+		ImageUtil.saveImage(resultFalseImage, SampleConfig.OUTPUT_PATH + "After\\result.jpg");
+		
+		
+//		PixelGrabber.saveResultImage(SampleConfig.OUTPUT_PATH + "After\\alpha.jpg",true);
+//		
+//		BufferedImage resultImage = ImageUtil.getConverterImage(PixelGrabber.resultImage, Global.BRUSH_COLOR);
+//		ImageUtil.saveImage(resultImage, SampleConfig.OUTPUT_PATH + "After\\result.jpg");
 		
 	}
 

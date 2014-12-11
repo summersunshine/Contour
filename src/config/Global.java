@@ -12,9 +12,9 @@ public class Global
 	
 	public static int SAMPLE_DIST = 10;
 	
-	public static float BRUSH_WDITH = 30;
+	public static float BRUSH_WDITH = 20;
 	
-	public static Color BRUSH_COLOR = new Color(0, 255, 255);
+	public static Color BRUSH_COLOR = new Color(255,255,255);
 	
 	public static String Libary = "pencil";
 }

@@ -43,7 +43,7 @@ public class Segement
 		int a = this.cs.lastElement().a;
 		int b = this.cs.lastElement().b;
 		int count = 0;
-		while (this.cs.lastElement().b < lastIndexOfLib)
+		while (this.cs.lastElement().b < lastIndexOfLib-1)
 		{
 			startIndexOfQuery--;
 			this.cs.add(new C(a, b + count + 1));
@@ -59,7 +59,7 @@ public class Segement
 
 		for (int i = 0; i < size; i++)
 		{
-			if (this.cs.lastElement().b < lastIndexOfLib)
+			if (this.cs.lastElement().b < lastIndexOfLib-1)
 			{
 				endIndexOfQuery++;
 				this.cs.add(new C(a, b + i + 1));

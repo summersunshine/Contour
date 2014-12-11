@@ -13,11 +13,11 @@ import java.util.Vector;
 import javax.xml.bind.annotation.XmlElementDecl.GLOBAL;
 
 import sample.LibParser;
+import sample.LibParserUtil;
 import stroke.LibStroke;
 import tps.TPSMorpher;
 import util.ColorUtil;
 import util.ImageUtil;
-import util.LibParserUtil;
 import config.Global;
 
 /**
@@ -29,31 +29,33 @@ public class PixelGrabber
 	
 	public static Vector<Point> points = new Vector<Point>();
 
-	public static boolean [][]flag = new boolean[Global.width][Global.height];
+	public static short [][]flag = new short[Global.width][Global.height];
 	
 	
-	public static BufferedImage resultImage;
+	public static BufferedImage alphaImage;
 	
 	public static void saveResultImage(String path,boolean isAlphaMerge)
 	{
-		flag = new boolean[Global.width][Global.height];
+		flag = new short[Global.width][Global.height];
 		
-		resultImage = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
-		Graphics2D graphics2d = (Graphics2D) resultImage.getGraphics();
+		alphaImage = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
+		Graphics2D graphics2d = (Graphics2D) alphaImage.getGraphics();
 		for (int i = 0; i < LibParser.segements.size(); i++)
 		{
 			System.out.println("segement" + i);
-			int start = LibParser.segements.get(i).cs.firstElement().b;
-			int end = LibParser.segements.get(i).cs.lastElement().b;
+			int start = LibParser.segements.get(i).getStartIndexOfLib();
+			int end = LibParser.segements.get(i).getEndIndexOfLib();
 			int index = LibParser.segements.get(i).getIndexofLibStroke();
 			LibStroke libStroke = LibParser.libStrokes.get(index);
 			Vector<CoordDiff> coordDiffs = LibParserUtil.vectors.get(i);
 			setSamplePoints(libStroke,index,start,end);
-			drawWarpingImage(libStroke.alphaImage,coordDiffs,graphics2d,isAlphaMerge);
+			drawWarpingImage(libStroke.alphaImage,coordDiffs,graphics2d,isAlphaMerge,(short)(i+1));
+			
+			ImageUtil.saveImage(alphaImage, path+i + ".jpg");
 		}
 		
 		
-		ImageUtil.saveImage(resultImage, path);
+		
 
 	}
 
@@ -61,10 +63,10 @@ public class PixelGrabber
 	
 	
 	
-	public static void drawWarpingImage(BufferedImage alphaImage,Vector<CoordDiff> coordDiffs,Graphics2D graphics2d,boolean isAlphaMerge)
+	public static void drawWarpingImage(BufferedImage strokealphaImage,Vector<CoordDiff> coordDiffs,Graphics2D graphics2d,boolean isAlphaMerge,short index)
 	{
 		// TODO Auto-generated method stub
-		BufferedImage image = ImageUtil.getCloneImage(alphaImage);
+		BufferedImage image = ImageUtil.getCloneImage(strokealphaImage);
 
 		TPSMorpher tpsMorpher = new TPSMorpher(coordDiffs, 0.15, 1);
 		Vector<CoordDiff> samples =  tpsMorpher.morphPoints(points);
@@ -79,33 +81,23 @@ public class PixelGrabber
 			int y2 = sampleCoordDiff.getIntY2();
 
 			
-			if (flag[x2][y2] && isAlphaMerge)
+			if (flag[x2][y2] != index && isAlphaMerge)
 			{
-				Color color1 = new Color(resultImage.getRGB(x2, y2));
+				Color color1 = new Color(alphaImage.getRGB(x2, y2));
 				Color color2 = new Color(image.getRGB(x,y));
 				Color mergeColor = ColorUtil.getAlphaMergeColor(color1, color2);
-				
-//				ColorUtil.printColor(color1);
-//				ColorUtil.printColor(color2);
-//				ColorUtil.printColor(mergeColor);
+
 				graphics2d.setColor(mergeColor);
+				
+				flag[x2][y2] = index;
 			}
 			else
 			{
-				flag[x2][y2] = true;
+				flag[x2][y2] = index;
 				graphics2d.setColor(new Color(image.getRGB(x,y)));
 			}
 			
 			graphics2d.drawRect(x2,y2, 1, 1);
-//			if (isAlphaMerge)
-//			{
-//				graphics2d.drawRect(x2,y2, 1, 1);
-//			}
-//			else
-//			{
-//				graphics2d.fillRect(x2,y2, 1, 1);	
-//			}
-			
 
 		}
 		
@@ -188,6 +180,12 @@ public class PixelGrabber
 			minY2 = minY2 > minY ? minY : minY2;
 			maxY2 = minY2 < maxY ? maxY : maxY2;
 
+			
+			if (Math.abs(minX-maxX) > 100 || Math.abs(minY-maxY) > 100)
+			{
+				System.out.println("gao mao!!!!!");
+			}
+			
 			// 循环，判断是否在四边形内
 			for (int y = minY; y <= maxY; y++)
 			{

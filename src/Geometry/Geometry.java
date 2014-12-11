@@ -329,8 +329,7 @@ public class Geometry
 
 	public static double getCos(Point diffPoint1, Point diffPoint2)
 	{
-		double cos = (diffPoint1.x * diffPoint2.x + diffPoint1.y * diffPoint2.y) / (diffPoint1.length() * diffPoint2.length());
-		return cos;
+		return (diffPoint1.x * diffPoint2.x + diffPoint1.y * diffPoint2.y) / (diffPoint1.length() * diffPoint2.length());
 	}
 
 	public static double getAngle(Point diffPoint1)
@@ -386,70 +385,3 @@ public class Geometry
 
 	}
 }
-
-// public static Vector<Point> normalize(Vector<Point> originPoints)
-// {
-// Vector<Float> lengths = new Vector<Float>();
-// float totalLength = 0;
-// for (int i = 1; i < originPoints.size(); i++)
-// {
-// lengths.add((float) originPoints.get(i).sub(originPoints.get(i-1)).length());
-// totalLength +=lengths.lastElement();
-// }
-//
-// int pointNum = (int) (totalLength/10);
-// Vector<Point> points = new Vector<Point>();
-//
-// points.add(originPoints.firstElement());
-//
-// float l = 0;
-// float lastl = 0;
-// boolean isEnd = false;
-// for (int i = 0; i < originPoints.size()-1; i++)
-// {
-//
-// int count = 0;
-// lastl = l;
-// while (true)
-// {
-// if (count +i >= originPoints.size())
-// {
-// isEnd = true;
-// break;
-// }
-//
-// l += lengths.get(count+i).floatValue();
-//
-// if (l>10)
-// {
-// break;
-// }
-//
-// count ++;
-// lastl =l;
-// }
-//
-// if (isEnd)
-// {
-// points.add(originPoints.lastElement());
-// break;
-// }
-// else
-// {
-// float percentage1 = (10f-lastl)/(l-lastl);
-// Point point1 = originPoints.get(i+count+1);
-// Point point2 = originPoints.get(i+count);
-// Point newPoint = Point.getPointBetweenTweenPoint(point1, point2,
-// percentage1);
-//
-// points.add(newPoint);
-// }
-//
-// l = l-10;
-// i = count + i + 1;
-//
-// }
-// points.add(originPoints.lastElement());
-// return points;
-// }
-

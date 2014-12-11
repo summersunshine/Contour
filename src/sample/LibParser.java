@@ -7,7 +7,6 @@ import sequence.C;
 import sequence.Segement;
 import stroke.LibStroke;
 import stroke.QueryStroke;
-import util.LibParserUtil;
 import config.Global;
 import config.Penalty;
 import feature.Cost;
@@ -275,7 +274,7 @@ public class LibParser
 	// ”≈ªØ–Ú¡–
 	public void optimization()
 	{
-		//handStortSegement();
+		handStortSegement();
 		//handEndPoint();
 		extent();
 

@@ -1,6 +1,7 @@
-package util;
+package edge;
 
 import geometry.BezierCurve;
+import geometry.Geometry;
 import geometry.Point;
 import geometry.SamplePoint;
 
@@ -11,6 +12,7 @@ import config.Global;
 //获取路径走向
 public class SpinePoints
 {
+	public static int SAMPLE_RATE = 6;
 	public static float scale = 0.6f;
 	
 	private Vector<Point> originPoints;
@@ -18,6 +20,7 @@ public class SpinePoints
 	private Vector<Point> extraPoints;
 	public Vector<Point> spinePoints;
 	public Vector<Double> angleDoubles;
+	public Vector<Double> radiusDoubles;
 	public Vector<SamplePoint> spineSamplePoints;
 	
 	
@@ -28,6 +31,7 @@ public class SpinePoints
 		this.extraPoints = new Vector<Point>();
 		this.spinePoints = new Vector<Point>();
 		this.angleDoubles = new Vector<Double>();
+		this.radiusDoubles = new Vector<Double>();
 		this.spineSamplePoints = new Vector<SamplePoint>();
 
 		this.sparsePoint(points);
@@ -38,13 +42,28 @@ public class SpinePoints
 		this.setSpineSamplePoints();
 	}
 	
+
+	
+	public static double getRatio(Point point1,Point point2,Point point3)
+	{
+		double cos = Geometry.getCos(point2.sub(point1), point3.sub(point2));
+		
+		if (cos<0)
+		{
+			return 2;
+		}
+		else
+		{
+			return 1 + Math.sqrt(1-cos);
+		}
+	}
 	
 	private void sparsePoint(Vector<Point> points)
 	{
 		this.originPoints = new Vector<Point>();
 		for (int i = 0; i < points.size(); i++)
 		{
-			if (i%4==0)
+			if (i%SAMPLE_RATE==0)
 			{
 				this.originPoints.add(points.get(i));
 			}
@@ -125,11 +144,13 @@ public class SpinePoints
 	
 	public void setSpineSamplePoints()
 	{
+		radiusDoubles.add((double) 0.5);
 		for (int i = 0; i < originPoints.size()-1; i++)
 		{
 			createBezierCurves(i);
 		}
 	}
+	
 	
 	/**
 	 * 在控制点生成*的bezier曲线上进行采样
@@ -150,14 +171,30 @@ public class SpinePoints
 		
 		double interval = 1/num;
 		
+		double lastRadius = radiusDoubles.lastElement();
+		
+		double nextRadius;
+		if (index < originPoints.size()-2)
+		{
+			Point point1 = originPoints.get(index);
+			Point point2 = originPoints.get(index+1);
+			Point point3 = originPoints.get(index+2);
+			nextRadius = getRatio(point1,point2,point3);
+		}
+		else
+		{
+			nextRadius = 0.5;
+		}
+
+		
 		spineSamplePoints = new Vector<SamplePoint>();
-		for (float j = 1; j >= interval/2; j -= interval)
+		for (float j = 1; j >= interval/3; j -= interval)
 		{
 			Point point = BezierCurve.bezier3func(j, controlPoint);
-			double angle = BezierCurve.berzier3Angle(j, controlPoint);
+			double radius = lastRadius*j + nextRadius*(1-j);
+			radiusDoubles.add(radius);
 			spinePoints.add(point);
-			angleDoubles.add(angle);
-			spineSamplePoints.add(new SamplePoint(point, angle));
+			//spineSamplePoints.add(new SamplePoint(point, angle));
 		}
 	}
 	

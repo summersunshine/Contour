@@ -17,31 +17,42 @@ public class MaskGenerator
 	public static final int width = 1280;
 	public static final int height = 720;
 
-	public static BufferedImage getImage(Vector<Point> points)
+//	public static BufferedImage getImage(Vector<Point> points)
+//	{
+//		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+//
+//		for (int i = 0; i < points.size(); i++)
+//		{
+//			float radius = Global.BRUSH_WDITH;
+//			if (i>0 && i < points.size()-1)
+//			{
+//				float ratio = (float) getRatio(points.get(i-1),points.get(i),points.get(i+1));
+//				System.out.println("ratio " + ratio);
+//				radius*= ratio;
+//			}
+//			updateImage(image, (int) points.get(i).x, (int) points.get(i).y, (int)radius);
+//		}
+//
+//		return image;
+//	}
+
+	public static BufferedImage getImage(SpinePoints spinePoints)
 	{
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-		for (int i = 0; i < points.size(); i++)
+		for (int i = 0; i < spinePoints.spinePoints.size(); i++)
 		{
-			updateImage(image, (int) points.get(i).x, (int) points.get(i).y, (int)Global.BRUSH_WDITH);
+			double radius = Global.BRUSH_WDITH* spinePoints.radiusDoubles.get(i);
+			Point point = spinePoints.spinePoints.get(i);
+			updateImage(image, (int) point.x, (int) point.y, (int)Global.BRUSH_WDITH);
 		}
 
 		return image;
 	}
-
-	public static void saveImage(BufferedImage image, String path)
+	
+	public static double getRatio(Point point1,Point point2,Point point3)
 	{
-		File file = new File(path);
-
-		try
-		{
-			ImageIO.write(image, "JPG", file);
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		return 2 - Geometry.getCos(point2.sub(point1), point3.sub(point2));
 	}
 
 	/**

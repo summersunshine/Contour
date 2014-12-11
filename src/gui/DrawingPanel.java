@@ -2,6 +2,7 @@ package gui;
 
 import edge.EdgeDetector;
 import edge.MaskGenerator;
+import edge.SpinePoints;
 import edge.UniformSample;
 import geometry.Point;
 
@@ -20,7 +21,6 @@ import javax.swing.JPanel;
 import sample.LibParser;
 import stroke.QueryStroke;
 import util.ImageUtil;
-import util.SpinePoints;
 import config.GuiConfig;
 import config.SampleConfig;
 
@@ -36,7 +36,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	private Vector<Double> angleDoubles;
 	private Vector<Point> leftContourPoints;
 	private Vector<Point> rightContourPoints;
-
+	private SpinePoints spinePoints;
 	private boolean clearFlag;
 
 	private JLabel posLabel;
@@ -107,21 +107,21 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	 * */
 	public void setPoints()
 	{
-		SpinePoints spinePoints = new SpinePoints(points);
+		spinePoints = new SpinePoints(points);
 		points = spinePoints.spinePoints;
 		angleDoubles = spinePoints.angleDoubles;
 		//points = UniformSample.normalize(points, 6);
 		//points = Geometry.removeClose(points, 6);
 
-		BufferedImage maskImage = MaskGenerator.getImage(points);
-		//ImageUtil.saveImage(maskImage, SampleConfig.OUTPUT_PATH + "After\\mask.jpg");
+		BufferedImage maskImage = MaskGenerator.getImage(spinePoints);
+		ImageUtil.saveImage(maskImage, SampleConfig.OUTPUT_PATH + "After\\mask.jpg");
 		
 		
 		
 		BufferedImage contourImage = EdgeDetector.getImage(maskImage);
-		//ImageUtil.saveImage(contourImage, SampleConfig.OUTPUT_PATH + "After\\contour.jpg");
+		ImageUtil.saveImage(contourImage, SampleConfig.OUTPUT_PATH + "After\\contour.jpg");
 		
-		EdgeDetector.getEdgePoints(contourImage, points);
+		EdgeDetector.getEdgePoints(contourImage, spinePoints);
 		leftContourPoints = EdgeDetector.leftCountourPoints;
 		rightContourPoints  = EdgeDetector.rightCountourPoints;
 		//leftContourPoints = Geometry.getContourPoints(points, 20.0f, true);

@@ -9,14 +9,16 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 import java.util.Vector;
 
+import javax.xml.bind.annotation.XmlElementDecl.GLOBAL;
+
 import util.ImageUtil;
 import config.Global;
 import config.SampleConfig;
 
 public class EdgeDetector
 {
-	public static final Point[] OFFSET_POINTS = { new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 1), new Point(-1, 0), new Point(-1, -1),
-			new Point(0, -1), new Point(1, -1) };
+	public static final Point[] OFFSET_POINTS = {new Point(1, 1),new Point(-1, 1),new Point(-1, -1),new Point(1, -1), 
+		new Point(1, 0),  new Point(0, 1),  new Point(-1, 0) ,new Point(0, -1),  };
 
 	public static final int[][] LAPLACE_MASK = { { 0, -1, 0 }, { -1, 4, -1 }, { 0, -1, 0 } };
 
@@ -60,24 +62,24 @@ public class EdgeDetector
 	 * 获取边缘检测图像
 	 * 
 	 * */
-	public static Vector<Point> getEdgePoints(BufferedImage edgeImage, Vector<Point> spinePoints)
+	public static Vector<Point> getEdgePoints(BufferedImage edgeImage, SpinePoints spinePoints)
 	{
-		points = spinePoints;
+		points = spinePoints.spinePoints;
 
-		Point beginPoint = getEndPoint(edgeImage, spinePoints.firstElement(), spinePoints.get(2));
-		Point endPoint = getEndPoint(edgeImage, spinePoints.lastElement(), spinePoints.get(spinePoints.size() - 2));
+		Point beginPoint = getEndPoint(edgeImage, points.firstElement(), points.get(2),1);
+		Point endPoint = getEndPoint(edgeImage, points.lastElement(), points.get(points.size() - 2),-1);
 
 
-		Point leftPoint = getContourPoint(edgeImage, beginPoint, endPoint, -1);
-		Point rightPoint = getContourPoint(edgeImage, beginPoint, endPoint, 1);
+		Point []contourPoint = getContourPoint(edgeImage, beginPoint);
+		
 
-		leftCountourPoints = traceContour(edgeImage, leftPoint, beginPoint, endPoint);
-		rightCountourPoints = traceContour(edgeImage, rightPoint, beginPoint, endPoint);
+		leftCountourPoints = traceContour(edgeImage, contourPoint[0], beginPoint, endPoint);
+		rightCountourPoints = traceContour(edgeImage, contourPoint[1], beginPoint, endPoint);
 
 		System.out.println(leftCountourPoints.size());
 		System.out.println(rightCountourPoints.size());
 		
-		
+		//handleTurningPoint1(spinePoints);
 		handleTurningPoint();
 		makeContourSizeSame();
 		twiceSample();
@@ -121,6 +123,7 @@ public class EdgeDetector
 	 * */
 	public static void handleTurningPoint()
 	{
+		int count = 0;
 		for (int i = 0; i < leftCountourPoints.size() && i<rightCountourPoints.size(); i++)
 		{
 			Point leftPoint = leftCountourPoints.get(i);
@@ -129,14 +132,61 @@ public class EdgeDetector
 			double length = leftPoint.sub(rightPoint).length();
 			if (length>2*Global.BRUSH_WDITH+2)
 			{
+				count = 0;
 				Point nextRightPoint = rightCountourPoints.get(i+1);
-				if (leftPoint.sub(nextRightPoint).length() < length)
+				Point nextLeftPoint = leftCountourPoints.get(i+1);
+				
+				int deleteCount = 0;
+				while (leftPoint.sub(nextRightPoint).length() < length)
 				{
 					rightCountourPoints.remove(i);
+					length = leftPoint.sub(nextRightPoint).length();
+					nextRightPoint = rightCountourPoints.get(i+1);
+					if (deleteCount++>2)
+					{
+						break;
+					}
+					
 				}
-				else
+				
+				while (rightPoint.sub(nextLeftPoint).length() < length)
 				{
 					leftCountourPoints.remove(i);
+					length = rightPoint.sub(nextLeftPoint).length();
+					nextLeftPoint = leftCountourPoints.get(i+1);
+					
+					if (deleteCount++>2)
+					{
+						break;
+					}
+				}
+				
+			}
+			else
+			{
+				count ++;
+				if (count==4)
+				{
+					int n = 3;
+					while ((n--)>0)
+					{
+						if (rightCountourPoints.size()>i)
+						{
+							rightCountourPoints.remove(i);
+						}
+						
+					}
+					n=3;
+					while ((n--)>0)
+					{
+						if (leftCountourPoints.size()>i)
+						{
+							leftCountourPoints.remove(i);
+						}
+						
+					}
+	
+					count = 0;
 				}
 			}
 			
@@ -144,6 +194,47 @@ public class EdgeDetector
 		
 
 	}
+	
+	
+	public static void handleTurningPoint1(SpinePoints spinePoints)
+	{
+		for (int i = 0; i < points.size(); i++)
+		{
+			while (leftCountourPoints.size()>=points.size())
+			{
+				Point leftPoint = leftCountourPoints.get(i);
+				double leftLength = points.get(i).sub(leftPoint).length();
+				if (leftLength>Global.BRUSH_WDITH*spinePoints.radiusDoubles.get(i))
+				{
+					leftCountourPoints.remove(i);
+				}
+				else
+				{
+					break;
+				}
+			}
+			
+			while(rightCountourPoints.size()>=points.size())
+			{
+				Point rightPoint = rightCountourPoints.get(i);
+				
+			
+				double rightLength = points.get(i).sub(rightPoint).length();
+		
+				if (rightLength>Global.BRUSH_WDITH*spinePoints.radiusDoubles.get(i))
+				{
+					rightCountourPoints.remove(i);
+				}
+				else
+				{
+					break;
+				}
+			}
+		}
+		
+
+	}
+	
 	
 	/**
 	 * 随机删除部分数据
@@ -195,8 +286,10 @@ public class EdgeDetector
 	/**
 	 * 获取轮廓上的与起始点响铃的点
 	 * */
-	public static Point getContourPoint(BufferedImage image, Point beginPoint, Point endPoint, int dir)
+	public static Point[] getContourPoint(BufferedImage image, Point beginPoint)
 	{
+		Point[] contouPoints = new Point[2];
+		int count =0;
 		for (int i = 0; i < OFFSET_POINTS.length; i++)
 		{
 
@@ -206,18 +299,15 @@ public class EdgeDetector
 
 			if (image.getRGB(testPoint.getIntX(), testPoint.getIntY()) == Global.WHITE_VALUE)
 			{
-				if (dir < 0 && Geometry.isLeftSide(beginPoint, endPoint, testPoint))
+				contouPoints[count++] = testPoint;
+				if (count>=2)
 				{
-					return testPoint;
-				}
-
-				if (dir > 0 && Geometry.isRightSide(beginPoint, endPoint, testPoint))
-				{
-					return testPoint;
+					break;
 				}
 			}
 		}
-		return beginPoint;
+		
+		return contouPoints;
 	}
 
 	/**
@@ -227,7 +317,7 @@ public class EdgeDetector
 	{
 		Vector<Point> contourPoints = new Vector<Point>();
 
-		contourPoints.add(currPoint);
+		//contourPoints.add(currPoint);
 		
 		while (!currPoint.equal(endPoint))
 		{
@@ -255,7 +345,7 @@ public class EdgeDetector
 	/**
 	 * 找到轮廓上对应的端点
 	 * */
-	public static Point getEndPoint(BufferedImage image, Point firstPoint, Point secondPoint)
+	public static Point getEndPoint(BufferedImage image, Point firstPoint, Point secondPoint,int dir)
 	{
 		double dx = firstPoint.x - secondPoint.x;
 		double dy = firstPoint.y - secondPoint.y;
@@ -264,10 +354,12 @@ public class EdgeDetector
 		double rateY = dy / num;
 
 
+		
 		for (int i = 0; i < 2*Global.BRUSH_WDITH; i++)
 		{
 			Point point = firstPoint.add(new Point(i * rateX, i * rateY));
-			
+
+
 			for (int j = 0; j < OFFSET_POINTS.length; j++)
 			{
 				Point testPoint = point.add(OFFSET_POINTS[j]);
@@ -276,6 +368,20 @@ public class EdgeDetector
 					return testPoint;
 				}
 			}
+			if (i%Global.SAMPLE_DIST==(Global.SAMPLE_DIST-1))
+			{
+				if (dir>0)
+				{
+					points.add(0,point);
+				}
+				else
+				{
+					points.add(point);
+				}
+			}
+			
+
+
 		}
 		return firstPoint;
 
