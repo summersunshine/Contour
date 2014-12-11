@@ -287,12 +287,12 @@ public class LibParser
 		{
 			if (i != 0)
 			{
-				segements.get(i).addFront(3);
+				segements.get(i).addFront(Penalty.TranArea);
 			}
 
 			if (i != segements.size() - 1)
 			{
-				segements.get(i).addBack(3);
+				segements.get(i).addBack(Penalty.TranArea);
 			}
 		}
 	}

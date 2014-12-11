@@ -14,5 +14,5 @@ public class Penalty
 
 	public static final int EndArea = 8;
 
-	public static final int TranArea = 8;
+	public static final int TranArea = 5;
 }

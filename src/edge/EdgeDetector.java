@@ -116,43 +116,39 @@ public class EdgeDetector
 		ImageUtil.saveImage(outputImage, SampleConfig.OUTPUT_PATH + "After\\contour points.jpg");
 	}
 	
+	/**
+	 * 处理因为拐点带来的采样数目的不同
+	 * */
 	public static void handleTurningPoint()
 	{
-		int min;
-		if (leftCountourPoints.size()<rightCountourPoints.size())
-		{
-			min = leftCountourPoints.size();
-		}
-		else
-		{
-			min = rightCountourPoints.size();
-		}
-		
-		for (int i = 0; i < min; i++)
+		for (int i = 0; i < leftCountourPoints.size() && i<rightCountourPoints.size(); i++)
 		{
 			Point leftPoint = leftCountourPoints.get(i);
 			Point rightPoint = rightCountourPoints.get(i);
 			
-			if (leftPoint.sub(rightPoint).length()>2*Global.BRUSH_WDITH+1)
+			double length = leftPoint.sub(rightPoint).length();
+			if (length>2*Global.BRUSH_WDITH+2)
 			{
-				if (leftCountourPoints.size() > rightCountourPoints.size())
-				{
-					leftCountourPoints.remove(i);
-				}
-				
-				if (leftCountourPoints.size() < rightCountourPoints.size())
+				Point nextRightPoint = rightCountourPoints.get(i+1);
+				if (leftPoint.sub(nextRightPoint).length() < length)
 				{
 					rightCountourPoints.remove(i);
 				}
+				else
+				{
+					leftCountourPoints.remove(i);
+				}
 			}
 			
-			//System.out.println(leftPoint.sub(rightPoint).length());
 		}
 		
 
 	}
 	
-	
+	/**
+	 * 随机删除部分数据
+	 * 保持左右轮廓点上的数目和脊柱上的数目一致
+	 * */
 	public static void makeContourSizeSame()
 	{
 		//保证具有相同的数目
@@ -173,7 +169,9 @@ public class EdgeDetector
 		}
 	}
 	
-	
+	/**
+	 * 二次采样，减少轮廓点的数目到合适的范围
+	 * */
 	public static void twiceSample()
 	{
 		
@@ -194,7 +192,9 @@ public class EdgeDetector
 		
 	}
 	
-
+	/**
+	 * 获取轮廓上的与起始点响铃的点
+	 * */
 	public static Point getContourPoint(BufferedImage image, Point beginPoint, Point endPoint, int dir)
 	{
 		for (int i = 0; i < OFFSET_POINTS.length; i++)
@@ -220,6 +220,9 @@ public class EdgeDetector
 		return beginPoint;
 	}
 
+	/**
+	 * 轮廓追踪
+	 * */
 	public static Vector<Point> traceContour(BufferedImage image, Point currPoint, Point lastPoint, Point endPoint)
 	{
 		Vector<Point> contourPoints = new Vector<Point>();
@@ -249,6 +252,9 @@ public class EdgeDetector
 		return contourPoints;
 	}
 
+	/**
+	 * 找到轮廓上对应的端点
+	 * */
 	public static Point getEndPoint(BufferedImage image, Point firstPoint, Point secondPoint)
 	{
 		double dx = firstPoint.x - secondPoint.x;
@@ -261,10 +267,6 @@ public class EdgeDetector
 		for (int i = 0; i < 2*Global.BRUSH_WDITH; i++)
 		{
 			Point point = firstPoint.add(new Point(i * rateX, i * rateY));
-//			if (i%Global.SAMPLE_DIST==(Global.SAMPLE_DIST-1))
-//			{
-//				points.add(point);
-//			}
 			
 			for (int j = 0; j < OFFSET_POINTS.length; j++)
 			{

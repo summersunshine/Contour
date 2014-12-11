@@ -7,6 +7,12 @@ public class ColorUtil
     static double BLACK = 20;
     static double YELLOW = 70;
     
+    
+    public static void printColor(Color color)
+    {
+    	System.out.println("Red:" + color.getGreen() + " Green:" + color.getGreen() + "Blue:" + color.getBlue());
+    }
+    
 	public static Color getAlphaMergeColor(Color color1,Color color2)
 	{
 		int r = (color1.getRed() + color2.getRed())/2;

@@ -10,6 +10,8 @@ import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.Vector;
 
+import javax.xml.bind.annotation.XmlElementDecl.GLOBAL;
+
 import sample.LibParser;
 import stroke.LibStroke;
 import tps.TPSMorpher;
@@ -40,6 +42,7 @@ public class PixelGrabber
 		Graphics2D graphics2d = (Graphics2D) resultImage.getGraphics();
 		for (int i = 0; i < LibParser.segements.size(); i++)
 		{
+			System.out.println("segement" + i);
 			int start = LibParser.segements.get(i).cs.firstElement().b;
 			int end = LibParser.segements.get(i).cs.lastElement().b;
 			int index = LibParser.segements.get(i).getIndexofLibStroke();
@@ -51,77 +54,10 @@ public class PixelGrabber
 		
 		
 		ImageUtil.saveImage(resultImage, path);
-		
-		
-		
+
 	}
 
 	
-	/**
-	 *抓到需要绘制的点
-	 * */
-	public static void setSamplePoints(LibStroke libStroke, int index, int start, int end)
-	{
-		BufferedImage strokeImage = new BufferedImage(libStroke.width, libStroke.height, BufferedImage.TYPE_INT_RGB);
-		Graphics2D strokeGraphics2d = strokeImage.createGraphics();
-
-		Point point12 = libStroke.leftContourPoints.get(0);
-		Point point22 = libStroke.leftContourPoints.get(0 + 1);
-
-		Point point32 = libStroke.rightContourPoints.get(0 + 1);
-		Point point42 = libStroke.rightContourPoints.get(0);
-
-		int minX2 = (int) Math.floor(Math.min(Math.min(Math.min(point12.x, point22.x), point32.x), point42.x));
-		int maxX2 = (int) Math.ceil(Math.max(Math.max(Math.max(point12.x, point22.x), point32.x), point42.x));
-		int minY2 = (int) Math.floor(Math.min(Math.min(Math.min(point12.y, point22.y), point32.y), point42.y));
-		int maxY2 = (int) Math.ceil(Math.max(Math.max(Math.max(point12.y, point22.y), point32.y), point42.y));
-
-//		System.out.println("index: " + index + " start : " + start + " end : " + end + " libStroke.leftContourPoints : " + libStroke.leftContourPoints);
-
-		points.clear();
-		for (int i = start + 1; i < end - 1; i++)
-		{
-			Point point1 = libStroke.leftContourPoints.get(i);
-			Point point2 = libStroke.leftContourPoints.get(i + 1);
-
-			Point point3 = libStroke.rightContourPoints.get(i + 1);
-			Point point4 = libStroke.rightContourPoints.get(i);
-
-			// 获取所有四个点的最大最小的x与y值
-			int minX = (int) Math.floor(Math.min(Math.min(Math.min(point1.x, point2.x), point3.x), point4.x));
-			int maxX = (int) Math.ceil(Math.max(Math.max(Math.max(point1.x, point2.x), point3.x), point4.x));
-			int minY = (int) Math.floor(Math.min(Math.min(Math.min(point1.y, point2.y), point3.y), point4.y));
-			int maxY = (int) Math.ceil(Math.max(Math.max(Math.max(point1.y, point2.y), point3.y), point4.y));
-
-			minX = minX < 0 ? 0 : minX;
-			maxX = maxX > strokeImage.getWidth() - 1 ? strokeImage.getWidth() - 1 : maxX;
-			minY = minY < 0 ? 0 : minY;
-			maxY = maxY > strokeImage.getHeight() - 1 ? strokeImage.getHeight() - 1 : maxY;
-
-			minX2 = minX2 > minX ? minX : minX2;
-			maxX2 = maxX2 < maxX ? maxX : maxX2;
-			minY2 = minY2 > minY ? minY : minY2;
-			maxY2 = minY2 < maxY ? maxY : maxY2;
-
-			// 循环，判断是否在四边形内
-			for (int y = minY; y <= maxY; y++)
-			{
-				for (int x = minX; x <= maxX; x++)
-				{
-					if (libStroke.tightImage.getRGB(x, y) == Global.BLACK_VALUE)
-					{
-						strokeGraphics2d.setColor(new Color(255, 255, 255));
-						strokeGraphics2d.fillRect(x, y, 1, 1);
-						points.add(new Point(x, y));
-					}
-				}
-			}
-
-		}
-
-		
-		
-	}
 	
 	
 	
@@ -132,7 +68,7 @@ public class PixelGrabber
 
 		TPSMorpher tpsMorpher = new TPSMorpher(coordDiffs, 0.15, 1);
 		Vector<CoordDiff> samples =  tpsMorpher.morphPoints(points);
-
+		System.out.println("sample size " + samples.size());
 		for (int i = 0; i < samples.size(); i++)
 		{
 			CoordDiff  sampleCoordDiff = samples.get(i);
@@ -147,33 +83,30 @@ public class PixelGrabber
 			{
 				Color color1 = new Color(resultImage.getRGB(x2, y2));
 				Color color2 = new Color(image.getRGB(x,y));
-				graphics2d.setColor(ColorUtil.getAlphaMergeColor(color1, color2));
+				Color mergeColor = ColorUtil.getAlphaMergeColor(color1, color2);
+				
+//				ColorUtil.printColor(color1);
+//				ColorUtil.printColor(color2);
+//				ColorUtil.printColor(mergeColor);
+				graphics2d.setColor(mergeColor);
 			}
 			else
 			{
 				flag[x2][y2] = true;
 				graphics2d.setColor(new Color(image.getRGB(x,y)));
 			}
-			if (isAlphaMerge)
-			{
-				graphics2d.drawRect(x2,y2, 1, 1);
-			}
-			else
-			{
-				graphics2d.fillRect(x2,y2, 1, 1);	
-			}
 			
-//			for (int j = 0; j < OFFSET_POINTS.length; j++)
+			graphics2d.drawRect(x2,y2, 1, 1);
+//			if (isAlphaMerge)
 //			{
-//				int xx = (int) (x2 + OFFSET_POINTS[j].x);
-//				int yy = (int) (y2 + OFFSET_POINTS[j].y);
-//				if (!flag[xx][yy])
-//				{
-//					flag[xx][yy] = true;
-//					graphics2d.drawRect(xx,yy,1,1);
-//				}
-//				
+//				graphics2d.drawRect(x2,y2, 1, 1);
 //			}
+//			else
+//			{
+//				graphics2d.fillRect(x2,y2, 1, 1);	
+//			}
+			
+
 		}
 		
 	}
@@ -209,6 +142,70 @@ public class PixelGrabber
 
 	}
 
+	/**
+	 *抓到需要绘制的点
+	 * */
+	public static void setSamplePoints(LibStroke libStroke, int index, int start, int end)
+	{
+		boolean [][]mask = new boolean[libStroke.width][libStroke.height];
+		BufferedImage strokeImage = new BufferedImage(libStroke.width, libStroke.height, BufferedImage.TYPE_INT_RGB);
+		Graphics2D strokeGraphics2d = strokeImage.createGraphics();
+
+		Point point12 = libStroke.leftContourPoints.get(0);
+		Point point22 = libStroke.leftContourPoints.get(0 + 1);
+
+		Point point32 = libStroke.rightContourPoints.get(0 + 1);
+		Point point42 = libStroke.rightContourPoints.get(0);
+
+		int minX2 = (int) Math.floor(Math.min(Math.min(Math.min(point12.x, point22.x), point32.x), point42.x));
+		int maxX2 = (int) Math.ceil(Math.max(Math.max(Math.max(point12.x, point22.x), point32.x), point42.x));
+		int minY2 = (int) Math.floor(Math.min(Math.min(Math.min(point12.y, point22.y), point32.y), point42.y));
+		int maxY2 = (int) Math.ceil(Math.max(Math.max(Math.max(point12.y, point22.y), point32.y), point42.y));
+
+
+		points.clear();
+		for (int i = start + 1; i < end - 1; i++)
+		{
+			Point point1 = libStroke.leftContourPoints.get(i);
+			Point point2 = libStroke.leftContourPoints.get(i + 1);
+
+			Point point3 = libStroke.rightContourPoints.get(i + 1);
+			Point point4 = libStroke.rightContourPoints.get(i);
+
+			// 获取所有四个点的最大最小的x与y值
+			int minX = (int) Math.floor(Math.min(Math.min(Math.min(point1.x, point2.x), point3.x), point4.x));
+			int maxX = (int) Math.ceil(Math.max(Math.max(Math.max(point1.x, point2.x), point3.x), point4.x));
+			int minY = (int) Math.floor(Math.min(Math.min(Math.min(point1.y, point2.y), point3.y), point4.y));
+			int maxY = (int) Math.ceil(Math.max(Math.max(Math.max(point1.y, point2.y), point3.y), point4.y));
+
+			minX = minX < 0 ? 0 : minX;
+			maxX = maxX > strokeImage.getWidth() - 1 ? strokeImage.getWidth() - 1 : maxX;
+			minY = minY < 0 ? 0 : minY;
+			maxY = maxY > strokeImage.getHeight() - 1 ? strokeImage.getHeight() - 1 : maxY;
+
+			minX2 = minX2 > minX ? minX : minX2;
+			maxX2 = maxX2 < maxX ? maxX : maxX2;
+			minY2 = minY2 > minY ? minY : minY2;
+			maxY2 = minY2 < maxY ? maxY : maxY2;
+
+			// 循环，判断是否在四边形内
+			for (int y = minY; y <= maxY; y++)
+			{
+				for (int x = minX; x <= maxX; x++)
+				{
+					if (!mask[x][y] && libStroke.tightImage.getRGB(x, y) == Global.BLACK_VALUE)
+					{
+						strokeGraphics2d.setColor(new Color(255, 255, 255));
+						strokeGraphics2d.fillRect(x, y, 1, 1);
+						points.add(new Point(x, y));
+						mask[x][y] = true;
+					}
+				}
+			}
+		}
+	}
+	
+	
 	public static boolean isPointInPolygon(Point point, Vector<Point> polygon)
 	{
 		double angle = 0;
