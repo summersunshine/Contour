@@ -12,21 +12,20 @@ import config.Global;
 //获取路径走向
 public class SpinePoints
 {
-	public static int SAMPLE_RATE = 6;
-	public static float scale = 0.6f;
-	
-	private Vector<Point> originPoints;
-	private Vector<Point> middlePoints;
-	private Vector<Point> extraPoints;
-	public Vector<Point> spinePoints;
-	public Vector<Double> angleDoubles;
-	public Vector<Double> radiusDoubles;
-	public Vector<SamplePoint> spineSamplePoints;
-	
-	
+	public static int			SAMPLE_RATE	= 6;
+	public static float			scale		= 0.6f;
+
+	private Vector<Point>		originPoints;
+	private Vector<Point>		middlePoints;
+	private Vector<Point>		extraPoints;
+	public Vector<Point>		spinePoints;
+	public Vector<Double>		angleDoubles;
+	public Vector<Double>		radiusDoubles;
+	public Vector<SamplePoint>	spineSamplePoints;
+
 	public SpinePoints(Vector<Point> points)
 	{
-		
+
 		this.middlePoints = new Vector<Point>();
 		this.extraPoints = new Vector<Point>();
 		this.spinePoints = new Vector<Point>();
@@ -41,35 +40,33 @@ public class SpinePoints
 		this.removeAssistPoint();
 		this.setSpineSamplePoints();
 	}
-	
 
-	
-	public static double getRatio(Point point1,Point point2,Point point3)
+	public static double getRatio(Point point1, Point point2, Point point3)
 	{
 		double cos = Geometry.getCos(point2.sub(point1), point3.sub(point2));
-		
-		if (cos<0)
+
+		if (cos < 0)
 		{
 			return 2;
 		}
 		else
 		{
-			return 1 + Math.sqrt(1-cos);
+			return 1 + Math.sqrt(1 - cos);
 		}
 	}
-	
+
 	private void sparsePoint(Vector<Point> points)
 	{
 		this.originPoints = new Vector<Point>();
 		for (int i = 0; i < points.size(); i++)
 		{
-			if (i%SAMPLE_RATE==0)
+			if (i % SAMPLE_RATE == 0)
 			{
 				this.originPoints.add(points.get(i));
 			}
 		}
 	}
-	
+
 	/**
 	 * 添加辅助点
 	 * */
@@ -78,14 +75,14 @@ public class SpinePoints
 		Point firstPoint = originPoints.firstElement();
 		Point secondPoint = originPoints.get(1);
 		Point tempFirstPoint = Point.getSymmetryPoint(firstPoint, secondPoint);
-		originPoints.add(0,tempFirstPoint);
+		originPoints.add(0, tempFirstPoint);
 
 		Point lastPoint = originPoints.lastElement();
 		Point lastSecondPoint = originPoints.get(originPoints.size() - 2);
 		Point tempLastPoint = Point.getSymmetryPoint(lastPoint, lastSecondPoint);
 		originPoints.add(tempLastPoint);
 	}
-	
+
 	/**
 	 * 添加辅助点
 	 * */
@@ -95,7 +92,7 @@ public class SpinePoints
 
 		originPoints.remove(originPoints.lastElement());
 	}
-	
+
 	/**
 	 * 生成中点
 	 * */
@@ -105,22 +102,21 @@ public class SpinePoints
 		for (int i = 0; i < originPoints.size() - 1; i++)
 		{
 			Point currPoint = originPoints.get(i);
-			Point nextPoint = originPoints.get(i+1);
+			Point nextPoint = originPoints.get(i + 1);
 			Point midPoint = Point.getMidPoint(currPoint, nextPoint);
 			middlePoints.add(midPoint);
 		}
 	}
-	
-	
+
 	/**
 	 * 获取额外的控制点
 	 * */
 	public void createExtraPoints()
 	{
-		for (int i = 0; i < middlePoints.size()-1; i++)
+		for (int i = 0; i < middlePoints.size() - 1; i++)
 		{
 			// 当前原始点
-			Point currOriginPoint = originPoints.get(i+1);
+			Point currOriginPoint = originPoints.get(i + 1);
 
 			// 当前的中点
 			Point currMiddlePoint = middlePoints.get(i);
@@ -141,64 +137,59 @@ public class SpinePoints
 			extraPoints.add(nextExtraPoint);
 		}
 	}
-	
+
 	public void setSpineSamplePoints()
 	{
 		radiusDoubles.add((double) 0.5);
-		for (int i = 0; i < originPoints.size()-1; i++)
+		for (int i = 0; i < originPoints.size() - 1; i++)
 		{
 			createBezierCurves(i);
 		}
 	}
-	
-	
+
 	/**
 	 * 在控制点生成*的bezier曲线上进行采样
 	 * */
 	public void createBezierCurves(int index)
 	{
-		Point[]controlPoint = new Point[4];
+		Point[] controlPoint = new Point[4];
 		controlPoint[0] = originPoints.get(index);
 		controlPoint[1] = extraPoints.get(2 * index + 1);
 		controlPoint[2] = extraPoints.get(2 * index + 2);
 		controlPoint[3] = originPoints.get(index + 1);
-		
-		//两个控制点直接的距离
+
+		// 两个控制点直接的距离
 		double length = controlPoint[0].sub(controlPoint[3]).length();
-		
-		//依据距离分成诺干等分
-		double num = Math.ceil(length/Global.SAMPLE_DIST);
-		
-		double interval = 1/num;
-		
+
+		// 依据距离分成诺干等分
+		double num = Math.ceil(length / Global.SAMPLE_DIST);
+
+		double interval = 1 / num;
+
 		double lastRadius = radiusDoubles.lastElement();
-		
+
 		double nextRadius;
-		if (index < originPoints.size()-2)
+		if (index < originPoints.size() - 2)
 		{
 			Point point1 = originPoints.get(index);
-			Point point2 = originPoints.get(index+1);
-			Point point3 = originPoints.get(index+2);
-			nextRadius = getRatio(point1,point2,point3);
+			Point point2 = originPoints.get(index + 1);
+			Point point3 = originPoints.get(index + 2);
+			nextRadius = getRatio(point1, point2, point3);
 		}
 		else
 		{
 			nextRadius = 0.5;
 		}
 
-		
 		spineSamplePoints = new Vector<SamplePoint>();
-		for (float j = 1; j >= interval/3; j -= interval)
+		for (float j = 1; j >= interval / 3; j -= interval)
 		{
 			Point point = BezierCurve.bezier3func(j, controlPoint);
-			double radius = lastRadius*j + nextRadius*(1-j);
+			double radius = lastRadius * j + nextRadius * (1 - j);
 			radiusDoubles.add(radius);
 			spinePoints.add(point);
-			//spineSamplePoints.add(new SamplePoint(point, angle));
+			// spineSamplePoints.add(new SamplePoint(point, angle));
 		}
 	}
-	
-	
-
 
 }

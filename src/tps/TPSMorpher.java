@@ -11,10 +11,10 @@ import Jama.Matrix;
 public class TPSMorpher
 {
 
-	public Matrix matrixL;
-	public Matrix matrixV;
-	public Matrix matrixK;
-	public Vector<CoordDiff> samples;
+	public Matrix				matrixL;
+	public Matrix				matrixV;
+	public Matrix				matrixK;
+	public Vector<CoordDiff>	samples;
 
 	public TPSMorpher(Vector<CoordDiff> samples, double regularization, double subsamplingFactor)
 	{
@@ -106,15 +106,10 @@ public class TPSMorpher
 		matrixV.set(p + 1, 1, 0);
 		matrixV.set(p + 2, 1, 0);
 
-
-		
 		matrixV = matrixL.solve(matrixV);
 
 	}
-	
-	
 
-	
 	public Vector<CoordDiff> morphPoints(Vector<Point> points)
 	{
 		Vector<CoordDiff> coordDiffs = new Vector<CoordDiff>();
@@ -126,7 +121,7 @@ public class TPSMorpher
 			double dx = matrixV.get(m + 0, 0) + matrixV.get(m + 1, 0) * x + matrixV.get(m + 2, 0) * y;
 			double dy = matrixV.get(m + 0, 1) + matrixV.get(m + 1, 1) * x + matrixV.get(m + 2, 1) * y;
 
-			//System.out.print("dx: " + dx + "dy: " + dy);
+			// System.out.print("dx: " + dx + "dy: " + dy);
 
 			for (int j = 0; j < m; j++)
 			{
@@ -136,8 +131,8 @@ public class TPSMorpher
 				dx += matrixV.get(j, 0) * d;
 				dy += matrixV.get(j, 1) * d;
 			}
-			
-			CoordDiff coordDiff = new CoordDiff(points.get(i).x,points.get(i).y, dx,dy);
+
+			CoordDiff coordDiff = new CoordDiff(points.get(i).x, points.get(i).y, dx, dy);
 			coordDiffs.add(coordDiff);
 		}
 		return coordDiffs;

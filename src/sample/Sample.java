@@ -10,18 +10,18 @@ public class Sample
 {
 
 	// 当前stroke库的第a个笔触
-	public int a;
+	public int		a;
 
 	// 属于stroke的第b个样例
-	public int b;
+	public int		b;
 
 	// 相对旋转点
-	public double angle;
+	public double	angle;
 
 	// 中心点特征
-	public Feature feature;
+	public Feature	feature;
 
-	public float percent;
+	public float	percent;
 
 	public Sample(Vector<Point> points, double angle, double averageR, int a, int b)
 	{

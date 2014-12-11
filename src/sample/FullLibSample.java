@@ -6,11 +6,11 @@ import java.util.Vector;
 
 public class FullLibSample extends FullSample
 {
-	public Point velocity;
+	public Point	velocity;
 
-	public Point leftVelocity;
+	public Point	leftVelocity;
 
-	public Point rightVelocity;
+	public Point	rightVelocity;
 
 	public FullLibSample(Vector<Point> points, Vector<Point> leftContourPoints, Vector<Point> rightContourPoints, double angle, double averageR, int a, int b)
 	{

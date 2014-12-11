@@ -9,7 +9,7 @@ import geometry.Point;
 public class QuerySample extends Sample
 {
 	// 距离其他的采样点的代价
-	public Vector<Cost> costs;
+	public Vector<Cost>	costs;
 
 	public QuerySample(Vector<Point> points, double angle, double averageR, int a, int b)
 	{

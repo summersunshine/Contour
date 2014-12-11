@@ -7,7 +7,7 @@ import java.util.Vector;
 public class LibSample extends Sample
 {
 
-	public Point velocity;
+	public Point	velocity;
 
 	public LibSample(Vector<Point> points, double angle, double averageR, int a, int b)
 	{

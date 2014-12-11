@@ -7,11 +7,11 @@ import java.util.Vector;
 
 public class Stroke
 {
-	public Vector<Double> dirAngle;
-	public Vector<Point> points;
-	public Vector<Point> rightContourPoints;
-	public Vector<Point> leftContourPoints;
-	protected float averageR;
+	public Vector<Double>	dirAngle;
+	public Vector<Point>	points;
+	public Vector<Point>	rightContourPoints;
+	public Vector<Point>	leftContourPoints;
+	protected float			averageR;
 
 	public Stroke()
 	{
@@ -43,6 +43,11 @@ public class Stroke
 		}
 		averageR = averageR * 2 / (points.size() + 1) / points.size();
 
+	}
+
+	public int getSize()
+	{
+		return points.size();
 	}
 
 }

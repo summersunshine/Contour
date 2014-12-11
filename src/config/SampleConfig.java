@@ -3,15 +3,15 @@ package config;
 public class SampleConfig
 {
 
-	public static final int K = 50;
+	public static final int		K				= 50;
 
-	public static final String OUTPUT_PATH = "C:\\Users\\XY\\Desktop\\Output\\";
+	public static final String	OUTPUT_PATH		= "C:\\Users\\XY\\Desktop\\Output\\";
 
-	public static final String DATABASE_PATH = "C:\\Users\\XY\\Desktop\\Dataset\\";
+	public static final String	DATABASE_PATH	= "C:\\Users\\XY\\Desktop\\Dataset\\";
 
-	public static final String SHAPE_PATH = "shape\\";
+	public static final String	SHAPE_PATH		= "shape\\";
 
-	public static final String CHARCOAR_PATH = "charcoal1\\";
+	public static final String	CHARCOAR_PATH	= "charcoal1\\";
 
 	public static String getPath(String name)
 	{

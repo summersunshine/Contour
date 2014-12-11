@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import sequence.C;
 import sequence.Segement;
+import sequence.SegementInfo;
 import stroke.LibStroke;
 import stroke.QueryStroke;
 import config.Global;
@@ -17,24 +18,28 @@ import geometry.Point;
 public class LibParser
 {
 	// 库中笔触的数目
-	public static final int STOKE_NUM = 14;
+	public static final int				STOKE_NUM	= 14;
 
 	// 库中笔触数列
-	public static Vector<LibStroke> libStrokes;
+	public static Vector<LibStroke>		libStrokes;
 
-	public static QueryStroke queryStroke;
+	public static QueryStroke			queryStroke;
 
-	public static Vector<Segement> segements;
+	public static Vector<Segement>		segements;
 
-	public boolean isRollBack;
+	public static Vector<SegementInfo>	segementInfos;
 
-	public Cost lastCost;
+	private SegementInfo				currSegementInfo;
 
-	public int currIndex;
+	public boolean						isRollBack;
 
-	public int count;
+	public Cost							lastCost;
 
-	public Vector<BufferedImage> partImages;
+	public int							currIndex;
+
+	public int							count;
+
+	public Vector<BufferedImage>		partImages;
 
 	public LibParser()
 	{
@@ -49,6 +54,11 @@ public class LibParser
 		this.count = 0;
 		segements = new Vector<Segement>();
 		segements.add(new Segement(0));
+
+		segementInfos = new Vector<SegementInfo>();
+
+		// segementInfos.add(new SegementInfo(strokeId, startLibIndex,
+		// startQueryIndex))
 	}
 
 	/**
@@ -83,9 +93,7 @@ public class LibParser
 
 		this.addFeatureData();
 
-
 		this.addTransitionData();
-
 
 		this.optimization();
 
@@ -116,7 +124,6 @@ public class LibParser
 		System.out.println("feature cal end");
 	}
 
-
 	/**
 	 * 加上Transition 数据
 	 * 
@@ -125,6 +132,10 @@ public class LibParser
 	public void addTransitionData()
 	{
 		System.out.println("transition cal begin");
+
+		lastCost = getQuerySampleCost(0, 0);
+
+		createNewSegements(lastCost.a, lastCost.b, 0);
 
 		for (currIndex = 1; currIndex < queryStroke.querySamples.size(); currIndex++)
 		{
@@ -237,27 +248,35 @@ public class LibParser
 
 		if (a != lastA)
 		{
-			createNewSegements(a, b);
+			createNewSegements(a, b, currIndex);
 		}
 		else
 		{
-			addSegementPoints(a, b);
+			addSegementPoints(a, b, currIndex);
 		}
 
 	}
 
 	// 创建一段新的stroke
-	private void createNewSegements(int a, int b)
+	private void createNewSegements(int a, int b, int queryIndex)
 	{
 		count = 0;
 
 		Segement segement = new Segement(currIndex);
 		segement.add(new C(a, b));
 		segements.add(segement);
+
+		if (currSegementInfo != null)
+		{
+			segementInfos.add(currSegementInfo);
+		}
+
+		currSegementInfo = new SegementInfo(a, b, queryIndex);
+
 	}
 
 	// 在stroke后加点
-	private void addSegementPoints(int a, int b)
+	private void addSegementPoints(int a, int b, int queryIndex)
 	{
 		count++;
 
@@ -265,6 +284,9 @@ public class LibParser
 		segements.lastElement().add(new C(a, b));
 		segements.lastElement().lastIndexOfLib = libStrokes.get(a).points.size() - 1;
 		segements.lastElement().endStroke(currIndex);
+
+		currSegementInfo.addBack(1);
+
 	}
 
 	/********************************* 结束处理segement *************************************************/
@@ -275,7 +297,7 @@ public class LibParser
 	public void optimization()
 	{
 		handStortSegement();
-		//handEndPoint();
+		// handEndPoint();
 		extent();
 
 	}
@@ -287,11 +309,28 @@ public class LibParser
 			if (i != 0)
 			{
 				segements.get(i).addFront(Penalty.TranArea);
+				// segementInfos.get(i).addFront(Penalty.TranArea);
+
 			}
 
 			if (i != segements.size() - 1)
 			{
 				segements.get(i).addBack(Penalty.TranArea);
+				// segementInfos.get(i).addBack(Penalty.TranArea);
+			}
+		}
+
+		for (int i = 0; i < segementInfos.size(); i++)
+		{
+			if (i != 0)
+			{
+				segementInfos.get(i).addFront(Penalty.TranArea);
+
+			}
+
+			if (i != segements.size() - 1)
+			{
+				segementInfos.get(i).addBack(Penalty.TranArea);
 			}
 		}
 	}

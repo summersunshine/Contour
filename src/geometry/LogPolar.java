@@ -6,10 +6,10 @@ package geometry;
 public class LogPolar
 {
 
-	public float p;
+	public float	p;
 
 	// È¡Öµ·¶Î§ 0-360
-	public float angle;
+	public float	angle;
 
 	public LogPolar(Point point, double referenceAngle)
 	{

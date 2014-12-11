@@ -28,7 +28,6 @@ public class LibStrokeUtil
 		String path = SampleConfig.OUTPUT_PATH + libStroke.index + "\\" + "sample.jpg";
 
 		ImageUtil.saveImage(image, path);
-		
 
 	}
 

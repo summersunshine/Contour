@@ -21,9 +21,7 @@ import config.SampleConfig;
 public class LibParserUtil
 {
 
-	
-	public static Vector<Vector<CoordDiff>> vectors = new Vector<Vector<CoordDiff>>();
-
+	public static Vector<Vector<CoordDiff>>	vectors	= new Vector<Vector<CoordDiff>>();
 
 	public static void saveTxt(String content, String path)
 	{
@@ -45,7 +43,6 @@ public class LibParserUtil
 
 	}
 
-
 	public static void drawStrokeSegements(String dir, Vector<Segement> segements, Vector<LibStroke> libStrokes, QueryStroke queryStroke)
 	{
 		File file = new File(SampleConfig.OUTPUT_PATH + dir);
@@ -56,24 +53,28 @@ public class LibParserUtil
 		}
 
 		vectors.clear();
-		for (int i = 0; i < segements.size(); i++)
+		for (int i = 0; i < LibParser.segementInfos.size(); i++)
 		{
 
 			drawStrokeSegement(i, dir, segements, libStrokes, queryStroke);
 		}
 
 		saveTxt(segements.size() + "\r\n", SampleConfig.OUTPUT_PATH + dir + "num.txt");
-		PixelGrabber.saveResultImage(SampleConfig.OUTPUT_PATH + "After\\alpha",true);
-		
+		PixelGrabber.saveResultImage(SampleConfig.OUTPUT_PATH + "After\\alpha", true);
+		PixelGrabber.saveResultImage(SampleConfig.OUTPUT_PATH + "After\\alpha");
+
 		BufferedImage resultFalseImage = ImageUtil.getConverterImage(PixelGrabber.alphaImage, Global.BRUSH_COLOR);
 		ImageUtil.saveImage(resultFalseImage, SampleConfig.OUTPUT_PATH + "After\\result.jpg");
-		
-		
-//		PixelGrabber.saveResultImage(SampleConfig.OUTPUT_PATH + "After\\alpha.jpg",true);
-//		
-//		BufferedImage resultImage = ImageUtil.getConverterImage(PixelGrabber.resultImage, Global.BRUSH_COLOR);
-//		ImageUtil.saveImage(resultImage, SampleConfig.OUTPUT_PATH + "After\\result.jpg");
-		
+
+		// PixelGrabber.saveResultImage(SampleConfig.OUTPUT_PATH +
+		// "After\\alpha.jpg",true);
+		//
+		// BufferedImage resultImage =
+		// ImageUtil.getConverterImage(PixelGrabber.resultImage,
+		// Global.BRUSH_COLOR);
+		// ImageUtil.saveImage(resultImage, SampleConfig.OUTPUT_PATH +
+		// "After\\result.jpg");
+
 	}
 
 	public static void drawStrokeSegement(int i, String dir, Vector<Segement> segements, Vector<LibStroke> libStrokes, QueryStroke queryStroke)
@@ -87,22 +88,31 @@ public class LibParserUtil
 
 		vectors.add(new Vector<CoordDiff>());
 
-		int startIndex = segements.get(i).startIndexOfQuery;
-		String context = "";
-		for (int j = 0; j < segements.get(i).cs.size(); j++)
+		// int startIndex = segements.get(i).startIndexOfQuery;
+		// String context = "";
+		// for (int j = 0; j < segements.get(i).cs.size(); j++)
+		// {
+		// int a = segements.get(i).cs.get(j).a;
+		// int b = segements.get(i).cs.get(j).b;
+		//
+		// context += getLineContent(libStrokes, queryStroke, a, b, startIndex +
+		// j);
+		//
+		// drawPoints(graphics2d, libStrokes, a, b);
+		//
+		// }
+
+		for (int j = 0; j < LibParser.segementInfos.get(i).libPoints.size(); j++)
 		{
-			int a = segements.get(i).cs.get(j).a;
-			int b = segements.get(i).cs.get(j).b;
-
-			context += getLineContent(libStrokes, queryStroke, a, b, startIndex + j);
-
-			drawPoints(graphics2d, libStrokes, a, b);
-
+			LibParser.segementInfos.get(i).libPoints.get(j).drawPoint(graphics2d, Color.RED);
+			LibParser.segementInfos.get(i).libLeftPoints.get(j).drawPoint(graphics2d, Color.RED);
+			LibParser.segementInfos.get(i).libRightPoints.get(j).drawPoint(graphics2d, Color.RED);
 		}
 
 		ImageUtil.saveImage(image, SampleConfig.OUTPUT_PATH + dir + i + "_" + index + "sample.jpg");
 
-		LibParserUtil.saveTxt(context, SampleConfig.OUTPUT_PATH + dir + i + ".txt");
+		// LibParserUtil.saveTxt(context, SampleConfig.OUTPUT_PATH + dir + i +
+		// ".txt");
 
 	}
 
@@ -126,9 +136,8 @@ public class LibParserUtil
 		content += (int) libStrokes.get(a).rightContourPoints.get(b).x + " " + (int) libStrokes.get(a).rightContourPoints.get(b).y + " "
 				+ (int) queryStroke.rightContourPoints.get(queryIndex).x + " " + (int) queryStroke.rightContourPoints.get(queryIndex).y + "\r\n";
 
-		
-		vectors.lastElement().add(new CoordDiff(libStrokes.get(a).leftContourPoints.get(b),queryStroke.leftContourPoints.get(queryIndex)));
-		vectors.lastElement().add(new CoordDiff(libStrokes.get(a).rightContourPoints.get(b),queryStroke.rightContourPoints.get(queryIndex)));
+		vectors.lastElement().add(new CoordDiff(libStrokes.get(a).leftContourPoints.get(b), queryStroke.leftContourPoints.get(queryIndex)));
+		vectors.lastElement().add(new CoordDiff(libStrokes.get(a).rightContourPoints.get(b), queryStroke.rightContourPoints.get(queryIndex)));
 		return content;
 
 	}

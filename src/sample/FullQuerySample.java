@@ -10,7 +10,7 @@ public class FullQuerySample extends FullSample
 {
 
 	// 距离其他的采样点的代价
-	public Vector<Cost> costs;
+	public Vector<Cost>	costs;
 
 	// // 距离其他的采样点的代价
 	// public Vector<Cost> leftCosts;

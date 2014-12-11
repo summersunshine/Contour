@@ -18,14 +18,14 @@ import config.GuiConfig;
 
 public class MainFrame extends JFrame implements ActionListener, AdjustmentListener, MouseMotionListener
 {
-	private DrawingPanel drawingPanel;
-	private JButton saveButton;
-	private JButton clearButton;
-	private JButton lastButton;
-	private JButton nextButton;
+	private DrawingPanel	drawingPanel;
+	private JButton			saveButton;
+	private JButton			clearButton;
+	private JButton			lastButton;
+	private JButton			nextButton;
 
-	private JScrollBar indexScrollBar;
-	private JLabel indexLabel;
+	private JScrollBar		indexScrollBar;
+	private JLabel			indexLabel;
 
 	public MainFrame()
 	{
@@ -128,7 +128,8 @@ public class MainFrame extends JFrame implements ActionListener, AdjustmentListe
 
 		if (event.getSource() == saveButton)
 		{
-		//	LibParserUtil.saveResultImage(SampleConfig.OUTPUT_PATH + "After\\result.jpg");
+			// LibParserUtil.saveResultImage(SampleConfig.OUTPUT_PATH +
+			// "After\\result.jpg");
 		}
 
 		if (event.getSource() == nextButton)
@@ -155,7 +156,7 @@ public class MainFrame extends JFrame implements ActionListener, AdjustmentListe
 
 	}
 
-	private static MainFrame mainFrame;
+	private static MainFrame	mainFrame;
 
 	public static MainFrame getInstance()
 	{

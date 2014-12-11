@@ -11,25 +11,25 @@ import config.SampleConfig;
 
 public class Feature
 {
-	public static boolean isLoadBegin = false;
+	public static boolean	isLoadBegin	= false;
 
 	// 当前stroke库的第a个笔触
-	public int a;
+	public int				a;
 
 	// 属于stroke的第b个样例
-	public int b;
+	public int				b;
 
-	public double angle;
+	public double			angle;
 
-	public double maxR;
+	public double			maxR;
 
 	// 当前点之前的shapeConext
-	public ShapeContext historyShapeConext;
+	public ShapeContext		historyShapeConext;
 
 	// 当前点之后的shapecontext
-	public ShapeContext futureShapeConext;
+	public ShapeContext		futureShapeConext;
 
-	public Vector<Point> points;
+	public Vector<Point>	points;
 
 	public Feature(Vector<Point> points, double angle, double maxR, int a, int b)
 	{

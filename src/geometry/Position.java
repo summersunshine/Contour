@@ -5,11 +5,11 @@ import java.awt.Graphics2D;
 
 public class Position
 {
-	public Point spinePoint;
+	public Point	spinePoint;
 
-	public Point rightPoint;
+	public Point	rightPoint;
 
-	public Point leftPoint;
+	public Point	leftPoint;
 
 	public Position(Point spinePoint, Point rightPoint, Point leftPoint)
 	{

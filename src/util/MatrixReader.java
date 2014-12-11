@@ -8,7 +8,7 @@ import java.io.IOException;
 public class MatrixReader
 {
 
-	public static String FILE_PATH = "C:\\Users\\XY\\Desktop\\OutPut\\After\\matrix";
+	public static String	FILE_PATH	= "C:\\Users\\XY\\Desktop\\OutPut\\After\\matrix";
 
 	@SuppressWarnings("resource")
 	public static double[][] getMaxtrix(int index)

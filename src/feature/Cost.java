@@ -5,27 +5,27 @@ import java.util.Comparator;
 public class Cost
 {
 	// 当前stroke库的第a个笔触
-	public int a;
+	public int		a;
 
 	// 属于stroke的第b个样例
-	public int b;
+	public int		b;
 
 	// 查询的第i个样例
-	public int i;
+	public int		i;
 
 	// 特征的惩罚
-	public float ef;
+	public float	ef;
 
 	// 转换的惩罚
-	public float et;
+	public float	et;
 
 	// 短段落的惩罚
-	public float es;
+	public float	es;
 
 	// 端点的惩罚
-	public float ee;
+	public float	ee;
 
-	public float totalPenalty;
+	public float	totalPenalty;
 
 	public Cost(int a, int b, int i, float distance)
 	{

@@ -9,13 +9,13 @@ import config.Penalty;
 
 public class Segement
 {
-	public int lastIndexOfLib;
-	public int startIndexOfQuery;
-	public int endIndexOfQuery;
-	public int startIndexOfLib;
-	public int endIndexOfLib;
+	public int			lastIndexOfLib;
+	public int			startIndexOfQuery;
+	public int			endIndexOfQuery;
+	public int			startIndexOfLib;
+	public int			endIndexOfLib;
 
-	public Vector<C> cs;
+	public Vector<C>	cs;
 
 	public Segement(int startIndex)
 	{
@@ -43,7 +43,7 @@ public class Segement
 		int a = this.cs.lastElement().a;
 		int b = this.cs.lastElement().b;
 		int count = 0;
-		while (this.cs.lastElement().b < lastIndexOfLib-1)
+		while (this.cs.lastElement().b < lastIndexOfLib - 1)
 		{
 			startIndexOfQuery--;
 			this.cs.add(new C(a, b + count + 1));
@@ -59,11 +59,12 @@ public class Segement
 
 		for (int i = 0; i < size; i++)
 		{
-			if (this.cs.lastElement().b < lastIndexOfLib-1)
+			if (this.cs.lastElement().b < lastIndexOfLib - 1)
 			{
 				endIndexOfQuery++;
 				this.cs.add(new C(a, b + i + 1));
-				//System.out.println("add Back a: " + cs.lastElement().a + " b: " + cs.lastElement().b);
+				// System.out.println("add Back a: " + cs.lastElement().a +
+				// " b: " + cs.lastElement().b);
 			}
 
 		}
@@ -80,7 +81,8 @@ public class Segement
 			{
 				startIndexOfQuery--;
 				this.cs.add(0, new C(a, b - i - 1));
-				//System.out.println("add Front a: " + cs.firstElement().a + " b: " + cs.firstElement().b);
+				// System.out.println("add Front a: " + cs.firstElement().a +
+				// " b: " + cs.firstElement().b);
 			}
 		}
 	}
@@ -93,7 +95,8 @@ public class Segement
 			{
 				endIndexOfQuery--;
 				this.cs.remove(this.cs.lastElement());
-				//System.out.println("remove Back a: " + cs.lastElement().a + " b: " + cs.lastElement().b);
+				// System.out.println("remove Back a: " + cs.lastElement().a +
+				// " b: " + cs.lastElement().b);
 			}
 
 		}
@@ -107,7 +110,8 @@ public class Segement
 			{
 				startIndexOfQuery++;
 				this.cs.remove(this.cs.firstElement());
-				//System.out.println("remove Front a: " + cs.firstElement().a + " b: " + cs.firstElement().b);
+				// System.out.println("remove Front a: " + cs.firstElement().a +
+				// " b: " + cs.firstElement().b);
 
 			}
 

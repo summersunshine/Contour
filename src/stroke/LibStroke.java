@@ -17,34 +17,34 @@ import config.SampleConfig;
 public class LibStroke extends Stroke
 {
 	// 数据中每一行的数据量
-	public static final int digitNums = 12;
+	public static final int		digitNums	= 12;
 
 	// 源图像的款
-	public int width;
+	public int					width;
 	// 源图像的高
-	public int height;
+	public int					height;
 
-	public BufferedImage sourceImage;
+	public BufferedImage		sourceImage;
 
-	public BufferedImage alphaImage;
+	public BufferedImage		alphaImage;
 
-	public BufferedImage tightImage;
+	public BufferedImage		tightImage;
 
 	// 库中的第index个笔触
-	public int index;
+	public int					index;
 
 	// 输出的文本路径
-	private String txtPathString;
+	private String				txtPathString;
 
 	// 输出的图像路径
-	private String imgPathString;
+	private String				imgPathString;
 
 	// 图像掩码路径
-	private String tightMaskString;
+	private String				tightMaskString;
 
-	private String alphaMaskString;
+	private String				alphaMaskString;
 
-	public Vector<LibSample> libSamples;
+	public Vector<LibSample>	libSamples;
 
 	public LibStroke(String name, int index)
 	{

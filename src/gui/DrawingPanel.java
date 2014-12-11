@@ -27,19 +27,19 @@ import config.SampleConfig;
 public class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener
 {
 	// 当前点的索引
-	public static int currentIndex;
+	public static int		currentIndex;
 
-	private LibParser libParser;
-	private QueryStroke queryStroke;
+	private LibParser		libParser;
+	private QueryStroke		queryStroke;
 
-	private Vector<Point> points;
-	private Vector<Double> angleDoubles;
-	private Vector<Point> leftContourPoints;
-	private Vector<Point> rightContourPoints;
-	private SpinePoints spinePoints;
-	private boolean clearFlag;
+	private Vector<Point>	points;
+	private Vector<Double>	angleDoubles;
+	private Vector<Point>	leftContourPoints;
+	private Vector<Point>	rightContourPoints;
+	private SpinePoints		spinePoints;
+	private boolean			clearFlag;
 
-	private JLabel posLabel;
+	private JLabel			posLabel;
 
 	public DrawingPanel()
 	{
@@ -110,22 +110,20 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 		spinePoints = new SpinePoints(points);
 		points = spinePoints.spinePoints;
 		angleDoubles = spinePoints.angleDoubles;
-		//points = UniformSample.normalize(points, 6);
-		//points = Geometry.removeClose(points, 6);
+		// points = UniformSample.normalize(points, 6);
+		// points = Geometry.removeClose(points, 6);
 
 		BufferedImage maskImage = MaskGenerator.getImage(spinePoints);
 		ImageUtil.saveImage(maskImage, SampleConfig.OUTPUT_PATH + "After\\mask.jpg");
-		
-		
-		
+
 		BufferedImage contourImage = EdgeDetector.getImage(maskImage);
 		ImageUtil.saveImage(contourImage, SampleConfig.OUTPUT_PATH + "After\\contour.jpg");
-		
+
 		EdgeDetector.getEdgePoints(contourImage, spinePoints);
 		leftContourPoints = EdgeDetector.leftCountourPoints;
-		rightContourPoints  = EdgeDetector.rightCountourPoints;
-		//leftContourPoints = Geometry.getContourPoints(points, 20.0f, true);
-		//rightContourPoints = Geometry.getContourPoints(points, -20.0f, true);
+		rightContourPoints = EdgeDetector.rightCountourPoints;
+		// leftContourPoints = Geometry.getContourPoints(points, 20.0f, true);
+		// rightContourPoints = Geometry.getContourPoints(points, -20.0f, true);
 
 		// 依据points的数目
 		MainFrame.getInstance().initScorllBar(points.size());
@@ -148,7 +146,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 
 		this.drawStrokeSample(graphics2d);
 
-		queryStroke = new QueryStroke(points,angleDoubles, rightContourPoints, leftContourPoints);
+		queryStroke = new QueryStroke(points, angleDoubles, rightContourPoints, leftContourPoints);
 
 		queryStroke.drawShapeContext(graphics2d, 0);
 

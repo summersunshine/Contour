@@ -7,45 +7,45 @@ import java.util.Vector;
 
 public class ShapeContext
 {
-	public static final double[] POW_DOUBLES = { 1.0, 0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625 };
+	public static final double[]	POW_DOUBLES		= { 1.0, 0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625 };
 
-	public static final int TYPE_HISTORY = 0;
-	public static final int TYPE_FUTURE = 1;
-	public static final int TYPE_NORMAL = 2;
+	public static final int			TYPE_HISTORY	= 0;
+	public static final int			TYPE_FUTURE		= 1;
+	public static final int			TYPE_NORMAL		= 2;
 
 	// 窗口大小
-	public static final int winSize = 30;
+	public static final int			winSize			= 30;
 
 	// 径向分割的区域数目
-	public static final int pBins = 5;
+	public static final int			pBins			= 5;
 
 	// 角度方向分割的区域数目
-	public static final int angleBins = 6;
+	public static final int			angleBins		= 6;
 
 	// 原点的下标（索引）
-	private int sourceIndex;
+	private int						sourceIndex;
 
 	// 原点的坐标
-	public Point sourcePoint;
+	public Point					sourcePoint;
 
 	// 其他点的对数极坐标
-	private Vector<LogPolar> logPolars;
+	private Vector<LogPolar>		logPolars;
 
 	// 其他点的xy坐标
-	private Vector<Point> points;
+	private Vector<Point>			points;
 
-	public double maxR;
+	public double					maxR;
 
 	// 参考坐标系的角度
-	public double angle;
+	public double					angle;
 
 	// 统计数据
-	public int[][] statistics = new int[pBins][angleBins];
+	public int[][]					statistics		= new int[pBins][angleBins];
 
-	private float averageAngle;
-	private int meaningfulCount;
-	private int type;
-	public Point startPoint;
+	private float					averageAngle;
+	private int						meaningfulCount;
+	private int						type;
+	public Point					startPoint;
 
 	/**
 	 * 构造函数

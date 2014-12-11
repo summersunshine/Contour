@@ -8,10 +8,10 @@ import java.util.Vector;
 public class Point
 {
 	// x坐标
-	public double x;
+	public double	x;
 
 	// y坐标
-	public double y;
+	public double	y;
 
 	/**
 	 * 构造函数
@@ -54,7 +54,7 @@ public class Point
 		this.x = point.x;
 		this.y = point.y;
 	}
-	
+
 	public Point()
 	{
 		this.x = 0;
@@ -63,14 +63,14 @@ public class Point
 
 	public int getIntX()
 	{
-		return (int)x;
+		return (int) x;
 	}
-	
+
 	public int getIntY()
 	{
-		return (int)y;
+		return (int) y;
 	}
-	
+
 	public boolean equal(Point point)
 	{
 		return (int) point.x == (int) x && (int) point.y == (int) y;
@@ -80,7 +80,7 @@ public class Point
 	{
 		return x * x + y * y;
 	}
-	
+
 	public double length()
 	{
 		return Math.sqrt(x * x + y * y);
