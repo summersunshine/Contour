@@ -19,6 +19,8 @@ public class LibStroke extends Stroke
 	// 数据中每一行的数据量
 	public static final int		digitNums	= 12;
 
+	public float				sampleDist;
+
 	// 源图像的款
 	public int					width;
 	// 源图像的高
@@ -58,9 +60,8 @@ public class LibStroke extends Stroke
 		this.readFile();
 		this.calDirAngle();
 		this.setAverageR();
-		// LibStrokeUtil.createStrokeSampleImage(this);
 		this.initLibSample();
-
+		this.calAverageSampleDist();
 	}
 
 	/**
@@ -74,6 +75,16 @@ public class LibStroke extends Stroke
 		{
 			libSamples.add(new LibSample(points, dirAngle.get(i), averageR, index, i));
 		}
+	}
+
+	private void calAverageSampleDist()
+	{
+		sampleDist = 0;
+		for (int i = 0; i < points.size() - 1; i++)
+		{
+			sampleDist += points.get(i).sub(points.get(i + 1)).length();
+		}
+		sampleDist /= (points.size() - 1);
 	}
 
 	/**

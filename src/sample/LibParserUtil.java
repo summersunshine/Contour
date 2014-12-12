@@ -57,8 +57,8 @@ public class LibParserUtil
 
 		PixelGrabber.saveResultImage(SampleConfig.OUTPUT_PATH + "After\\alpha");
 
-		BufferedImage resultFalseImage = ImageUtil.getConverterImage(PixelGrabber.alphaImage, Global.BRUSH_COLOR);
-		ImageUtil.saveImage(resultFalseImage, SampleConfig.OUTPUT_PATH + "After\\result.jpg");
+		LibParser.resultImage = ImageUtil.getConverterImage(PixelGrabber.alphaImage, Global.BRUSH_COLOR);
+		ImageUtil.saveImage(LibParser.resultImage, SampleConfig.OUTPUT_PATH + "After\\result.jpg");
 
 		// PixelGrabber.saveResultImage(SampleConfig.OUTPUT_PATH +
 		// "After\\alpha.jpg",true);
@@ -97,7 +97,7 @@ public class LibParserUtil
 	
 
 
-	private static void drawPoints(Graphics2D graphics2d, Vector<LibStroke> libStrokes, int a, int b)
+	public static void drawPoints(Graphics2D graphics2d, Vector<LibStroke> libStrokes, int a, int b)
 	{
 
 		libStrokes.get(a).points.get(b).drawPoint(graphics2d, Color.RED);
@@ -105,7 +105,7 @@ public class LibParserUtil
 		libStrokes.get(a).leftContourPoints.get(b).drawPoint(graphics2d, Color.BLUE);
 	}
 
-	private static String getLineContent(Vector<LibStroke> libStrokes, QueryStroke queryStroke, int a, int b, int queryIndex)
+	public static String getLineContent(Vector<LibStroke> libStrokes, QueryStroke queryStroke, int a, int b, int queryIndex)
 	{
 		String content = "";
 		content += (int) libStrokes.get(a).points.get(b).x + " " + (int) libStrokes.get(a).points.get(b).y + " " + (int) queryStroke.points.get(queryIndex).x

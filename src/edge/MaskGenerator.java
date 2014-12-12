@@ -42,7 +42,7 @@ public class MaskGenerator
 		{
 			double radius = Global.BRUSH_WDITH * spinePoints.radiusDoubles.get(i);
 			Point point = spinePoints.spinePoints.get(i);
-			updateImage(image, (int) point.x, (int) point.y, (int) Global.BRUSH_WDITH);
+			updateImage(image, (int) point.x, (int) point.y, (int) radius);
 		}
 
 		return image;

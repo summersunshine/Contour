@@ -14,7 +14,23 @@ public class Global
 
 	public static float		BRUSH_WDITH	= 20;
 
-	public static Color		BRUSH_COLOR	= new Color(255, 255, 255);
+	public static String[]	strokelibaries	=
+											{ "charcoal1", "charcoal2", "dry_watercolor", "fingercolor1", "glitter", "lipcolor1", "lipcolor2", "lipcolor3",
+			"lipstick1", "marker1", "mixedGel", "oil0", "oil1", "oil2", "pastel1", "pencil", "pencilSmudged", "playdoh", "toothpaste1", "watercolor1",
+			"watercolor2"					};
 
-	public static String	Libary		= "pencil";
+	public static String	Libary			= "pencilSmudged";
+
+
+	
+	public static String[]	colorStrings	=
+											{ "BLUE","BLACK","CYAN","DARK_GRAY","GRAY","GREEN","LIGHT_GRAY","MAGENTA",
+ "ORANGE", "PINK", "RED", "YELLOW" };
+	
+	public static Color[]	brushColors		=
+											{ Color.BLUE, Color.BLACK, Color.CYAN, Color.DARK_GRAY, Color.GRAY, Color.GREEN, Color.LIGHT_GRAY, Color.MAGENTA,
+			Color.ORANGE, Color.PINK, Color.RED, Color.YELLOW };
+
+	public static Color		BRUSH_COLOR		= brushColors[0];
+
 }

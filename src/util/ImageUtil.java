@@ -87,40 +87,17 @@ public class ImageUtil
 
 	public static BufferedImage getConverterImage(BufferedImage alphaMaskImage, Color brushColor)
 	{
-		// double L = 80;
-		double[] brushLAB = ColorUtil.RGB2Lab2(brushColor);
-
-		System.out.println(brushLAB[0]);
-		System.out.println(brushLAB[1]);
-		System.out.println(brushLAB[2]);
 
 		for (int y = 0; y < Global.height; y++)
 		{
 			for (int x = 0; x < Global.width; x++)
 			{
-				// Color color = new Color(alphaMaskImage.getRGB(x, y));
-				// double [] LAB = ColorUtil.RGB2Lab2(color);
-				//
-				// double L = (color.getRed()+color.getGreen() +
-				// color.getBlue())*100/255/3;
-				// double alpha = (100-L)/100;
-				// LAB[0] = 100-L;
-				// LAB[1] = alpha*brushLAB[1];
-				// LAB[2] = alpha*brushLAB[2];
-				// Color newColor = ColorUtil.Lab2RGB2(LAB);
-				// alphaMaskImage.setRGB(x, y,newColor.getRGB());
 
 				Color color = new Color(alphaMaskImage.getRGB(x, y));
 				double alpha = (color.getRed() + color.getGreen() + color.getBlue()) / 255f / 3;
-				// int r = (int) (brushColor.getRed()*alpha +
-				// (1-alpha)*(255-brushColor.getRed()));
-				// int g = (int) (brushColor.getGreen()*alpha +
-				// (1-alpha)*(255-brushColor.getGreen()));
-				// int b = (int) (brushColor.getBlue()*alpha +
-				// (1-alpha)*(255-brushColor.getBlue()));
-				int r = (int) (255 - brushColor.getRed() * alpha);
-				int g = (int) (255 - brushColor.getGreen() * alpha);
-				int b = (int) (255 - brushColor.getBlue() * alpha);
+				int r = (int) (255 - (255 - brushColor.getRed()) * alpha);
+				int g = (int) (255 - (255 - brushColor.getGreen()) * alpha);
+				int b = (int) (255 - (255 - brushColor.getBlue()) * alpha);
 
 				alphaMaskImage.setRGB(x, y, ImageUtil.getRGB(r, g, b));
 			}

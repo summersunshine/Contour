@@ -140,7 +140,7 @@ public class SpinePoints
 
 	public void setSpineSamplePoints()
 	{
-		radiusDoubles.add((double) 0.5);
+		radiusDoubles.add((double) 0.3);
 		for (int i = 0; i < originPoints.size() - 1; i++)
 		{
 			createBezierCurves(i);

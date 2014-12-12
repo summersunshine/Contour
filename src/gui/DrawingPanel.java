@@ -3,7 +3,6 @@ package gui;
 import edge.EdgeDetector;
 import edge.MaskGenerator;
 import edge.SpinePoints;
-import edge.UniformSample;
 import geometry.Point;
 
 import java.awt.Color;
@@ -44,6 +43,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	public DrawingPanel()
 	{
 		initPosLabel();
+
 		this.setBounds(GuiConfig.DRAWING_RECTANGLE);
 		this.setVisible(true);
 		this.addMouseListener(this);
@@ -99,7 +99,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 
 		DrawingPanel.currentIndex = (DrawingPanel.currentIndex + dir) % points.size();
 
-		this.queryStroke.drawShapeContext(graphics2d, currentIndex);
+		// this.queryStroke.drawShapeContext(graphics2d, currentIndex);
 	}
 
 	/**
@@ -148,9 +148,11 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 
 		queryStroke = new QueryStroke(points, angleDoubles, rightContourPoints, leftContourPoints);
 
-		queryStroke.drawShapeContext(graphics2d, 0);
+		// queryStroke.drawShapeContext(graphics2d, 0);
 
 		libParser.compareWithQueryStroke(queryStroke);
+
+		getGraphics().drawImage(LibParser.resultImage, 0, 0, 1280, 720, null);
 
 		clearFlag = false;
 	}
@@ -198,6 +200,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 
 		points.add(new Point(x, y));
 	}
+
 
 	private void initPosLabel()
 	{

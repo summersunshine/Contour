@@ -5,15 +5,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollBar;
 import javax.swing.UIManager;
 
+import sample.LibParser;
+import config.Global;
 import config.GuiConfig;
 
 public class MainFrame extends JFrame implements ActionListener, AdjustmentListener, MouseMotionListener
@@ -33,6 +38,8 @@ public class MainFrame extends JFrame implements ActionListener, AdjustmentListe
 		initDrawingPanel();
 		initClearButton();
 		initSaveButton();
+		initStrokeCombBox();
+		initColorCombBox();
 		// initLastButton();
 		// initNextButton();
 		this.addMouseMotionListener(this);
@@ -46,6 +53,53 @@ public class MainFrame extends JFrame implements ActionListener, AdjustmentListe
 		this.setResizable(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setBackground(Color.white);
+	}
+
+	private void initColorCombBox()
+	{
+		final JComboBox choice = new JComboBox(Global.colorStrings);
+		choice.addItemListener(new ItemListener()
+		{
+
+			@Override
+			public void itemStateChanged(ItemEvent event)
+			{
+				// TODO Auto-generated method stub
+				if (event.getStateChange() == 1)
+				{
+					// label.setText(ie.getItem().toString());
+					Global.BRUSH_COLOR = Global.brushColors[choice.getSelectedIndex()];
+
+				}
+			}
+		});
+		choice.setBounds(1000, 0, 100, 50);
+		this.add(choice);
+		choice.repaint();
+	}
+
+	private void initStrokeCombBox()
+	{
+
+		final JComboBox choice = new JComboBox(Global.strokelibaries);
+		choice.addItemListener(new ItemListener()
+		{
+
+			@Override
+			public void itemStateChanged(ItemEvent event)
+			{
+				// TODO Auto-generated method stub
+				if (event.getStateChange() == 1)
+				{
+					// label.setText(ie.getItem().toString());
+					Global.Libary = Global.strokelibaries[choice.getSelectedIndex()];
+					LibParser.loadLibary();
+				}
+			}
+		});
+		choice.setBounds(900, 0, 100, 50);
+		this.add(choice);
+		choice.repaint();
 	}
 
 	private void initDrawingPanel()

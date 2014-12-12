@@ -1,5 +1,6 @@
 package sample;
 
+import java.awt.image.BufferedImage;
 import java.util.Vector;
 
 import sequence.SegementInfo;
@@ -24,6 +25,8 @@ public class LibParser
 
 	public static Vector<SegementInfo>	segementInfos;
 
+	public static BufferedImage			resultImage;
+
 	private SegementInfo				currSegementInfo;
 
 
@@ -31,17 +34,15 @@ public class LibParser
 
 	public int							currIndex;
 
-	public int							count;
 
 	public LibParser()
 	{
 		this.initStrokeInfos();
-		this.initLibStrokes();
+		LibParser.loadLibary();
 	}
 
 	public void initStrokeInfos()
 	{
-		this.count = 0;
 		this.currSegementInfo = null;
 		segementInfos = new Vector<SegementInfo>();
 	}
@@ -49,17 +50,22 @@ public class LibParser
 	/**
 	 * 载入笔触库中笔触
 	 * */
-	public void initLibStrokes()
+	public static void loadLibary()
 	{
 		// System.out.println("LibParser.initLibStrokes() begin");
 		LibParser.libStrokes = new Vector<LibStroke>();
+		int sum = 0;
 		for (int i = 0; i < STOKE_NUM; i++)
 		{
-			LibParser.libStrokes.add(new LibStroke(Global.Libary, i));
+			LibStroke libStroke = new LibStroke(Global.Libary, i);
+			sum += libStroke.sampleDist;
+			LibParser.libStrokes.add(libStroke);
 			System.out.println("parse stroke " + i);
 		}
 
+		Global.SAMPLE_DIST = (int) (sum / STOKE_NUM / 1.5);
 		Feature.isLoadBegin = false;
+		System.out.println(Global.SAMPLE_DIST);
 		// System.out.println("LibParser.initLibStrokes() end");
 	}
 
@@ -202,7 +208,7 @@ public class LibParser
 		Point v1 = getLibSampleVelocity(lastA, lastB);
 		Point v2 = getLibSampleVelocity(a, b);
 
-		float ratio = count < Penalty.Lmin ? 1 : Penalty.Lmin / 1.33f / count + 0.25f;
+		float ratio = currSegementInfo.getSize() < Penalty.Lmin ? 1 : Penalty.Lmin / 1.33f / currSegementInfo.getSize() + 0.25f;
 
 		return (float) ((Penalty.Ct + Penalty.Cp * (1 - Geometry.getCos(v1, v2))) * ratio);
 
@@ -245,7 +251,6 @@ public class LibParser
 	// 创建一段新的stroke
 	private void createNewSegements(int a, int b, int queryIndex)
 	{
-		count = 0;
 
 		if (currSegementInfo != null)
 		{
@@ -260,7 +265,6 @@ public class LibParser
 	// 在stroke后加点
 	private void addSegementPoints(int a, int b, int queryIndex)
 	{
-		count++;
 		currSegementInfo.addBack(1);
 
 	}
@@ -272,7 +276,7 @@ public class LibParser
 	// 优化序列
 	public void optimization()
 	{
-		handStortSegement();
+		// handStortSegement();
 		// handEndPoint();
 		extent();
 
