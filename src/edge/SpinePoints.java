@@ -13,6 +13,7 @@ import config.Global;
 public class SpinePoints
 {
 	public static int			SAMPLE_RATE	= 6;
+	public static double		maxRadius	= 1.4;
 	public static float			scale		= 0.6f;
 
 	private Vector<Point>		originPoints;
@@ -20,7 +21,7 @@ public class SpinePoints
 	private Vector<Point>		extraPoints;
 	public Vector<Point>		spinePoints;
 	public Vector<Double>		angleDoubles;
-	public Vector<Double>		radiusDoubles;
+	public Vector<Double>		radius;
 	public Vector<SamplePoint>	spineSamplePoints;
 
 	public SpinePoints(Vector<Point> points)
@@ -30,7 +31,7 @@ public class SpinePoints
 		this.extraPoints = new Vector<Point>();
 		this.spinePoints = new Vector<Point>();
 		this.angleDoubles = new Vector<Double>();
-		this.radiusDoubles = new Vector<Double>();
+		this.radius = new Vector<Double>();
 		this.spineSamplePoints = new Vector<SamplePoint>();
 
 		this.sparsePoint(points);
@@ -140,7 +141,7 @@ public class SpinePoints
 
 	public void setSpineSamplePoints()
 	{
-		radiusDoubles.add((double) 0.3);
+		// radius.add((double) 0.3);
 		for (int i = 0; i < originPoints.size() - 1; i++)
 		{
 			createBezierCurves(i);
@@ -166,30 +167,39 @@ public class SpinePoints
 
 		double interval = 1 / num;
 
-		double lastRadius = radiusDoubles.lastElement();
+		double lastRadius;
+
+		if (index == 0)
+		{
+			lastRadius = 0.3;
+		}
+		else
+		{
+			lastRadius = radius.lastElement();
+		}
 
 		double nextRadius;
-		if (index < originPoints.size() - 2)
+		if (index == originPoints.size() - 2)
+		{
+			nextRadius = 0.5;
+		}
+		else
 		{
 			Point point1 = originPoints.get(index);
 			Point point2 = originPoints.get(index + 1);
 			Point point3 = originPoints.get(index + 2);
 			nextRadius = getRatio(point1, point2, point3);
+			nextRadius = nextRadius < maxRadius ? nextRadius : maxRadius;
 		}
-		else
-		{
-			nextRadius = 0.5;
-		}
+		System.out.println("LastRadius :" + lastRadius + " nextRadius :" + nextRadius);
 
 		spineSamplePoints = new Vector<SamplePoint>();
 		for (float j = 1; j >= interval / 3; j -= interval)
 		{
 			Point point = BezierCurve.bezier3func(j, controlPoint);
-			double radius = lastRadius * j + nextRadius * (1 - j);
-			radiusDoubles.add(radius);
+			radius.add(lastRadius * j + nextRadius * (1 - j));
 			spinePoints.add(point);
 			// spineSamplePoints.add(new SamplePoint(point, angle));
 		}
 	}
-
 }

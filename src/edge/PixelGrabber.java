@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.Vector;
 
 import sample.LibParser;
-import sequence.SegementInfo;
+import sequence.Segement;
 import stroke.LibStroke;
 import tps.TPSMorpher;
 import util.ColorUtil;
@@ -37,10 +37,10 @@ public class PixelGrabber
 
 
 		Vector<BufferedImage> alphaImages = new Vector<BufferedImage>();
-		for (int i = 0; i < LibParser.segementInfos.size(); i++)
+		for (int i = 0; i < LibParser.segements.size(); i++)
 		{
-			setSamplePoints(LibParser.segementInfos.get(i));
-			BufferedImage image = getWarpingImage(LibParser.segementInfos.get(i));
+			setSamplePoints(LibParser.segements.get(i));
+			BufferedImage image = getWarpingImage(LibParser.segements.get(i));
 			ImageUtil.saveImage(image, path + i + ".jpg");
 
 			alphaImages.add(image);
@@ -93,7 +93,7 @@ public class PixelGrabber
 
 	}
 
-	public static BufferedImage getWarpingImage(SegementInfo segementInfo)
+	public static BufferedImage getWarpingImage(Segement segementInfo)
 	{
 		segementInfo.calCoorDiff();
 
@@ -130,7 +130,7 @@ public class PixelGrabber
 	/**
 	 * 抓到需要绘制的点
 	 * */
-	public static void setSamplePoints(SegementInfo segementInfo)
+	public static void setSamplePoints(Segement segementInfo)
 	{
 		int strokeId = segementInfo.strokeId;
 		LibStroke libStroke = LibParser.libStrokes.get(strokeId);

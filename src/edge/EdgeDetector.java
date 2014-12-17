@@ -69,8 +69,8 @@ public class EdgeDetector
 		leftCountourPoints = traceContour(edgeImage, contourPoint[0], beginPoint, endPoint);
 		rightCountourPoints = traceContour(edgeImage, contourPoint[1], beginPoint, endPoint);
 
-		System.out.println(leftCountourPoints.size());
-		System.out.println(rightCountourPoints.size());
+		// System.out.println(leftCountourPoints.size());
+		// System.out.println(rightCountourPoints.size());
 
 		// handleTurningPoint1(spinePoints);
 		handleTurningPoint();
@@ -79,8 +79,8 @@ public class EdgeDetector
 
 		drawAndSaveImage(edgeImage);
 
-		System.out.println(leftCountourPoints.size());
-		System.out.println(rightCountourPoints.size());
+		// System.out.println(leftCountourPoints.size());
+		// System.out.println(rightCountourPoints.size());
 		return points;
 	}
 
@@ -194,7 +194,7 @@ public class EdgeDetector
 			{
 				Point leftPoint = leftCountourPoints.get(i);
 				double leftLength = points.get(i).sub(leftPoint).length();
-				if (leftLength > Global.BRUSH_WDITH * spinePoints.radiusDoubles.get(i))
+				if (leftLength > Global.BRUSH_WDITH * spinePoints.radius.get(i))
 				{
 					leftCountourPoints.remove(i);
 				}
@@ -210,7 +210,7 @@ public class EdgeDetector
 
 				double rightLength = points.get(i).sub(rightPoint).length();
 
-				if (rightLength > Global.BRUSH_WDITH * spinePoints.radiusDoubles.get(i))
+				if (rightLength > Global.BRUSH_WDITH * spinePoints.radius.get(i))
 				{
 					rightCountourPoints.remove(i);
 				}
@@ -281,7 +281,8 @@ public class EdgeDetector
 
 			Point testPoint = beginPoint.add(OFFSET_POINTS[i]);
 
-			System.out.println(image.getRGB(testPoint.getIntX(), testPoint.getIntY()));
+			// System.out.println(image.getRGB(testPoint.getIntX(),
+			// testPoint.getIntY()));
 
 			if (image.getRGB(testPoint.getIntX(), testPoint.getIntY()) == Global.WHITE_VALUE)
 			{
@@ -350,17 +351,17 @@ public class EdgeDetector
 					return testPoint;
 				}
 			}
-			if (i % Global.SAMPLE_DIST == (Global.SAMPLE_DIST - 1))
-			{
-				if (dir > 0)
-				{
-					points.add(0, point);
-				}
-				else
-				{
-					points.add(point);
-				}
-			}
+			// if (i % Global.SAMPLE_DIST == (Global.SAMPLE_DIST - 1))
+			// {
+			// if (dir > 0)
+			// {
+			// points.add(0, point);
+			// }
+			// else
+			// {
+			// points.add(point);
+			// }
+			// }
 
 		}
 		return firstPoint;

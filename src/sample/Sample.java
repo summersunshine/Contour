@@ -1,10 +1,10 @@
 package sample;
 
-import feature.Feature;
-import geometry.Point;
-
 import java.awt.Graphics2D;
 import java.util.Vector;
+
+import feature.Feature;
+import geometry.Point;
 
 public class Sample
 {
@@ -23,10 +23,13 @@ public class Sample
 
 	public float	percent;
 
+	public Point	currPoint;
+
 	public Sample(Vector<Point> points, double angle, double averageR, int a, int b)
 	{
 		this.a = a;
 		this.b = b;
+		this.currPoint = points.get(b);
 		this.feature = new Feature(points, angle, averageR, a, b);
 		this.percent = b * 1.0f / (points.size() - 1);
 	}

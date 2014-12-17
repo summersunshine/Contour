@@ -1,6 +1,8 @@
 package sample;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import feature.Cost;
@@ -9,14 +11,21 @@ import geometry.Point;
 public class QuerySample extends Sample
 {
 	// 距离其他的采样点的代价
-	public Vector<Cost>	costs;
+	public Vector<Cost>			costs;
 
-	public QuerySample(Vector<Point> points, double angle, double averageR, int a, int b)
+	public double				radius;
+
+	public Map<String, Float>	costMap;
+
+	public QuerySample(Vector<Point> points, double radius, double angle, double averageR, int a, int b)
 	{
 		super(points, angle, averageR, a, b);
 
 		this.costs = new Vector<Cost>();
 
+		this.costMap = new HashMap<String, Float>();
+
+		this.radius = radius;
 	}
 
 	/**
@@ -47,13 +56,28 @@ public class QuerySample extends Sample
 		int begin = (int) ((otherSamples.size() - 1) * beginPercent);
 		int end = (int) ((otherSamples.size() - 1) * endPercent);
 
-		for (int i = begin; i < end; i++)
+		// for (int i = begin; i < end; i++)
+		// {
+		// float dis = feature.getDistance(otherSamples.get(i).feature);
+		//
+		// this.costs.addElement(new Cost(otherSamples.get(i).a,
+		// otherSamples.get(i).b, b, dis));
+		//
+		// }
+		//
+
+		for (int i = 0; i < otherSamples.size(); i++)
 		{
 			float dis = feature.getDistance(otherSamples.get(i).feature);
 
-			this.costs.addElement(new Cost(otherSamples.get(i).a, otherSamples.get(i).b, b, dis));
+			// this.costs.addElement(new Cost(otherSamples.get(i).a,
+			// otherSamples.get(i).b, b, dis));
 
+			String key = otherSamples.get(i).a + "_" + otherSamples.get(i).b;
+
+			this.costMap.put(key, dis);
 		}
+
 	}
 
 	/**

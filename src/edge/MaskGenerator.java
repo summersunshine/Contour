@@ -12,35 +12,13 @@ public class MaskGenerator
 	public static final int	width	= 1280;
 	public static final int	height	= 720;
 
-	// public static BufferedImage getImage(Vector<Point> points)
-	// {
-	// BufferedImage image = new BufferedImage(width, height,
-	// BufferedImage.TYPE_INT_RGB);
-	//
-	// for (int i = 0; i < points.size(); i++)
-	// {
-	// float radius = Global.BRUSH_WDITH;
-	// if (i>0 && i < points.size()-1)
-	// {
-	// float ratio = (float)
-	// getRatio(points.get(i-1),points.get(i),points.get(i+1));
-	// System.out.println("ratio " + ratio);
-	// radius*= ratio;
-	// }
-	// updateImage(image, (int) points.get(i).x, (int) points.get(i).y,
-	// (int)radius);
-	// }
-	//
-	// return image;
-	// }
-
 	public static BufferedImage getImage(SpinePoints spinePoints)
 	{
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-		for (int i = 0; i < spinePoints.spinePoints.size(); i++)
+		for (int i = 1; i < spinePoints.spinePoints.size() - 1; i++)
 		{
-			double ratio = spinePoints.radiusDoubles.get(i);
+			double ratio = spinePoints.radius.get(i);
 			double radius = Global.BRUSH_WDITH * ratio;
 			System.out.println("i: " + i + "ratio " + ratio);
 			Point point = spinePoints.spinePoints.get(i);

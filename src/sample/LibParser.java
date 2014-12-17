@@ -3,7 +3,8 @@ package sample;
 import java.awt.image.BufferedImage;
 import java.util.Vector;
 
-import sequence.SegementInfo;
+import sequence.QuerySegement;
+import sequence.Segement;
 import stroke.LibStroke;
 import stroke.QueryStroke;
 import config.Global;
@@ -16,25 +17,24 @@ import geometry.Point;
 public class LibParser
 {
 	// 库中笔触的数目
-	public static final int				STOKE_NUM	= 14;
+	public static final int			STOKE_NUM	= 14;
 
 	// 库中笔触数列
-	public static Vector<LibStroke>		libStrokes;
+	public static Vector<LibStroke>	libStrokes;
 
-	public static QueryStroke			queryStroke;
+	public static QueryStroke		queryStroke;
 
-	public static Vector<SegementInfo>	segementInfos;
+	public static Vector<Segement>	segements;
 
-	public static BufferedImage			resultImage;
+	public static BufferedImage		resultImage;
 
-	private SegementInfo				currSegementInfo;
+	private Segement				currSegement;
 
+	public Cost						lastCost;
 
-	public Cost							lastCost;
+	public int						currIndex;
 
-	public int							currIndex;
-
-	public static int					drawNum		= 0;
+	public static int				drawNum		= 0;
 
 	public LibParser()
 	{
@@ -44,8 +44,8 @@ public class LibParser
 
 	public void initStrokeInfos()
 	{
-		this.currSegementInfo = null;
-		segementInfos = new Vector<SegementInfo>();
+		this.currSegement = null;
+		segements = new Vector<Segement>();
 	}
 
 	/**
@@ -64,8 +64,8 @@ public class LibParser
 			LibParser.libStrokes.add(libStroke);
 			System.out.println("parse stroke " + i);
 		}
-		Global.BRUSH_WDITH = (int) (sampleBrushWidthSum / STOKE_NUM / 1.4);
-		Global.SAMPLE_DIST = (int) (sampleDistSum / STOKE_NUM / 1.4);
+		Global.BRUSH_WDITH = (int) (sampleBrushWidthSum / STOKE_NUM);
+		Global.SAMPLE_DIST = (int) (sampleDistSum / STOKE_NUM);
 		Feature.isLoadBegin = false;
 		System.out.println(Global.SAMPLE_DIST);
 		// System.out.println("LibParser.initLibStrokes() end");
@@ -86,11 +86,80 @@ public class LibParser
 
 		this.addFeatureData();
 
-		this.addTransitionData();
+		this.matchSegements();
 
-		this.optimization();
+		// this.addTransitionData();
+
+		// this.optimization();
 
 		LibParserUtil.drawStrokeSegements("After\\");
+
+	}
+
+	/**
+	 * 匹配段落
+	 * */
+	public void matchSegements()
+	{
+		for (int i = 0; i < LibParser.queryStroke.querySegements.size(); i++)
+		{
+			matchSegement(LibParser.queryStroke.querySegements.get(i));
+		}
+	}
+
+	public void matchSegement(QuerySegement querySegement)
+	{
+		boolean flag = false;
+		int targetI = 0, targetJ = 0;
+		int size;
+		int count;
+
+		float minSum = 0;
+
+		for (int i = 0; i < LibParser.libStrokes.size(); i++)
+		{
+			size = libStrokes.get(i).libSamples.size();
+			count = size - querySegement.getLength();
+			if (count < 0)
+			{
+				continue;
+			}
+			else
+			{
+				if (!flag)
+				{
+					minSum = getFeatureSum(querySegement.startIndex, querySegement.endIndex, i, 0);
+					targetI = i;
+					flag = true;
+				}
+			}
+			// minSum = getFeatureSum(i, 0, length);
+			for (int j = 0; j < count; j++)
+			{
+				float sum = getFeatureSum(querySegement.startIndex, querySegement.endIndex, i, j);
+				System.out.println("i: " + i + " j: " + j + " sum: " + sum);
+				if (minSum > sum)
+				{
+					targetI = i;
+					targetJ = j;
+					minSum = sum;
+				}
+			}
+		}
+		System.out.println();
+		segements.add(new Segement(targetI, targetJ, querySegement.startIndex));
+		segements.lastElement().addBack(querySegement.getLength());
+
+	}
+
+	public float getFeatureSum(int startIndex, int endIndex, int a, int startB)
+	{
+		float sum = 0;
+		for (int count = 0, i = startIndex; i <= endIndex; i++, count++)
+		{
+			sum += LibParser.queryStroke.getFeatureDistance(i, a, startB + count);
+		}
+		return sum;
 
 	}
 
@@ -109,7 +178,7 @@ public class LibParser
 
 			}
 
-			queryStroke.querySamples.get(i).sort();
+			// queryStroke.querySamples.get(i).sort();
 			// queryStroke.querySamples.get(i).printKNN();
 
 		}
@@ -210,7 +279,7 @@ public class LibParser
 		Point v1 = getLibSampleVelocity(lastA, lastB);
 		Point v2 = getLibSampleVelocity(a, b);
 
-		float ratio = currSegementInfo.getSize() < Penalty.Lmin ? 1 : Penalty.Lmin / 1.33f / currSegementInfo.getSize() + 0.25f;
+		float ratio = currSegement.getSize() < Penalty.Lmin ? 1 : Penalty.Lmin / 1.33f / currSegement.getSize() + 0.25f;
 
 		return (float) ((Penalty.Ct + Penalty.Cp * (1 - Geometry.getCos(v1, v2))) * ratio);
 
@@ -254,20 +323,20 @@ public class LibParser
 	private void createNewSegements(int a, int b, int queryIndex)
 	{
 
-		if (currSegementInfo != null)
+		if (currSegement != null)
 		{
 
-			segementInfos.add(currSegementInfo);
+			segements.add(currSegement);
 		}
 
-		currSegementInfo = new SegementInfo(a, b, queryIndex);
+		currSegement = new Segement(a, b, queryIndex);
 
 	}
 
 	// 在stroke后加点
 	private void addSegementPoints(int a, int b, int queryIndex)
 	{
-		currSegementInfo.addBack(1);
+		currSegement.addBack(1);
 
 	}
 
@@ -287,17 +356,17 @@ public class LibParser
 	public void extent()
 	{
 
-		for (int i = 0; i < segementInfos.size(); i++)
+		for (int i = 0; i < segements.size(); i++)
 		{
 			if (i != 0)
 			{
-				segementInfos.get(i).addFront(Penalty.TranArea);
+				segements.get(i).addFront(Penalty.TranArea);
 
 			}
 
-			if (i != segementInfos.size() - 1)
+			if (i != segements.size() - 1)
 			{
-				segementInfos.get(i).addBack(Penalty.TranArea);
+				segements.get(i).addBack(Penalty.TranArea);
 			}
 		}
 	}
@@ -305,22 +374,21 @@ public class LibParser
 	public void handEndPoint()
 	{
 
-		for (int i = 0; i < segementInfos.size(); i++)
+		for (int i = 0; i < segements.size(); i++)
 		{
-			if (i != segementInfos.size() - 1)
+			if (i != segements.size() - 1)
 			{
-				if (segementInfos.get(i).isReachEnd())
+				if (segements.get(i).isReachEnd())
 				{
 					// segementInfos.get(i).removeBack(Penalty.EndArea);
-					segementInfos.get(i + 1).addFront(4);
+					segements.get(i + 1).addFront(4);
 				}
 			}
 
-			if (!segementInfos.get(i).isReachEnd() && i == (segementInfos.size() - 1))
+			if (!segements.get(i).isReachEnd() && i == (segements.size() - 1))
 			{
-				segementInfos.get(i).addBack();
+				segements.get(i).addBack();
 			}
-
 
 		}
 	}
@@ -328,27 +396,25 @@ public class LibParser
 	public void handStortSegement()
 	{
 
-		for (int i = 1; i < segementInfos.size(); i++)
+		for (int i = 1; i < segements.size(); i++)
 		{
-			if (segementInfos.get(i).isShort())
+			if (segements.get(i).isShort())
 			{
 				// 不是最后一个
-				if (i == segementInfos.size() - 1)
+				if (i == segements.size() - 1)
 				{
-					segementInfos.get(i).addFront(Penalty.TranArea);
+					segements.get(i).addFront(Penalty.TranArea);
 
 				}
 				// 如果是最后一个，就不删除他了
 				else
 				{
-					segementInfos.get(i - 1).addBack(segementInfos.get(i).getSize());
-					segementInfos.remove(i--);
+					segements.get(i - 1).addBack(segements.get(i).getSize());
+					segements.remove(i--);
 				}
 			}
 		}
 	}
-
-
 
 	/********************************* 结束优化序列 *************************************************/
 

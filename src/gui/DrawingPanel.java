@@ -32,7 +32,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	private QueryStroke		queryStroke;
 
 	private Vector<Point>	points;
-	private Vector<Double>	angleDoubles;
+	// private Vector<Double> angleDoubles;
 	private Vector<Point>	leftContourPoints;
 	private Vector<Point>	rightContourPoints;
 	private SpinePoints		spinePoints;
@@ -57,7 +57,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	private void initPoint()
 	{
 		points = new Vector<Point>();
-		angleDoubles = new Vector<Double>();
+		// angleDoubles = new Vector<Double>();
 	}
 
 	private void initLibParser()
@@ -111,7 +111,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	{
 		spinePoints = new SpinePoints(points);
 		points = spinePoints.spinePoints;
-		angleDoubles = spinePoints.angleDoubles;
+		// angleDoubles = spinePoints.angleDoubles;
 		// points = UniformSample.normalize(points, 6);
 		// points = Geometry.removeClose(points, 6);
 
@@ -148,7 +148,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 
 		this.drawStrokeSample(graphics2d);
 
-		queryStroke = new QueryStroke(points, angleDoubles, rightContourPoints, leftContourPoints);
+		queryStroke = new QueryStroke(points, spinePoints.radius, rightContourPoints, leftContourPoints);
 
 		// queryStroke.drawShapeContext(graphics2d, 0);
 
@@ -202,7 +202,6 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 
 		points.add(new Point(x, y));
 	}
-
 
 	private void initPosLabel()
 	{

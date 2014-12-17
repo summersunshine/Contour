@@ -1,8 +1,5 @@
 package sample;
 
-import edge.PixelGrabber;
-import geometry.CoordDiff;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -16,11 +13,10 @@ import stroke.QueryStroke;
 import util.ImageUtil;
 import config.Global;
 import config.SampleConfig;
+import edge.PixelGrabber;
 
 public class LibParserUtil
 {
-
-	public static Vector<Vector<CoordDiff>>	vectors	= new Vector<Vector<CoordDiff>>();
 
 	public static void saveTxt(String content, String path)
 	{
@@ -51,9 +47,7 @@ public class LibParserUtil
 			file.mkdir();
 		}
 
-
 		drawStrokeSegements();
-		
 
 		PixelGrabber.saveResultImage(SampleConfig.OUTPUT_PATH + "After\\alpha");
 
@@ -61,7 +55,7 @@ public class LibParserUtil
 		{
 			addStrokeToResult(PixelGrabber.alphaImage);
 		}
- else
+		else
 		{
 			LibParser.resultImage = ImageUtil.getConverterImage(PixelGrabber.alphaImage, Global.BRUSH_COLOR);
 
@@ -69,17 +63,8 @@ public class LibParserUtil
 		LibParser.drawNum++;
 		ImageUtil.saveImage(LibParser.resultImage, SampleConfig.OUTPUT_PATH + "After\\result.jpg");
 
-		// PixelGrabber.saveResultImage(SampleConfig.OUTPUT_PATH +
-		// "After\\alpha.jpg",true);
-		//
-		// BufferedImage resultImage =
-		// ImageUtil.getConverterImage(PixelGrabber.resultImage,
-		// Global.BRUSH_COLOR);
-		// ImageUtil.saveImage(resultImage, SampleConfig.OUTPUT_PATH +
-		// "After\\result.jpg");
-
 	}
-	
+
 	public static void addStrokeToResult(BufferedImage alphaImage)
 	{
 		for (int i = 0; i < Global.height; i++)
@@ -98,28 +83,25 @@ public class LibParserUtil
 	public static void drawStrokeSegements()
 	{
 
-		for (int i = 0; i < LibParser.segementInfos.size(); i++)
+		for (int i = 0; i < LibParser.segements.size(); i++)
 		{
-			int strokeId = LibParser.segementInfos.get(i).strokeId;
+			int strokeId = LibParser.segements.get(i).strokeId;
 			int width = LibParser.libStrokes.get(strokeId).width;
 			int height = LibParser.libStrokes.get(strokeId).height;
-			
+
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 			Graphics2D graphics2d = (Graphics2D) image.getGraphics();
-			
-			for (int j = 0; j < LibParser.segementInfos.get(i).libPoints.size(); j++)
+
+			for (int j = 0; j < LibParser.segements.get(i).libPoints.size(); j++)
 			{
-				LibParser.segementInfos.get(i).libPoints.get(j).drawPoint(graphics2d, Color.RED);
-				LibParser.segementInfos.get(i).libLeftPoints.get(j).drawPoint(graphics2d, Color.GREEN);
-				LibParser.segementInfos.get(i).libRightPoints.get(j).drawPoint(graphics2d, Color.BLUE);
+				LibParser.segements.get(i).libPoints.get(j).drawPoint(graphics2d, Color.RED);
+				LibParser.segements.get(i).libLeftPoints.get(j).drawPoint(graphics2d, Color.GREEN);
+				LibParser.segements.get(i).libRightPoints.get(j).drawPoint(graphics2d, Color.BLUE);
 			}
 			ImageUtil.saveImage(image, SampleConfig.OUTPUT_PATH + "After\\" + i + "_" + strokeId + "sample.jpg");
 		}
 
-
 	}
-	
-
 
 	public static void drawPoints(Graphics2D graphics2d, Vector<LibStroke> libStrokes, int a, int b)
 	{
@@ -141,8 +123,6 @@ public class LibParserUtil
 		content += (int) libStrokes.get(a).rightContourPoints.get(b).x + " " + (int) libStrokes.get(a).rightContourPoints.get(b).y + " "
 				+ (int) queryStroke.rightContourPoints.get(queryIndex).x + " " + (int) queryStroke.rightContourPoints.get(queryIndex).y + "\r\n";
 
-		vectors.lastElement().add(new CoordDiff(libStrokes.get(a).leftContourPoints.get(b), queryStroke.leftContourPoints.get(queryIndex)));
-		vectors.lastElement().add(new CoordDiff(libStrokes.get(a).rightContourPoints.get(b), queryStroke.rightContourPoints.get(queryIndex)));
 		return content;
 
 	}
