@@ -51,6 +51,7 @@ public class PixelGrabber
 
 	}
 	
+
 	
 	public static void mergeMerge(Vector<BufferedImage> alphaImages,String path)
 	{
@@ -159,11 +160,12 @@ public class PixelGrabber
 
 
 
-			System.out.println("minx : " + minX + "maxx : " + maxX + "miny : " + minY + "maxY : " + maxY);
-			if (Math.abs(minX - maxX) > 100 || Math.abs(minY - maxY) > 100)
-			{
-				System.out.println("gao mao!!!!!");
-			}
+			// System.out.println("minx : " + minX + "maxx : " + maxX +
+			// "miny : " + minY + "maxY : " + maxY);
+			// if (Math.abs(minX - maxX) > 100 || Math.abs(minY - maxY) > 100)
+			// {
+			// System.out.println("gao mao!!!!!");
+			// }
 
 			// 循环，判断是否在四边形内
 			for (int y = minY; y <= maxY; y++)

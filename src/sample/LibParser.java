@@ -34,6 +34,7 @@ public class LibParser
 
 	public int							currIndex;
 
+	public static int					drawNum		= 0;
 
 	public LibParser()
 	{
@@ -54,16 +55,17 @@ public class LibParser
 	{
 		// System.out.println("LibParser.initLibStrokes() begin");
 		LibParser.libStrokes = new Vector<LibStroke>();
-		int sum = 0;
+		int sampleDistSum = 0, sampleBrushWidthSum = 0;
 		for (int i = 0; i < STOKE_NUM; i++)
 		{
 			LibStroke libStroke = new LibStroke(Global.Libary, i);
-			sum += libStroke.sampleDist;
+			sampleDistSum += libStroke.sampleDist;
+			sampleBrushWidthSum += libStroke.sampleBrushWidth;
 			LibParser.libStrokes.add(libStroke);
 			System.out.println("parse stroke " + i);
 		}
-
-		Global.SAMPLE_DIST = (int) (sum / STOKE_NUM / 1.5);
+		Global.BRUSH_WDITH = (int) (sampleBrushWidthSum / STOKE_NUM / 1.4);
+		Global.SAMPLE_DIST = (int) (sampleDistSum / STOKE_NUM / 1.4);
 		Feature.isLoadBegin = false;
 		System.out.println(Global.SAMPLE_DIST);
 		// System.out.println("LibParser.initLibStrokes() end");
@@ -108,7 +110,7 @@ public class LibParser
 			}
 
 			queryStroke.querySamples.get(i).sort();
-			queryStroke.querySamples.get(i).printKNN();
+			// queryStroke.querySamples.get(i).printKNN();
 
 		}
 
@@ -138,7 +140,7 @@ public class LibParser
 			}
 
 			queryStroke.querySamples.get(currIndex).sort();
-			queryStroke.querySamples.get(currIndex).printKNN();
+			// queryStroke.querySamples.get(currIndex).printKNN();
 
 			addSegements(lastCost.a, lastCost.b);
 

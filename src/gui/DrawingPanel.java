@@ -69,6 +69,8 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	{
 		clearFlag = true;
 		getGraphics().clearRect(0, 0, 1280, 720);
+		libParser.resultImage = null;
+		libParser.drawNum = 0;
 	}
 
 	public void moveToPoint()
@@ -137,10 +139,10 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	public void drawAfterMouseRelease(Graphics2D graphics2d)
 	{
 		// 如果没有被清除，那么不做处理
-		if (!clearFlag)
-		{
-			return;
-		}
+		// if (!clearFlag)
+		// {
+		// return;
+		// }
 
 		this.setPoints();
 

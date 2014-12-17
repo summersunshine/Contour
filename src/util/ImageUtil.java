@@ -106,6 +106,16 @@ public class ImageUtil
 
 	}
 
+	public static int grayToColor(int rgb)
+	{
+		Color brushColor = Global.BRUSH_COLOR;
+		Color color = new Color(rgb);
+		double alpha = (color.getRed() + color.getGreen() + color.getBlue()) / 255f / 3;
+		int r = (int) (255 - (255 - brushColor.getRed()) * alpha);
+		int g = (int) (255 - (255 - brushColor.getGreen()) * alpha);
+		int b = (int) (255 - (255 - brushColor.getBlue()) * alpha);
+		return ImageUtil.getRGB(r, g, b);
+	}
 	// /////////////////////////////////////////////下面都是打酱油的/////////////////////////////////////////
 	public static int[] getSplitRGB(int rgb)
 	{

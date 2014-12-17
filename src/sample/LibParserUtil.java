@@ -57,7 +57,16 @@ public class LibParserUtil
 
 		PixelGrabber.saveResultImage(SampleConfig.OUTPUT_PATH + "After\\alpha");
 
-		LibParser.resultImage = ImageUtil.getConverterImage(PixelGrabber.alphaImage, Global.BRUSH_COLOR);
+		if (LibParser.drawNum != 0)
+		{
+			addStrokeToResult(PixelGrabber.alphaImage);
+		}
+ else
+		{
+			LibParser.resultImage = ImageUtil.getConverterImage(PixelGrabber.alphaImage, Global.BRUSH_COLOR);
+
+		}
+		LibParser.drawNum++;
 		ImageUtil.saveImage(LibParser.resultImage, SampleConfig.OUTPUT_PATH + "After\\result.jpg");
 
 		// PixelGrabber.saveResultImage(SampleConfig.OUTPUT_PATH +
@@ -71,6 +80,21 @@ public class LibParserUtil
 
 	}
 	
+	public static void addStrokeToResult(BufferedImage alphaImage)
+	{
+		for (int i = 0; i < Global.height; i++)
+		{
+			for (int j = 0; j < Global.width; j++)
+			{
+				int rgb = alphaImage.getRGB(j, i);
+				if (rgb != Global.BLACK_VALUE)
+				{
+					LibParser.resultImage.setRGB(j, i, ImageUtil.grayToColor(rgb));
+				}
+			}
+		}
+	}
+
 	public static void drawStrokeSegements()
 	{
 

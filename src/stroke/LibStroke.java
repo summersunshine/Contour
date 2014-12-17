@@ -21,6 +21,8 @@ public class LibStroke extends Stroke
 
 	public float				sampleDist;
 
+	public float				sampleBrushWidth;
+
 	// 源图像的款
 	public int					width;
 	// 源图像的高
@@ -62,7 +64,9 @@ public class LibStroke extends Stroke
 		this.setAverageR();
 		this.initLibSample();
 		this.calAverageSampleDist();
+		this.calAverageSampleWidth();
 	}
+
 
 	/**
 	 * 初始化库中样例
@@ -85,6 +89,17 @@ public class LibStroke extends Stroke
 			sampleDist += points.get(i).sub(points.get(i + 1)).length();
 		}
 		sampleDist /= (points.size() - 1);
+	}
+
+	private void calAverageSampleWidth()
+	{
+		// TODO Auto-generated method stub
+		sampleBrushWidth = 0;
+		for (int i = 0; i < points.size(); i++)
+		{
+			sampleBrushWidth += leftContourPoints.get(i).sub(rightContourPoints.get(i)).length();
+		}
+		sampleBrushWidth /= (points.size() * 2);
 	}
 
 	/**
