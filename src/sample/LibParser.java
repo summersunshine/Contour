@@ -137,7 +137,7 @@ public class LibParser
 			for (int j = 0; j < count; j++)
 			{
 				float sum = getFeatureSum(querySegement.startIndex, querySegement.endIndex, i, j);
-				System.out.println("i: " + i + " j: " + j + " sum: " + sum);
+				// System.out.println("i: " + i + " j: " + j + " sum: " + sum);
 				if (minSum > sum)
 				{
 					targetI = i;

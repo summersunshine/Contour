@@ -1,5 +1,6 @@
 package edge;
 
+import geometry.Geometry;
 import geometry.Point;
 
 import java.awt.Color;
@@ -73,6 +74,7 @@ public class EdgeDetector
 		// System.out.println(rightCountourPoints.size());
 
 		// handleTurningPoint1(spinePoints);
+		handleTurningPoint2();
 		handleTurningPoint();
 		makeContourSizeSame();
 		twiceSample();
@@ -184,6 +186,45 @@ public class EdgeDetector
 
 		}
 
+	}
+
+	/**
+	 * 处理因为拐点带来的采样数目的不同
+	 * */
+	public static void handleTurningPoint2()
+	{
+		int[] differences = new int[points.size()];
+		for (int i = 0; i < points.size(); i++)
+		{
+			int leftCount = getCountInBox(leftCountourPoints, points.get(i), (int) Global.BRUSH_WDITH * 4);
+			int rightCount = getCountInBox(rightCountourPoints, points.get(i), (int) Global.BRUSH_WDITH * 4);
+			differences[i] = leftCount - rightCount;
+			System.out.println("leftCount: " + leftCount + " rightCount: " + rightCount);
+			System.out.println("sum: " + (leftCount - rightCount) + " i: " + i);
+		}
+
+	}
+
+	public static int getCountInBox(Vector<Point> points, Point point, int size)
+	{
+		int minX = (int) (point.x - size / 2);
+		int maxX = (int) (point.x + size / 2);
+		int minY = (int) (point.y - size / 2);
+		int maxY = (int) (point.y + size / 2);
+		return getCountInBox(points, minX, maxX, minY, maxY);
+	}
+
+	public static int getCountInBox(Vector<Point> points, int minX, int maxX, int minY, int maxY)
+	{
+		int count = 0;
+		for (int i = 0; i < points.size(); i++)
+		{
+			if (Geometry.isInBox(minX, maxX, minY, maxY, points.get(i)))
+			{
+				count++;
+			}
+		}
+		return count;
 	}
 
 	public static void handleTurningPoint1(SpinePoints spinePoints)

@@ -384,4 +384,9 @@ public class Geometry
 		return endPoint.add(normalPoint);
 
 	}
+
+	public static boolean isInBox(int minX, int maxX, int minY, int maxY, Point point)
+	{
+		return point.x >= minX && point.x <= maxX && point.y >= minY && point.y < maxY;
+	}
 }
