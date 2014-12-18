@@ -15,6 +15,7 @@ import config.SampleConfig;
 
 public class EdgeDetector
 {
+	public static final float		MINDIST				= 3;
 	public static final Point[]		OFFSET_POINTS		= { new Point(1, 1), new Point(-1, 1), new Point(-1, -1), new Point(1, -1), new Point(1, 0),
 			new Point(0, 1), new Point(-1, 0), new Point(0, -1), };
 
@@ -27,7 +28,6 @@ public class EdgeDetector
 	private static float[]			differences;
 	private static int				boxSize;
 	private static double			ratio;
-	private static Vector<Double>	radius;
 	private static Vector<Point>	dirPoints;
 
 	/**
@@ -67,7 +67,6 @@ public class EdgeDetector
 	public static Vector<Point> getEdgePoints(BufferedImage edgeImage, SpinePoints spinePoints)
 	{
 		points = spinePoints.spinePoints;
-		radius = spinePoints.radius;
 
 		dirPoints = Geometry.getDirPoints(points);
 		Point beginPoint = getEndPoint(edgeImage, points.firstElement(), points.get(2), 1);
@@ -81,11 +80,7 @@ public class EdgeDetector
 		System.out.println(leftCountourPoints.size());
 		System.out.println(rightCountourPoints.size());
 
-		// handleTurningPoint1(spinePoints);
-		handleTurningPoint2();
-		// handleTurningPoint();
-		// makeContourSizeSame();
-		// twiceSample();
+		handleTurningPoint();
 
 		drawAndSaveImage(edgeImage);
 
@@ -125,82 +120,6 @@ public class EdgeDetector
 	 * */
 	public static void handleTurningPoint()
 	{
-		int count = 0;
-		for (int i = 0; i < leftCountourPoints.size() && i < rightCountourPoints.size(); i++)
-		{
-			Point leftPoint = leftCountourPoints.get(i);
-			Point rightPoint = rightCountourPoints.get(i);
-
-			double length = leftPoint.sub(rightPoint).length();
-			if (length > 2 * Global.BRUSH_WDITH + 2)
-			{
-				count = 0;
-				Point nextRightPoint = rightCountourPoints.get(i + 1);
-				Point nextLeftPoint = leftCountourPoints.get(i + 1);
-
-				int deleteCount = 0;
-				while (leftPoint.sub(nextRightPoint).length() < length)
-				{
-					rightCountourPoints.remove(i);
-					length = leftPoint.sub(nextRightPoint).length();
-					nextRightPoint = rightCountourPoints.get(i + 1);
-					if (deleteCount++ > 2)
-					{
-						break;
-					}
-
-				}
-
-				while (rightPoint.sub(nextLeftPoint).length() < length)
-				{
-					leftCountourPoints.remove(i);
-					length = rightPoint.sub(nextLeftPoint).length();
-					nextLeftPoint = leftCountourPoints.get(i + 1);
-
-					if (deleteCount++ > 2)
-					{
-						break;
-					}
-				}
-
-			}
-			else
-			{
-				count++;
-				if (count == 4)
-				{
-					int n = 3;
-					while ((n--) > 0)
-					{
-						if (rightCountourPoints.size() > i)
-						{
-							rightCountourPoints.remove(i);
-						}
-
-					}
-					n = 3;
-					while ((n--) > 0)
-					{
-						if (leftCountourPoints.size() > i)
-						{
-							leftCountourPoints.remove(i);
-						}
-
-					}
-
-					count = 0;
-				}
-			}
-
-		}
-
-	}
-
-	/**
-	 * 处理因为拐点带来的采样数目的不同
-	 * */
-	public static void handleTurningPoint2()
-	{
 		boxSize = (int) Global.BRUSH_WDITH * 3;
 		differences = new float[points.size()];
 		for (int i = 0; i < points.size(); i++)
@@ -210,17 +129,15 @@ public class EdgeDetector
 			differences[i] = (leftCount - rightCount) * 1f / (leftCount + rightCount);
 			System.out.println("leftCount: " + leftCount + " rightCount: " + rightCount);
 			System.out.println("differences: " + differences[i] + " i: " + i);
-			// System.out.println("sum: " + (leftCount - rightCount) + " i: " +
-			// i);
 		}
 
 		int firstIndex = findNoZeroAfterZero(differences);
 		int lastIndex = findNoZeroAfterZeroOpposite(differences);
 
-		twiceSample2(firstIndex, lastIndex);
+		twiceSample(firstIndex, lastIndex);
 	}
 
-	public static void twiceSample2(int firstIndex, int lastIndex)
+	public static void twiceSample(int firstIndex, int lastIndex)
 	{
 
 		double leftRatio = leftCountourPoints.size() * 1f / points.size();
@@ -228,7 +145,6 @@ public class EdgeDetector
 		ratio = (leftRatio + rightRatio) / 2f;
 		Vector<Point> leftPoints = new Vector<Point>();
 		Vector<Point> righPoints = new Vector<Point>();
-		Vector<Point> tempPoints = new Vector<Point>();
 
 		int rightIndex = 0, leftIndex = 0;
 		for (int i = 0; i < differences.length; i++)
@@ -238,51 +154,18 @@ public class EdgeDetector
 				leftIndex = getMinDistIndex(leftCountourPoints, points.get(i), dirPoints.get(i), leftIndex);
 				rightIndex = getMinDistIndex(rightCountourPoints, points.get(i), dirPoints.get(i), rightIndex);
 			}
-			if (differences[i] > 0)
+			else if (differences[i] > 0.1)
 			{
-				rightIndex += (ratio - 2) * (1 - differences[i]) * (1 - differences[i]) + 2;
-				Point diffPoint1 = points.get(i).sub(rightCountourPoints.get(rightIndex));
-				Point diffPoint2 = points.get(i).sub(leftCountourPoints.get(leftIndex));
-				double minCos = Geometry.getCos(diffPoint1, diffPoint2);
-				for (int j = leftIndex + 1; j < leftCountourPoints.size(); j++)
-				{
-					diffPoint2 = points.get(i).sub(leftCountourPoints.get(j));
-					double cos = Geometry.getCos(diffPoint1, diffPoint2);
-					if (minCos > cos)
-					{
-						minCos = cos;
-					}
-					else
-					{
-						leftIndex = j;
-						break;
-					}
-				}
+				rightIndex += (ratio - MINDIST) * (1 - differences[i]) * (1 - differences[i]) + MINDIST;
+				leftIndex = getLeftIndex(points.get(i), rightIndex, leftIndex);
 			}
-			else if (differences[i] < 0)
+			else if (differences[i] < -0.1)
 			{
-				leftIndex += (ratio - 2) * (1 + differences[i]) * (1 + differences[i]) + 2;
-				Point diffPoint1 = points.get(i).sub(leftCountourPoints.get(leftIndex));
-				Point diffPoint2 = points.get(i).sub(rightCountourPoints.get(rightIndex));
-				double minCos = Geometry.getCos(diffPoint1, diffPoint2);
-				for (int j = rightIndex + 1; j < rightCountourPoints.size(); j++)
-				{
-					diffPoint2 = points.get(i).sub(rightCountourPoints.get(j));
-					double cos = Geometry.getCos(diffPoint1, diffPoint2);
-					if (minCos > cos)
-					{
-						minCos = cos;
-					}
-					else
-					{
-						rightIndex = j;
-						break;
-					}
-				}
+				leftIndex += (ratio - MINDIST) * (1 + differences[i]) * (1 + differences[i]) + MINDIST;
+				rightIndex = getRightIndex(points.get(i), rightIndex, leftIndex);
 			}
 			else
 			{
-
 				leftIndex = getMinDistIndex(leftCountourPoints, points.get(i), dirPoints.get(i), leftIndex);
 				rightIndex = getMinDistIndex(rightCountourPoints, points.get(i), dirPoints.get(i), rightIndex);
 
@@ -290,15 +173,56 @@ public class EdgeDetector
 			System.out.println("i " + i + " leftIndex: " + leftIndex + " rightIndex: " + rightIndex + " differences: " + differences[i]);
 			leftPoints.add(leftCountourPoints.get(leftIndex));
 			righPoints.add(rightCountourPoints.get(rightIndex));
-			// tempPoints.add(points.get(i));
 		}
 
-		// points.clear();
 		leftCountourPoints.clear();
 		rightCountourPoints.clear();
-		// points.addAll(tempPoints);
 		leftCountourPoints.addAll(leftPoints);
 		rightCountourPoints.addAll(righPoints);
+	}
+
+	public static int getLeftIndex(Point currPoint, int rightIndex, int leftIndex)
+	{
+		Point diffPoint1 = currPoint.sub(rightCountourPoints.get(rightIndex));
+		Point diffPoint2 = currPoint.sub(leftCountourPoints.get(leftIndex));
+		double minCos = Geometry.getCos(diffPoint1, diffPoint2);
+		for (int j = leftIndex + 1; j < leftCountourPoints.size(); j++)
+		{
+			diffPoint2 = currPoint.sub(leftCountourPoints.get(j));
+			double cos = Geometry.getCos(diffPoint1, diffPoint2);
+			if (minCos > cos)
+			{
+				minCos = cos;
+			}
+			else
+			{
+				leftIndex = j;
+				break;
+			}
+		}
+		return leftIndex;
+	}
+
+	public static int getRightIndex(Point currPoint, int rightIndex, int leftIndex)
+	{
+		Point diffPoint1 = currPoint.sub(leftCountourPoints.get(leftIndex));
+		Point diffPoint2 = currPoint.sub(rightCountourPoints.get(rightIndex));
+		double minCos = Geometry.getCos(diffPoint1, diffPoint2);
+		for (int j = rightIndex + 1; j < rightCountourPoints.size(); j++)
+		{
+			diffPoint2 = currPoint.sub(rightCountourPoints.get(j));
+			double cos = Geometry.getCos(diffPoint1, diffPoint2);
+			if (minCos > cos)
+			{
+				minCos = cos;
+			}
+			else
+			{
+				rightIndex = j;
+				break;
+			}
+		}
+		return rightIndex;
 	}
 
 	public static int getMinDistIndex(Vector<Point> contourPoints, Point point, Point dirPoint, int startIndex)
@@ -317,55 +241,6 @@ public class EdgeDetector
 			}
 		}
 		return index;
-	}
-
-	public static void twiceSample(int firstIndex, int lastIndex)
-	{
-
-		double leftRatio = leftCountourPoints.size() * 1f / points.size();
-		double rightRatio = rightCountourPoints.size() * 1f / points.size();
-		double ratio = (leftRatio + rightRatio) / 2f;
-		Vector<Point> leftPoints = new Vector<Point>();
-		Vector<Point> righPoints = new Vector<Point>();
-		Vector<Point> tempPoints = new Vector<Point>();
-
-		int rightIndex = 0, leftIndex = 0;
-		for (int i = 0; i < differences.length; i++)
-		{
-			if (i < firstIndex)
-			{
-				rightIndex = leftIndex = (int) (i * ratio);
-
-			}
-			else if (i > lastIndex)
-			{
-
-				rightIndex = (int) (rightCountourPoints.size() - (differences.length - i) * ratio);
-				leftIndex = (int) (leftCountourPoints.size() - (differences.length - i) * ratio);
-				break;
-			}
-			else
-			{
-				leftIndex += (ratio - 2) * (1 + differences[i]) * (1 + differences[i]) + 2;
-				rightIndex += (ratio - 2) * (1 - differences[i]) * (1 - differences[i]) + 2;
-				break;
-				// if (differences[i] < 0)
-				// {
-				//
-				// }
-			}
-			System.out.println("leftIndex: " + leftIndex + " rightIndex: " + rightIndex + " differences: " + differences[i]);
-			leftPoints.add(leftCountourPoints.get(leftIndex));
-			righPoints.add(rightCountourPoints.get(rightIndex));
-			tempPoints.add(points.get(i));
-		}
-
-		points.clear();
-		leftCountourPoints.clear();
-		rightCountourPoints.clear();
-		points.addAll(tempPoints);
-		leftCountourPoints.addAll(leftPoints);
-		rightCountourPoints.addAll(righPoints);
 	}
 
 	public static int findNoZeroAfterZero(float[] differences)
@@ -426,43 +301,6 @@ public class EdgeDetector
 		return count;
 	}
 
-	public static void handleTurningPoint1(SpinePoints spinePoints)
-	{
-		for (int i = 0; i < points.size(); i++)
-		{
-			while (leftCountourPoints.size() >= points.size())
-			{
-				Point leftPoint = leftCountourPoints.get(i);
-				double leftLength = points.get(i).sub(leftPoint).length();
-				if (leftLength > Global.BRUSH_WDITH * spinePoints.radius.get(i))
-				{
-					leftCountourPoints.remove(i);
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			while (rightCountourPoints.size() >= points.size())
-			{
-				Point rightPoint = rightCountourPoints.get(i);
-
-				double rightLength = points.get(i).sub(rightPoint).length();
-
-				if (rightLength > Global.BRUSH_WDITH * spinePoints.radius.get(i))
-				{
-					rightCountourPoints.remove(i);
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
-
-	}
-
 	/**
 	 * 随机删除部分数据 保持左右轮廓点上的数目和脊柱上的数目一致
 	 * */
@@ -487,29 +325,6 @@ public class EdgeDetector
 	}
 
 	/**
-	 * 二次采样，减少轮廓点的数目到合适的范围
-	 * */
-	public static void twiceSample()
-	{
-
-		double ratio = leftCountourPoints.size() * 1f / points.size();
-		Vector<Point> leftPoints = new Vector<Point>();
-		Vector<Point> righPoints = new Vector<Point>();
-
-		for (int i = 0; i < points.size(); i++)
-		{
-			int index = (int) (i * ratio);
-			leftPoints.add(leftCountourPoints.get(index));
-			righPoints.add(rightCountourPoints.get(index));
-		}
-		leftCountourPoints.clear();
-		rightCountourPoints.clear();
-		leftCountourPoints.addAll(leftPoints);
-		rightCountourPoints.addAll(righPoints);
-
-	}
-
-	/**
 	 * 获取轮廓上的与起始点响铃的点
 	 * */
 	public static Point[] getContourPoint(BufferedImage image, Point beginPoint)
@@ -520,9 +335,6 @@ public class EdgeDetector
 		{
 
 			Point testPoint = beginPoint.add(OFFSET_POINTS[i]);
-
-			// System.out.println(image.getRGB(testPoint.getIntX(),
-			// testPoint.getIntY()));
 
 			if (image.getRGB(testPoint.getIntX(), testPoint.getIntY()) == Global.WHITE_VALUE)
 			{
@@ -591,17 +403,6 @@ public class EdgeDetector
 					return testPoint;
 				}
 			}
-			// if (i % Global.SAMPLE_DIST == (Global.SAMPLE_DIST - 1))
-			// {
-			// if (dir > 0)
-			// {
-			// points.add(0, point);
-			// }
-			// else
-			// {
-			// points.add(point);
-			// }
-			// }
 
 		}
 		return firstPoint;
