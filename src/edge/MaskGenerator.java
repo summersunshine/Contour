@@ -16,6 +16,8 @@ public class MaskGenerator
 	{
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
+		int startIndex = (int) (Global.BRUSH_WDITH / Global.SAMPLE_DIST);
+
 		for (int i = 1; i < spinePoints.spinePoints.size() - 1; i++)
 		{
 			double ratio = spinePoints.radius.get(i);

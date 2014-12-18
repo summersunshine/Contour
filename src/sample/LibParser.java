@@ -64,8 +64,8 @@ public class LibParser
 			LibParser.libStrokes.add(libStroke);
 			System.out.println("parse stroke " + i);
 		}
-		Global.BRUSH_WDITH = (int) (sampleBrushWidthSum / STOKE_NUM);
-		Global.SAMPLE_DIST = (int) (sampleDistSum / STOKE_NUM);
+		// Global.BRUSH_WDITH = (int) (sampleBrushWidthSum / STOKE_NUM);
+		// Global.SAMPLE_DIST = (int) (sampleDistSum / STOKE_NUM);
 		Feature.isLoadBegin = false;
 		System.out.println(Global.SAMPLE_DIST);
 		// System.out.println("LibParser.initLibStrokes() end");

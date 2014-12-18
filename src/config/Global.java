@@ -11,7 +11,7 @@ public class Global
 	public static final int	WHITE_VALUE		= -1;
 	public static final int	BLACK_VALUE		= -16777216;
 
-	public static int		SAMPLE_DIST		= 10;
+	public static int		SAMPLE_DIST		= 8;
 
 	public static float		BRUSH_WDITH		= 20;
 

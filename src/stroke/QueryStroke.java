@@ -2,6 +2,7 @@ package stroke;
 
 import geometry.Point;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Vector;
 
@@ -173,7 +174,10 @@ public class QueryStroke extends Stroke
 
 	public void drawShapeContext(Graphics2D graphics2d, int i)
 	{
-		querySamples.get(i).drawShapeContext(graphics2d);
+		// querySamples.get(i).drawShapeContext(graphics2d);
+		points.get(i).drawPoint(graphics2d, Color.YELLOW);
+		leftContourPoints.get(i).drawPoint(graphics2d, Color.YELLOW);
+		rightContourPoints.get(i).drawPoint(graphics2d, Color.YELLOW);
 	}
 
 	public float getFeatureDistance(int i, int a, int b)

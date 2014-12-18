@@ -1,9 +1,5 @@
-/config
-/edge
-/feature
-/geometry
-/sample
-/sequence
-/gui
-/util
-/stroke
+/edge/
+/stroke/
+/geometry/
+/sample/
+/config/

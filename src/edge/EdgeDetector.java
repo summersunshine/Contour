@@ -15,14 +15,20 @@ import config.SampleConfig;
 
 public class EdgeDetector
 {
-	public static final Point[]	OFFSET_POINTS		= { new Point(1, 1), new Point(-1, 1), new Point(-1, -1), new Point(1, -1), new Point(1, 0),
+	public static final Point[]		OFFSET_POINTS		= { new Point(1, 1), new Point(-1, 1), new Point(-1, -1), new Point(1, -1), new Point(1, 0),
 			new Point(0, 1), new Point(-1, 0), new Point(0, -1), };
 
-	public static final int[][]	LAPLACE_MASK		= { { 0, -1, 0 }, { -1, 4, -1 }, { 0, -1, 0 } };
+	public static final int[][]		LAPLACE_MASK		= { { 0, -1, 0 }, { -1, 4, -1 }, { 0, -1, 0 } };
 
-	public static Vector<Point>	points				= new Vector<Point>();
-	public static Vector<Point>	leftCountourPoints	= new Vector<Point>();
-	public static Vector<Point>	rightCountourPoints	= new Vector<Point>();
+	public static Vector<Point>		points				= new Vector<Point>();
+	public static Vector<Point>		leftCountourPoints	= new Vector<Point>();
+	public static Vector<Point>		rightCountourPoints	= new Vector<Point>();
+
+	private static float[]			differences;
+	private static int				boxSize;
+	private static double			ratio;
+	private static Vector<Double>	radius;
+	private static Vector<Point>	dirPoints;
 
 	/**
 	 * ªÒ»°±ﬂ‘µºÏ≤‚ÕºœÒ
@@ -61,7 +67,9 @@ public class EdgeDetector
 	public static Vector<Point> getEdgePoints(BufferedImage edgeImage, SpinePoints spinePoints)
 	{
 		points = spinePoints.spinePoints;
+		radius = spinePoints.radius;
 
+		dirPoints = Geometry.getDirPoints(points);
 		Point beginPoint = getEndPoint(edgeImage, points.firstElement(), points.get(2), 1);
 		Point endPoint = getEndPoint(edgeImage, points.lastElement(), points.get(points.size() - 2), -1);
 
@@ -70,14 +78,14 @@ public class EdgeDetector
 		leftCountourPoints = traceContour(edgeImage, contourPoint[0], beginPoint, endPoint);
 		rightCountourPoints = traceContour(edgeImage, contourPoint[1], beginPoint, endPoint);
 
-		// System.out.println(leftCountourPoints.size());
-		// System.out.println(rightCountourPoints.size());
+		System.out.println(leftCountourPoints.size());
+		System.out.println(rightCountourPoints.size());
 
 		// handleTurningPoint1(spinePoints);
 		handleTurningPoint2();
-		handleTurningPoint();
-		makeContourSizeSame();
-		twiceSample();
+		// handleTurningPoint();
+		// makeContourSizeSame();
+		// twiceSample();
 
 		drawAndSaveImage(edgeImage);
 
@@ -193,16 +201,207 @@ public class EdgeDetector
 	 * */
 	public static void handleTurningPoint2()
 	{
-		int[] differences = new int[points.size()];
+		boxSize = (int) Global.BRUSH_WDITH * 3;
+		differences = new float[points.size()];
 		for (int i = 0; i < points.size(); i++)
 		{
-			int leftCount = getCountInBox(leftCountourPoints, points.get(i), (int) Global.BRUSH_WDITH * 4);
-			int rightCount = getCountInBox(rightCountourPoints, points.get(i), (int) Global.BRUSH_WDITH * 4);
-			differences[i] = leftCount - rightCount;
+			int leftCount = getCountInBox(leftCountourPoints, points.get(i), boxSize);
+			int rightCount = getCountInBox(rightCountourPoints, points.get(i), boxSize);
+			differences[i] = (leftCount - rightCount) * 1f / (leftCount + rightCount);
 			System.out.println("leftCount: " + leftCount + " rightCount: " + rightCount);
-			System.out.println("sum: " + (leftCount - rightCount) + " i: " + i);
+			System.out.println("differences: " + differences[i] + " i: " + i);
+			// System.out.println("sum: " + (leftCount - rightCount) + " i: " +
+			// i);
 		}
 
+		int firstIndex = findNoZeroAfterZero(differences);
+		int lastIndex = findNoZeroAfterZeroOpposite(differences);
+
+		twiceSample2(firstIndex, lastIndex);
+	}
+
+	public static void twiceSample2(int firstIndex, int lastIndex)
+	{
+
+		double leftRatio = leftCountourPoints.size() * 1f / points.size();
+		double rightRatio = rightCountourPoints.size() * 1f / points.size();
+		ratio = (leftRatio + rightRatio) / 2f;
+		Vector<Point> leftPoints = new Vector<Point>();
+		Vector<Point> righPoints = new Vector<Point>();
+		Vector<Point> tempPoints = new Vector<Point>();
+
+		int rightIndex = 0, leftIndex = 0;
+		for (int i = 0; i < differences.length; i++)
+		{
+			if (i < firstIndex)
+			{
+				leftIndex = getMinDistIndex(leftCountourPoints, points.get(i), dirPoints.get(i), leftIndex);
+				rightIndex = getMinDistIndex(rightCountourPoints, points.get(i), dirPoints.get(i), rightIndex);
+			}
+			if (differences[i] > 0)
+			{
+				rightIndex += (ratio - 2) * (1 - differences[i]) * (1 - differences[i]) + 2;
+				Point diffPoint1 = points.get(i).sub(rightCountourPoints.get(rightIndex));
+				Point diffPoint2 = points.get(i).sub(leftCountourPoints.get(leftIndex));
+				double minCos = Geometry.getCos(diffPoint1, diffPoint2);
+				for (int j = leftIndex + 1; j < leftCountourPoints.size(); j++)
+				{
+					diffPoint2 = points.get(i).sub(leftCountourPoints.get(j));
+					double cos = Geometry.getCos(diffPoint1, diffPoint2);
+					if (minCos > cos)
+					{
+						minCos = cos;
+					}
+					else
+					{
+						leftIndex = j;
+						break;
+					}
+				}
+			}
+			else if (differences[i] < 0)
+			{
+				leftIndex += (ratio - 2) * (1 + differences[i]) * (1 + differences[i]) + 2;
+				Point diffPoint1 = points.get(i).sub(leftCountourPoints.get(leftIndex));
+				Point diffPoint2 = points.get(i).sub(rightCountourPoints.get(rightIndex));
+				double minCos = Geometry.getCos(diffPoint1, diffPoint2);
+				for (int j = rightIndex + 1; j < rightCountourPoints.size(); j++)
+				{
+					diffPoint2 = points.get(i).sub(rightCountourPoints.get(j));
+					double cos = Geometry.getCos(diffPoint1, diffPoint2);
+					if (minCos > cos)
+					{
+						minCos = cos;
+					}
+					else
+					{
+						rightIndex = j;
+						break;
+					}
+				}
+			}
+			else
+			{
+
+				leftIndex = getMinDistIndex(leftCountourPoints, points.get(i), dirPoints.get(i), leftIndex);
+				rightIndex = getMinDistIndex(rightCountourPoints, points.get(i), dirPoints.get(i), rightIndex);
+
+			}
+			System.out.println("i " + i + " leftIndex: " + leftIndex + " rightIndex: " + rightIndex + " differences: " + differences[i]);
+			leftPoints.add(leftCountourPoints.get(leftIndex));
+			righPoints.add(rightCountourPoints.get(rightIndex));
+			// tempPoints.add(points.get(i));
+		}
+
+		// points.clear();
+		leftCountourPoints.clear();
+		rightCountourPoints.clear();
+		// points.addAll(tempPoints);
+		leftCountourPoints.addAll(leftPoints);
+		rightCountourPoints.addAll(righPoints);
+	}
+
+	public static int getMinDistIndex(Vector<Point> contourPoints, Point point, Point dirPoint, int startIndex)
+	{
+		int index = startIndex + 1;
+		Point diffPoint = point.sub(contourPoints.get(index));
+		double minCos = Math.abs(Geometry.getCos(diffPoint, dirPoint));
+		for (int j = index; j < contourPoints.size() && j < startIndex + 2 * ratio; j++)
+		{
+			diffPoint = point.sub(contourPoints.get(j));
+			double dis = Math.abs(Geometry.getCos(diffPoint, dirPoint));
+			if (minCos > dis)
+			{
+				index = j;
+				minCos = dis;
+			}
+		}
+		return index;
+	}
+
+	public static void twiceSample(int firstIndex, int lastIndex)
+	{
+
+		double leftRatio = leftCountourPoints.size() * 1f / points.size();
+		double rightRatio = rightCountourPoints.size() * 1f / points.size();
+		double ratio = (leftRatio + rightRatio) / 2f;
+		Vector<Point> leftPoints = new Vector<Point>();
+		Vector<Point> righPoints = new Vector<Point>();
+		Vector<Point> tempPoints = new Vector<Point>();
+
+		int rightIndex = 0, leftIndex = 0;
+		for (int i = 0; i < differences.length; i++)
+		{
+			if (i < firstIndex)
+			{
+				rightIndex = leftIndex = (int) (i * ratio);
+
+			}
+			else if (i > lastIndex)
+			{
+
+				rightIndex = (int) (rightCountourPoints.size() - (differences.length - i) * ratio);
+				leftIndex = (int) (leftCountourPoints.size() - (differences.length - i) * ratio);
+				break;
+			}
+			else
+			{
+				leftIndex += (ratio - 2) * (1 + differences[i]) * (1 + differences[i]) + 2;
+				rightIndex += (ratio - 2) * (1 - differences[i]) * (1 - differences[i]) + 2;
+				break;
+				// if (differences[i] < 0)
+				// {
+				//
+				// }
+			}
+			System.out.println("leftIndex: " + leftIndex + " rightIndex: " + rightIndex + " differences: " + differences[i]);
+			leftPoints.add(leftCountourPoints.get(leftIndex));
+			righPoints.add(rightCountourPoints.get(rightIndex));
+			tempPoints.add(points.get(i));
+		}
+
+		points.clear();
+		leftCountourPoints.clear();
+		rightCountourPoints.clear();
+		points.addAll(tempPoints);
+		leftCountourPoints.addAll(leftPoints);
+		rightCountourPoints.addAll(righPoints);
+	}
+
+	public static int findNoZeroAfterZero(float[] differences)
+	{
+		boolean isZeroAppeared = false;
+		for (int i = 0; i < differences.length; i++)
+		{
+			if (differences[i] == 0)
+			{
+				isZeroAppeared = true;
+			}
+
+			if (isZeroAppeared && differences[i] != 0)
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	public static int findNoZeroAfterZeroOpposite(float[] differences)
+	{
+		boolean isZeroAppeared = false;
+		for (int i = differences.length - 1; i > 0; i--)
+		{
+			if (differences[i] == 0)
+			{
+				isZeroAppeared = true;
+			}
+
+			if (isZeroAppeared && differences[i] != 0)
+			{
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	public static int getCountInBox(Vector<Point> points, Point point, int size)

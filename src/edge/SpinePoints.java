@@ -181,7 +181,7 @@ public class SpinePoints
 		double nextRadius;
 		if (index == originPoints.size() - 2)
 		{
-			nextRadius = 0.5;
+			nextRadius = 0.3;
 		}
 		else
 		{
