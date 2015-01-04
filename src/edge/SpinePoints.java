@@ -7,7 +7,9 @@ import geometry.SamplePoint;
 
 import java.util.Vector;
 
+import util.ImageUtil;
 import config.Global;
+import config.SampleConfig;
 
 //获取路径走向
 public class SpinePoints
@@ -40,6 +42,10 @@ public class SpinePoints
 		this.createExtraPoints();
 		this.removeAssistPoint();
 		this.setSpineSamplePoints();
+
+		ImageUtil.drawPointImage(points, SampleConfig.OUTPUT_PATH + "After\\Points.jpg");
+		ImageUtil.drawPointImage(originPoints, SampleConfig.OUTPUT_PATH + "After\\SparsePoints.jpg");
+		ImageUtil.drawPointImage(spinePoints, SampleConfig.OUTPUT_PATH + "After\\SpinePoints.jpg");
 	}
 
 	public static double getRatio(Point point1, Point point2, Point point3)
@@ -66,6 +72,7 @@ public class SpinePoints
 				this.originPoints.add(points.get(i));
 			}
 		}
+
 	}
 
 	/**
@@ -146,6 +153,7 @@ public class SpinePoints
 		{
 			createBezierCurves(i);
 		}
+
 	}
 
 	/**

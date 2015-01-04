@@ -1,9 +1,13 @@
 package util;
 
+import geometry.Point;
+
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
@@ -29,6 +33,18 @@ public class ImageUtil
 			e.printStackTrace();
 		}
 		return bufferedImage;
+	}
+
+	public static void drawPointImage(Vector<Point> points, String path)
+	{
+		BufferedImage outputImage = new BufferedImage(Global.width, Global.height, BufferedImage.TYPE_INT_RGB);
+		Graphics2D graphics2d = outputImage.createGraphics();
+
+		for (int i = 0; i < points.size(); i++)
+		{
+			points.get(i).drawPoint(graphics2d, Color.red);
+		}
+		ImageUtil.saveImage(outputImage, path);
 	}
 
 	public static void saveImage(BufferedImage image, String path)
@@ -116,6 +132,7 @@ public class ImageUtil
 		int b = (int) (255 - (255 - brushColor.getBlue()) * alpha);
 		return ImageUtil.getRGB(r, g, b);
 	}
+
 	// /////////////////////////////////////////////下面都是打酱油的/////////////////////////////////////////
 	public static int[] getSplitRGB(int rgb)
 	{

@@ -53,8 +53,8 @@ public class QuerySample extends Sample
 			beginPercent = beginPercent > (1 - range) ? (1 - range) : beginPercent;
 		}
 
-		int begin = (int) ((otherSamples.size() - 1) * beginPercent);
-		int end = (int) ((otherSamples.size() - 1) * endPercent);
+		// int begin = (int) ((otherSamples.size() - 1) * beginPercent);
+		// int end = (int) ((otherSamples.size() - 1) * endPercent);
 
 		// for (int i = begin; i < end; i++)
 		// {

@@ -82,37 +82,34 @@ public class EdgeDetector
 
 		handleTurningPoint();
 
-		drawAndSaveImage(edgeImage);
+		drawAndSaveImage(SampleConfig.OUTPUT_PATH + "After\\contour points.jpg");
 
 		// System.out.println(leftCountourPoints.size());
 		// System.out.println(rightCountourPoints.size());
 		return points;
 	}
 
-	public static void drawAndSaveImage(BufferedImage edgeImage)
+	public static void drawAndSaveImage(String path)
 	{
-		BufferedImage outputImage = new BufferedImage(edgeImage.getWidth(), edgeImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+		BufferedImage outputImage = new BufferedImage(Global.width, Global.height, BufferedImage.TYPE_INT_RGB);
 		Graphics2D graphics2d = outputImage.createGraphics();
 
-		graphics2d.setColor(new Color(255, 0, 0));
 		for (int i = 0; i < points.size(); i++)
 		{
-			graphics2d.fillRect(points.get(i).getIntX(), points.get(i).getIntY(), 1, 1);
+			points.get(i).drawPoint(graphics2d, Color.red);
 		}
 
-		graphics2d.setColor(new Color(0, 0, 255));
 		for (int i = 0; i < leftCountourPoints.size(); i++)
 		{
-			graphics2d.fillRect(leftCountourPoints.get(i).getIntX(), leftCountourPoints.get(i).getIntY(), 1, 1);
+			leftCountourPoints.get(i).drawPoint(graphics2d, Color.blue);
 		}
 
-		graphics2d.setColor(new Color(0, 255, 0));
 		for (int i = 0; i < rightCountourPoints.size(); i++)
 		{
-			graphics2d.fillRect(rightCountourPoints.get(i).getIntX(), rightCountourPoints.get(i).getIntY(), 1, 1);
+			rightCountourPoints.get(i).drawPoint(graphics2d, Color.green);
 		}
 
-		ImageUtil.saveImage(outputImage, SampleConfig.OUTPUT_PATH + "After\\contour points.jpg");
+		ImageUtil.saveImage(outputImage, path);
 	}
 
 	/**

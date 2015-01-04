@@ -20,7 +20,7 @@ public class Global
 
 	public static String	Libary			= "charcoal1";
 
-	public static String[]	colorStrings	= { "BLUE", "BLACK", "CYAN", "DARK_GRAY", "GRAY", "GREEN", "LIGHT_GRAY", "MAGENTA", "ORANGE", "PINK", "RED",
+	public static String[]	colorStrings	= { "BLACK", "BLUE", "CYAN", "DARK_GRAY", "GRAY", "GREEN", "LIGHT_GRAY", "MAGENTA", "ORANGE", "PINK", "RED",
 			"YELLOW"						};
 
 	public static Color[]	brushColors		= { Color.BLACK, Color.BLUE, Color.CYAN, Color.DARK_GRAY, Color.GRAY, Color.GREEN, Color.LIGHT_GRAY, Color.MAGENTA,

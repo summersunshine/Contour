@@ -25,20 +25,25 @@ import config.SampleConfig;
 
 public class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener
 {
+	/**
+	 * 
+	 */
+	private static final long	serialVersionUID	= 1L;
+
 	// 当前点的索引
-	public static int		currentIndex;
+	public static int			currentIndex;
 
-	private LibParser		libParser;
-	private QueryStroke		queryStroke;
+	private LibParser			libParser;
+	private QueryStroke			queryStroke;
 
-	private Vector<Point>	points;
+	private Vector<Point>		points;
 	// private Vector<Double> angleDoubles;
-	private Vector<Point>	leftContourPoints;
-	private Vector<Point>	rightContourPoints;
-	private SpinePoints		spinePoints;
-	private boolean			clearFlag;
+	private Vector<Point>		leftContourPoints;
+	private Vector<Point>		rightContourPoints;
+	private SpinePoints			spinePoints;
+	private boolean				clearFlag;
 
-	private JLabel			posLabel;
+	private JLabel				posLabel;
 
 	public DrawingPanel()
 	{
@@ -52,6 +57,31 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 		this.clearFlag = true;
 		this.initPoint();
 		this.initLibParser();
+
+		// BufferedImage alphaImage =
+		// ImageUtil.getImage(SampleConfig.OUTPUT_PATH + "After\\alpha.jpg");
+		// BufferedImage resultImage = ImageUtil.getConverterImage(alphaImage,
+		// Color.BLUE);
+		// ImageUtil.saveImage(resultImage, SampleConfig.OUTPUT_PATH +
+		// "After\\result1.jpg");
+		//
+		// alphaImage = ImageUtil.getImage(SampleConfig.OUTPUT_PATH +
+		// "After\\alpha.jpg");
+		// resultImage = ImageUtil.getConverterImage(alphaImage, Color.BLACK);
+		// ImageUtil.saveImage(resultImage, SampleConfig.OUTPUT_PATH +
+		// "After\\result2.jpg");
+		//
+		// alphaImage = ImageUtil.getImage(SampleConfig.OUTPUT_PATH +
+		// "After\\alpha.jpg");
+		// resultImage = ImageUtil.getConverterImage(alphaImage, Color.RED);
+		// ImageUtil.saveImage(resultImage, SampleConfig.OUTPUT_PATH +
+		// "After\\result3.jpg");
+		//
+		// alphaImage = ImageUtil.getImage(SampleConfig.OUTPUT_PATH +
+		// "After\\alpha.jpg");
+		// resultImage = ImageUtil.getConverterImage(alphaImage, Color.GRAY);
+		// ImageUtil.saveImage(resultImage, SampleConfig.OUTPUT_PATH +
+		// "After\\result4.jpg");
 	}
 
 	private void initPoint()

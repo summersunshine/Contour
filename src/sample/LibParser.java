@@ -55,12 +55,12 @@ public class LibParser
 	{
 		// System.out.println("LibParser.initLibStrokes() begin");
 		LibParser.libStrokes = new Vector<LibStroke>();
-		int sampleDistSum = 0, sampleBrushWidthSum = 0;
+		// int sampleDistSum = 0, sampleBrushWidthSum = 0;
 		for (int i = 0; i < STOKE_NUM; i++)
 		{
 			LibStroke libStroke = new LibStroke(Global.Libary, i);
-			sampleDistSum += libStroke.sampleDist;
-			sampleBrushWidthSum += libStroke.sampleBrushWidth;
+			// sampleDistSum += libStroke.sampleDist;
+			// sampleBrushWidthSum += libStroke.sampleBrushWidth;
 			LibParser.libStrokes.add(libStroke);
 			System.out.println("parse stroke " + i);
 		}
