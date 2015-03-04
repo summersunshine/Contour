@@ -2,7 +2,7 @@ package gui;
 
 import edge.EdgeDetector;
 import edge.MaskGenerator;
-import edge.SpinePoints;
+import edge.SpinePath;
 import geometry.Point;
 
 import java.awt.Color;
@@ -40,7 +40,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	// private Vector<Double> angleDoubles;
 	private Vector<Point>		leftContourPoints;
 	private Vector<Point>		rightContourPoints;
-	private SpinePoints			spinePoints;
+	private SpinePath			spinePoints;
 	private boolean				clearFlag;
 
 	private JLabel				posLabel;
@@ -139,7 +139,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	 * */
 	public void setPoints()
 	{
-		spinePoints = new SpinePoints(points);
+		spinePoints = new SpinePath(points);
 		points = spinePoints.spinePoints;
 		// angleDoubles = spinePoints.angleDoubles;
 		// points = UniformSample.normalize(points, 6);

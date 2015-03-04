@@ -1,4 +1,4 @@
-package sample;
+package util;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -8,9 +8,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
 
+import sample.LibParser;
 import stroke.LibStroke;
 import stroke.QueryStroke;
-import util.ImageUtil;
 import config.Global;
 import config.SampleConfig;
 import edge.PixelGrabber;

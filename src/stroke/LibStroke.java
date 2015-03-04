@@ -25,13 +25,20 @@ public class LibStroke extends Stroke
 
 	// 源图像的款
 	public int					width;
+
 	// 源图像的高
 	public int					height;
 
+	// 源图像，用于生成笔触的颜色
 	public BufferedImage		sourceImage;
 
+	// 源图像的灰度图
+	public BufferedImage		grayImage;
+
+	// alpha掩膜
 	public BufferedImage		alphaImage;
 
+	// 用于判断边缘
 	public BufferedImage		tightImage;
 
 	// 库中的第index个笔触
@@ -110,6 +117,7 @@ public class LibStroke extends Stroke
 		sourceImage = ImageUtil.getImage(imgPathString);
 		width = sourceImage.getWidth();
 		height = sourceImage.getHeight();
+		grayImage = ImageUtil.getGrayImage(sourceImage);
 		tightImage = ImageUtil.getImage(tightMaskString);
 		alphaImage = ImageUtil.getImage(alphaMaskString);
 	}

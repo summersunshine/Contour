@@ -1,6 +1,7 @@
 package util;
 
 import java.awt.Color;
+import java.util.Vector;
 
 public class ColorUtil
 {
@@ -19,6 +20,80 @@ public class ColorUtil
 		int g = (color1.getGreen() + color2.getGreen()) / 2;
 		int b = (color1.getBlue() + color2.getBlue()) / 2;
 		return new Color(r, g, b);
+	}
+
+	public static Color getAlphaMergeColor(Boolean hasAlpha, Vector<Integer> rgbs)
+	{
+		int r = 0, g = 0, b = 0, a = 0;
+		for (int i = 0; i < rgbs.size(); i++)
+		{
+			Color color = new Color(rgbs.get(i));
+			r += color.getRed();
+			g += color.getGreen();
+			b += color.getBlue();
+			a += color.getAlpha();
+		}
+		r /= rgbs.size();
+		g /= rgbs.size();
+		b /= rgbs.size();
+		a /= rgbs.size();
+		if (hasAlpha)
+		{
+			return new Color(r, g, b, a);
+		} else
+		{
+			return new Color(r, g, b);
+		}
+	}
+
+	public static Color getAlphaMergeColor(boolean hasAlpha, int... rgbs)
+	{
+		int r = 0, g = 0, b = 0, a = 0;
+		for (int i = 0; i < rgbs.length; i++)
+		{
+			Color color = new Color(rgbs[i]);
+			r += color.getRed();
+			g += color.getGreen();
+			b += color.getBlue();
+			a += color.getAlpha();
+		}
+		r /= rgbs.length;
+		g /= rgbs.length;
+		b /= rgbs.length;
+		a /= rgbs.length;
+		if (hasAlpha)
+		{
+			return new Color(r, g, b, a);
+		} else
+		{
+			return new Color(r, g, b);
+		}
+
+	}
+
+
+	public static Color getAlphaMergeColor(boolean hasAlpha, Color... colors)
+	{
+		int r = 0, g = 0, b = 0, a = 0;
+		for (int i = 0; i < colors.length; i++)
+		{
+			r += colors[i].getRed();
+			g += colors[i].getGreen();
+			b += colors[i].getBlue();
+			a += colors[i].getAlpha();
+		}
+		r /= colors.length;
+		g /= colors.length;
+		b /= colors.length;
+		a /= colors.length;
+		if (hasAlpha)
+		{
+			return new Color(r, g, b, a);
+		} else
+		{
+			return new Color(r, g, b);
+		}
+
 	}
 
 	public static double[] RGB2Lab2(Color color)
@@ -128,4 +203,5 @@ public class ColorUtil
 
 		return new Color((int) R, (int) G, (int) B);
 	}
+
 }

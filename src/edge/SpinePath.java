@@ -11,8 +11,8 @@ import util.ImageUtil;
 import config.Global;
 import config.SampleConfig;
 
-//获取路径走向
-public class SpinePoints
+//路径走向
+public class SpinePath
 {
 	public static int			SAMPLE_RATE	= 6;
 	public static double		maxRadius	= 1.4;
@@ -26,7 +26,7 @@ public class SpinePoints
 	public Vector<Double>		radius;
 	public Vector<SamplePoint>	spineSamplePoints;
 
-	public SpinePoints(Vector<Point> points)
+	public SpinePath(Vector<Point> points)
 	{
 
 		this.middlePoints = new Vector<Point>();

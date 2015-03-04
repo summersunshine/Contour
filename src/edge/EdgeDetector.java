@@ -64,7 +64,7 @@ public class EdgeDetector
 	 * ªÒ»°±ﬂ‘µºÏ≤‚ÕºœÒ
 	 * 
 	 * */
-	public static Vector<Point> getEdgePoints(BufferedImage edgeImage, SpinePoints spinePoints)
+	public static Vector<Point> getEdgePoints(BufferedImage edgeImage, SpinePath spinePoints)
 	{
 		points = spinePoints.spinePoints;
 

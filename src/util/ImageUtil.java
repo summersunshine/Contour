@@ -35,6 +35,30 @@ public class ImageUtil
 		return bufferedImage;
 	}
 
+	/**
+	 * Éú³É»Ò¶ÈÍ¼
+	 * */
+	public static BufferedImage getGrayImage(BufferedImage image)
+	{
+		int width = image.getWidth();
+		int height = image.getHeight();
+
+		BufferedImage outputImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				Color color = new Color(image.getRGB(x, y));
+				int gray = (color.getRed() + color.getGreen() + color.getBlue())/3;
+				int rgb = gray << 16 | gray << 8 | gray;
+				outputImage.setRGB(x, y, rgb);
+			}
+		}
+
+		return outputImage;
+	}
+
 	public static void drawPointImage(Vector<Point> points, String path)
 	{
 		BufferedImage outputImage = new BufferedImage(Global.width, Global.height, BufferedImage.TYPE_INT_RGB);

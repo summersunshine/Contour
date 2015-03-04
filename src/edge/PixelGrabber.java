@@ -60,31 +60,26 @@ public class PixelGrabber
 		
 		flag = new boolean[Global.width][Global.height];
 
-		for (int i = 0; i < alphaImages.size(); i++)
+
+		for (int y = 0; y < Global.height; y++)
 		{
-			for (int y = 0; y < Global.height; y++)
+			for (int x = 0; x < Global.width; x++)
 			{
-				for (int x = 0; x < Global.width; x++)
+
+				Vector<Integer> colors = new Vector<Integer>();
+				for (int i = 0; i < alphaImages.size(); i++)
 				{
-
-					if (alphaImages.get(i).getRGB(x, y) != Global.BLACK_VALUE)
+					if (alphaImages.get(i).getRGB(x, y) != 0)
 					{
-						if (flag[x][y])
-						{
-							Color color = new Color(alphaImages.get(i).getRGB(x, y));
-							Color srcColor = new Color(alphaImage.getRGB(x, y));
-							Color mergeColor = ColorUtil.getAlphaMergeColor(color, srcColor);
-							mainGraphics2d.setColor(mergeColor);
-						}
-						else
-						{
-							Color color = new Color(alphaImages.get(i).getRGB(x, y));
-							mainGraphics2d.setColor(color);
-						}
-						flag[x][y] = true;
-						mainGraphics2d.fillRect(x, y, 1, 1);
+						colors.add(alphaImages.get(i).getRGB(x, y));
 					}
+				}
 
+				for (int i = 0; i < colors.size(); i++)
+				{
+					Color mergeColor = ColorUtil.getAlphaMergeColor(true, colors);
+					mainGraphics2d.setColor(mergeColor);
+					mainGraphics2d.fillRect(x, y, 1, 1);
 				}
 			}
 		}
@@ -97,15 +92,15 @@ public class PixelGrabber
 	{
 		segementInfo.calCoorDiff();
 
-		BufferedImage bufferedImage = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
+		BufferedImage bufferedImage = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D graphics2d = (Graphics2D) bufferedImage.getGraphics();
 
 		int strokeId = segementInfo.strokeId;
 		LibStroke libStroke = LibParser.libStrokes.get(strokeId);
 
 		// TODO Auto-generated method stub
-		BufferedImage image = ImageUtil.getCloneImage(libStroke.alphaImage);
-
+		BufferedImage image = ImageUtil.getCloneImage(libStroke.sourceImage);
+		BufferedImage alphaImage = ImageUtil.getCloneImage(libStroke.alphaImage);
 		TPSMorpher tpsMorpher = new TPSMorpher(segementInfo.coordDiffs, 0.15, 1);
 		Vector<CoordDiff> samples = tpsMorpher.morphPoints(samplePoints);
 
@@ -117,8 +112,15 @@ public class PixelGrabber
 			int y = sampleCoordDiff.getIntY();
 			int x2 = sampleCoordDiff.getIntX2();
 			int y2 = sampleCoordDiff.getIntY2();
+			Color color = new Color(image.getRGB(x, y));
+			Color alphaColor = new Color(alphaImage.getRGB(x, y));
 
-			graphics2d.setColor(new Color(image.getRGB(x, y)));
+			int r = color.getRed() * alphaColor.getRed() / 255;
+			int g = color.getGreen() * alphaColor.getRed() / 255;
+			int b = color.getBlue() * alphaColor.getRed() / 255;
+			// Color compositeColor = new Color(r, g, b,alphaColor.getRed());
+			Color compositeColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), alphaColor.getRed());
+			graphics2d.setColor(compositeColor);
 			graphics2d.drawRect(x2, y2, 1, 1);
 
 		}

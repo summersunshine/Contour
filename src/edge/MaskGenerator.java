@@ -12,7 +12,7 @@ public class MaskGenerator
 	public static final int	width	= 1280;
 	public static final int	height	= 720;
 
-	public static BufferedImage getImage(SpinePoints spinePoints)
+	public static BufferedImage getImage(SpinePath spinePoints)
 	{
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
