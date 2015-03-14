@@ -115,11 +115,11 @@ public class PixelGrabber
 			Color color = new Color(image.getRGB(x, y));
 			Color alphaColor = new Color(alphaImage.getRGB(x, y));
 
-			int r = color.getRed() * alphaColor.getRed() / 255;
-			int g = color.getGreen() * alphaColor.getRed() / 255;
-			int b = color.getBlue() * alphaColor.getRed() / 255;
+			// int r = color.getRed() * alphaColor.getRed() / 255;
+			// int g = color.getGreen() * alphaColor.getRed() / 255;
+			// int b = color.getBlue() * alphaColor.getRed() / 255;
 			// Color compositeColor = new Color(r, g, b,alphaColor.getRed());
-			Color compositeColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), alphaColor.getRed());
+			Color compositeColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (255 - alphaColor.getRed()));
 			graphics2d.setColor(compositeColor);
 			graphics2d.drawRect(x2, y2, 1, 1);
 
