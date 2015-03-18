@@ -41,6 +41,8 @@ public class Segement
 	public int					frontEndOverLayIndex;
 	public int					backStartOverlayIndex;
 	public int					backEndOverlayIndex;
+	public int					frontOverlayLength;
+	public int					backOverlayLength;
 
 	public Segement(int strokeId, int startLibIndex, int startQueryIndex)
 	{
@@ -57,6 +59,8 @@ public class Segement
 		this.frontEndOverLayIndex = 0;
 		this.backStartOverlayIndex = 0;
 		this.backEndOverlayIndex = 0;
+		this.frontOverlayLength = 0;
+		this.backOverlayLength = 0;
 
 		this.libPoints = new Vector<Point>();
 		this.libLeftPoints = new Vector<Point>();
@@ -259,6 +263,10 @@ public class Segement
 			{
 				segementInfos.get(i).frontEndOverLayIndex = 0;
 			}
+
+			segementInfos.get(i).frontOverlayLength = segementInfos.get(i).frontEndOverLayIndex - segementInfos.get(i).frontStartOverlayIndex;
+			segementInfos.get(i).backOverlayLength = segementInfos.get(i).libPoints.size() - 1 - segementInfos.get(i).backEndOverlayIndex
+					+ segementInfos.get(i).backStartOverlayIndex;
 		}
 	}
 

@@ -22,28 +22,21 @@ public class ColorUtil
 		return new Color(r, g, b);
 	}
 
-	public static Color getAlphaMergeColor(Boolean hasAlpha, Vector<Integer> rgbs)
+	public static Color getAlphaMergeColor(Vector<Integer> rgbs)
 	{
-		int r = 0, g = 0, b = 0, a = 0;
+		int r = 0, g = 0, b = 0;
 		for (int i = 0; i < rgbs.size(); i++)
 		{
 			Color color = new Color(rgbs.get(i));
 			r += color.getRed();
 			g += color.getGreen();
 			b += color.getBlue();
-			a += color.getAlpha();
 		}
 		r /= rgbs.size();
 		g /= rgbs.size();
 		b /= rgbs.size();
-		a /= rgbs.size();
-		if (hasAlpha)
-		{
-			return new Color(r, g, b, a);
-		} else
-		{
-			return new Color(r, g, b);
-		}
+
+		return new Color(r, g, b);
 	}
 
 	public static Color getAlphaMergeColor(boolean hasAlpha, int... rgbs)

@@ -44,6 +44,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	private boolean				clearFlag;
 
 	private JLabel				posLabel;
+	private JLabel				colorLabel;
 
 	public DrawingPanel()
 	{
@@ -236,9 +237,14 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	private void initPosLabel()
 	{
 		posLabel = new JLabel();
-		posLabel.setBounds(900, 0, 100, 50);
+		posLabel.setBounds(600, 0, 100, 50);
 		this.add(posLabel);
 		posLabel.repaint();
+
+		colorLabel = new JLabel();
+		colorLabel.setBounds(1000, 0, 100, 50);
+		this.add(colorLabel);
+		colorLabel.repaint();
 	}
 
 	@Override
@@ -250,8 +256,20 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	@Override
 	public void mouseMoved(MouseEvent event)
 	{
-		posLabel.setText("x:" + event.getX() + "y:" + event.getY());
+		int x = event.getX();
+		int y = event.getY();
+		posLabel.setText("x:" + x + "y:" + y);
 		posLabel.repaint();
+
+		if (libParser.resultImage != null)
+		{
+			int rgb = libParser.resultImage.getRGB(x, y);
+			Color color = new Color(rgb);
+			colorLabel.setText("r:" + color.getRed() + "g:" + color.getGreen()
+					+ "b:" + color.getBlue() + "a:" + color.getAlpha());
+			colorLabel.repaint();
+		}
+
 	}
 
 	@Override

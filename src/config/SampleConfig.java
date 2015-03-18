@@ -5,9 +5,9 @@ public class SampleConfig
 
 	public static final int		K				= 50;
 
-	public static final String	OUTPUT_PATH		= "C:\\Users\\XY\\Desktop\\Output\\";
+	public static final String	OUTPUT_PATH		= "C:\\Users\\Yang\\Desktop\\Output\\";
 
-	public static final String	DATABASE_PATH	= "C:\\Users\\XY\\Desktop\\Dataset\\";
+	public static final String	DATABASE_PATH	= "C:\\Users\\Yang\\Desktop\\Dataset\\";
 
 	public static final String	SHAPE_PATH		= "shape\\";
 

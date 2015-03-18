@@ -117,9 +117,10 @@ public class LibStroke extends Stroke
 		sourceImage = ImageUtil.getImage(imgPathString);
 		width = sourceImage.getWidth();
 		height = sourceImage.getHeight();
-		grayImage = ImageUtil.getGrayImage(sourceImage);
+
 		tightImage = ImageUtil.getImage(tightMaskString);
 		alphaImage = ImageUtil.getImage(alphaMaskString);
+		grayImage = ImageUtil.getGrayImage(alphaImage);
 	}
 
 	/**
