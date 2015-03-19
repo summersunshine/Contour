@@ -22,6 +22,8 @@ public class ColorUtil
 		return new Color(r, g, b);
 	}
 
+
+
 	public static Color getAlphaMergeColor(Vector<Integer> rgbs)
 	{
 		int r = 0, g = 0, b = 0;

@@ -256,17 +256,26 @@ public class Segement
 
 			if (i == segementInfos.size() - 1)
 			{
-				segementInfos.get(i).backStartOverlayIndex = segementInfos.get(i + 1).endQueryIndex;
+				segementInfos.get(i).backStartOverlayIndex = segementInfos.get(i).endQueryIndex;
 			}
 
-			if (i != 0)
+			if (i == 0)
 			{
-				segementInfos.get(i).frontEndOverLayIndex = 0;
+				segementInfos.get(i).frontEndOverLayIndex = segementInfos.get(i).startQueryIndex;
 			}
+
+			System.out.println("segementInfos.get(i).libPoints.size() " + segementInfos.get(i).libPoints.size());
+			System.out.println("segementInfos.get(i).backStartOverlayIndex " + segementInfos.get(i).backStartOverlayIndex);
+			System.out.println("segementInfos.get(i).backEndOverlayIndex " + segementInfos.get(i).backEndOverlayIndex);
+
 
 			segementInfos.get(i).frontOverlayLength = segementInfos.get(i).frontEndOverLayIndex - segementInfos.get(i).frontStartOverlayIndex;
-			segementInfos.get(i).backOverlayLength = segementInfos.get(i).libPoints.size() - 1 - segementInfos.get(i).backEndOverlayIndex
-					+ segementInfos.get(i).backStartOverlayIndex;
+			segementInfos.get(i).backOverlayLength = segementInfos.get(i).backEndOverlayIndex - segementInfos.get(i).backStartOverlayIndex;
+			// segementInfos.get(i).backOverlayLength =
+			// segementInfos.get(i).libPoints.size() - 1 -
+			// segementInfos.get(i).backEndOverlayIndex
+			// + segementInfos.get(i).backStartOverlayIndex;
+
 		}
 	}
 

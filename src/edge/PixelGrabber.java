@@ -26,6 +26,8 @@ public class PixelGrabber
 
 	public static Vector<Point>	samplePoints	= new Vector<Point>();
 
+	public static Vector<Float>		alphas			= new Vector<Float>();
+
 	public static Vector<TpsPoint>	tpsPoints		= new Vector<TpsPoint>();
 
 	public static boolean[][]	flag			= new boolean[Global.width][Global.height];
@@ -40,6 +42,9 @@ public class PixelGrabber
 
 
 		Vector<BufferedImage> alphaImages = new Vector<BufferedImage>();
+
+		Segement.setOverLayArea(LibParser.segements);
+
 		for (int i = 0; i < LibParser.segements.size(); i++)
 		{
 			setSamplePoints(LibParser.segements.get(i));
@@ -78,7 +83,7 @@ public class PixelGrabber
 					if (color.getRed() != 0 && color.getBlue() != 0
 							&& color.getGreen() != 0)
 					{
-						System.out.println("x: " + x + " y: " + y);
+						// System.out.println("x: " + x + " y: " + y);
 						colors.add(alphaImages.get(i).getRGB(x, y));
 					}
 				}
@@ -133,13 +138,20 @@ public class PixelGrabber
 			// {
 			// System.out.println("PixelGrabber.getWarpingImage()" + alpha);
 			// }
+			// int alpha = (int) (alphas.get(i).floatValue() *
+			// (alphaColor.getRed() + alphaColor.getGreen() +
+			// alphaColor.getBlue()) / 3);
 			int alpha = (alphaColor.getRed() + alphaColor.getGreen() + alphaColor.getBlue()) / 3;
+
 			// System.out.println("PixelGrabber.getWarpingImage()" + alpha);
 			// int r = color.getRed() * alpha / 255;
 			// int g = color.getGreen() * alpha / 255;
 			// int b = color.getBlue() * alpha / 255;
 			// Color compositeColor = new Color(255 - r, 255 - g, 255 - b);
-			Color compositeColor = new Color(255 - sourceColor.getRed(), 255 - sourceColor.getGreen(), 255 - sourceColor.getBlue(), alpha);
+			int r = 255 - sourceColor.getRed();
+			int g = 255 - sourceColor.getGreen();
+			int b = 255 - sourceColor.getBlue();
+			Color compositeColor = new Color(r, g, b, alpha);
 			graphics2d.setColor(compositeColor);
 			graphics2d.drawRect(x2, y2, 1, 1);
 
@@ -169,12 +181,21 @@ public class PixelGrabber
 		BufferedImage strokeImage = new BufferedImage(libStroke.width, libStroke.height, BufferedImage.TYPE_INT_RGB);
 
 		samplePoints.clear();
+		alphas.clear();
 		tpsPoints.clear();
 
-		Point frontLeftBoundaryPoint = segementInfo.libLeftPoints.get(segementInfo.frontOverlayLength);
-		Point frontRightBoundaryPoint = segementInfo.libRightPoints.get(segementInfo.frontOverlayLength);
-		Point backLeftBoundaryPoint = segementInfo.libLeftPoints.get(segementInfo.backOverlayLength);
-		Point backRightBoundaryPoint = segementInfo.libRightPoints.get(segementInfo.backOverlayLength);
+		// Point frontLeftPoint = segementInfo.libLeftPoints.firstElement();
+		// Point frontRightPoint = segementInfo.libRightPoints.firstElement();
+		// Point backLeftPoint = segementInfo.libLeftPoints.lastElement();
+		// Point backRightPoint = segementInfo.libRightPoints.lastElement();
+		// Point frontLeftBoundaryPoint =
+		// segementInfo.libLeftPoints.get(segementInfo.frontOverlayLength);
+		// Point frontRightBoundaryPoint =
+		// segementInfo.libRightPoints.get(segementInfo.frontOverlayLength);
+		// Point backLeftBoundaryPoint =
+		// segementInfo.libLeftPoints.get(segementInfo.backOverlayLength);
+		// Point backRightBoundaryPoint =
+		// segementInfo.libRightPoints.get(segementInfo.backOverlayLength);
 
 		for (int i = 0; i < segementInfo.libPoints.size()-1; i++)
 		{
@@ -216,28 +237,64 @@ public class PixelGrabber
 						// TpsPoint tpsPoint = new TpsPoint(x, y);
 						mask[x][y] = true;
 
-						// // 点在前段重叠的部分
-						// if (i < segementInfo.frontOverlayLength)
-						// {
-						// samplePoints.add(new Point(x, y));
-						// }
-						//
-						// // 点在后段重叠部分
-						// else if (i + segementInfo.backOverlayLength >
-						// segementInfo.libPoints.size())
-						// {
-						// TpsPoint tpsPoint = new TpsPoint(x, y, 1);
-						// tpsPoints.add(tpsPoint);
-						// }
-						// else
-						// {
-						// TpsPoint tpsPoint = new TpsPoint(x, y, 1);
-						// tpsPoints.add(tpsPoint);
-						// }
+						// 点在前段重叠的部分
+						if (i < segementInfo.frontOverlayLength)
+						{
+							// float alpha = getAlpha(frontLeftPoint,
+							// frontRightPoint, frontRightBoundaryPoint,
+							// frontLeftBoundaryPoint,
+							// samplePoints.lastElement());
+							// TpsPoint tpsPoint = new TpsPoint(x, y, alpha);
+							// tpsPoints.add(tpsPoint);
+							float alpha = (i + 1) * 1f / segementInfo.frontOverlayLength;
+							alphas.add(alpha / 2 + 0.5f);
+							System.out.println("front" + alphas.lastElement());
+						}
+
+						// 点在后段重叠部分
+						else if (i + segementInfo.backOverlayLength > segementInfo.libPoints.size() - 1)
+						{
+							// float alpha = getAlpha(backLeftPoint,
+							// backRightPoint, backRightBoundaryPoint,
+							// backLeftBoundaryPoint,
+							// samplePoints.lastElement());
+							// TpsPoint tpsPoint = new TpsPoint(x, y, alpha);
+							// tpsPoints.add(tpsPoint);
+							float alpha = (segementInfo.libPoints.size() - 1 - i) * 1f / (segementInfo.backOverlayLength);
+							alphas.add(alpha / 2 + 0.5f);
+							System.out.println("back" + alphas.lastElement());
+						}
+						else
+						{
+							// TpsPoint tpsPoint = new TpsPoint(x, y, 1);
+							// tpsPoints.add(tpsPoint);
+							alphas.add(1f);
+						}
+
+
 					}
 				}
 			}
 		}
+	}
+
+	public static float getAlpha(Point point1, Point point2, Point point3, Point point4, Point point)
+	{
+		Point point5 = Point.getMidPoint(point1, point2);
+		Point point6 = Point.getMidPoint(point3, point4);
+		double dist1 = Point.getDistance(point1, point);
+		double dist2 = Point.getDistance(point2, point);
+		double dist3 = Point.getDistance(point3, point);
+		double dist4 = Point.getDistance(point4, point);
+		double dist5 = Point.getDistance(point5, point);
+		double dist6 = Point.getDistance(point6, point);
+		double min1 = Math.min(dist1, Math.min(dist2, dist3));
+		double min2 = Math.min(dist4, Math.min(dist5, dist6));
+		return (float) (min1 / (min1 + min2));
+		// + Point.getDistance(point2, point);
+		// double dist2 = Point.getDistance(point2, point) +
+		// Point.getDistance(point3, point);
+		// return (float) (dist1 / (dist1 + dist2));
 	}
 
 

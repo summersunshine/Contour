@@ -40,7 +40,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	// private Vector<Double> angleDoubles;
 	private Vector<Point>		leftContourPoints;
 	private Vector<Point>		rightContourPoints;
-	private SpinePath			spinePoints;
+	private SpinePath			spinePath;
 	private boolean				clearFlag;
 
 	private JLabel				posLabel;
@@ -140,19 +140,19 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 	 * */
 	public void setPoints()
 	{
-		spinePoints = new SpinePath(points);
-		points = spinePoints.spinePoints;
+		spinePath = new SpinePath(points);
+		points = spinePath.spinePoints;
 		// angleDoubles = spinePoints.angleDoubles;
 		// points = UniformSample.normalize(points, 6);
 		// points = Geometry.removeClose(points, 6);
 
-		BufferedImage maskImage = MaskGenerator.getImage(spinePoints);
+		BufferedImage maskImage = MaskGenerator.getImage(spinePath);
 		ImageUtil.saveImage(maskImage, SampleConfig.OUTPUT_PATH + "After\\mask.jpg");
 
 		BufferedImage contourImage = EdgeDetector.getImage(maskImage);
 		ImageUtil.saveImage(contourImage, SampleConfig.OUTPUT_PATH + "After\\contour.jpg");
 
-		EdgeDetector.getEdgePoints(contourImage, spinePoints);
+		EdgeDetector.getEdgePoints(contourImage, spinePath);
 		leftContourPoints = EdgeDetector.leftCountourPoints;
 		rightContourPoints = EdgeDetector.rightCountourPoints;
 		// leftContourPoints = Geometry.getContourPoints(points, 20.0f, true);
@@ -179,7 +179,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 
 		this.drawStrokeSample(graphics2d);
 
-		queryStroke = new QueryStroke(points, spinePoints.radius, rightContourPoints, leftContourPoints);
+		queryStroke = new QueryStroke(points, spinePath.radius, rightContourPoints, leftContourPoints);
 
 		// queryStroke.drawShapeContext(graphics2d, 0);
 

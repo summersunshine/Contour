@@ -73,6 +73,14 @@ public class SpinePath
 			}
 		}
 
+		for (int i = 0; i < originPoints.size() - 1; i++)
+		{
+			if (Point.getDistance(originPoints.get(i), originPoints.get(i + 1)) < Global.BRUSH_WDITH)
+			{
+				this.originPoints.remove(i + 1);
+			}
+		}
+
 	}
 
 	/**
