@@ -29,6 +29,8 @@ public class LibParser
 
 	public static BufferedImage		resultImage;
 
+	public static BufferedImage		maskImage;
+
 	private Segement				currSegement;
 
 	public Cost						lastCost;

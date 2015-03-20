@@ -22,15 +22,25 @@ import config.Global;
  * */
 public class PixelGrabber
 {
+	// 空的，无需填充
+	public static final int			EMPTY			= 0;
+	// 填充过了
+	public static final int			FILLED			= 1;
+	// 等待填充
+	public static final int			WAIT_FILL		= 2;
+
 	public static final Point[]	OFFSET_POINTS	= { new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1) };
 
 	public static Vector<Point>	samplePoints	= new Vector<Point>();
-
+	public static Vector<Point>		querySamplePoints	= new Vector<Point>();
 	public static Vector<Float>		alphas			= new Vector<Float>();
 
 	public static Vector<TpsPoint>	tpsPoints		= new Vector<TpsPoint>();
 
-	public static boolean[][]	flag			= new boolean[Global.width][Global.height];
+	// public static boolean[][] flag = new
+	// boolean[Global.width][Global.height];
+
+	public static int[][]			flag			= new int[Global.width][Global.height];
 
 	public static BufferedImage	alphaImage;
 
@@ -38,8 +48,7 @@ public class PixelGrabber
 
 	public static void saveResultImage(String path)
 	{
-		flag = new boolean[Global.width][Global.height];
-
+		// flag = new boolean[Global.width][Global.height];
 
 		Vector<BufferedImage> alphaImages = new Vector<BufferedImage>();
 
@@ -47,9 +56,13 @@ public class PixelGrabber
 
 		for (int i = 0; i < LibParser.segements.size(); i++)
 		{
+			LibParser.segements.get(i).calCoorDiff();
 			setSamplePoints(LibParser.segements.get(i));
+			// setQuerySamplePoints(LibParser.segements.get(i));
 			BufferedImage image = getWarpingImage(LibParser.segements.get(i));
-			ImageUtil.saveImage(image, path + i + ".jpg");
+			ImageUtil.saveImage(image, path + i + "_before.jpg");
+			// fill(image);
+			// ImageUtil.saveImage(image, path + i + "_after.jpg");
 
 			alphaImages.add(image);
 		}
@@ -68,7 +81,7 @@ public class PixelGrabber
 				BufferedImage.TYPE_INT_RGB);
 		Graphics2D mainGraphics2d = (Graphics2D) alphaImage.getGraphics();
 		
-		flag = new boolean[Global.width][Global.height];
+		flag = new int[Global.width][Global.height];
 
 
 		for (int y = 0; y < Global.height; y++)
@@ -104,7 +117,7 @@ public class PixelGrabber
 
 	public static BufferedImage getWarpingImage(Segement segementInfo)
 	{
-		segementInfo.calCoorDiff();
+
 
 		BufferedImage bufferedImage = new BufferedImage(1280, 720,
 				BufferedImage.TYPE_INT_ARGB);
@@ -154,20 +167,111 @@ public class PixelGrabber
 			Color compositeColor = new Color(r, g, b, alpha);
 			graphics2d.setColor(compositeColor);
 			graphics2d.drawRect(x2, y2, 1, 1);
-
-			// if (alpha > 50)
-			// {
-			// Color compositeColor = new Color(sourceColor.getRed(),
-			// sourceColor.getGreen(), sourceColor.getBlue(), alpha);
-			// graphics2d.setColor(compositeColor);
-			// graphics2d.drawRect(x2, y2, 1, 1);
-			// }
+			flag[x2][y2] = FILLED;
 
 		}
 		return bufferedImage;
 	}
 
+	public static void fill(BufferedImage image)
+	{
+		Graphics2D graphics2d = (Graphics2D) image.getGraphics();
+		for (int i = 0; i < querySamplePoints.size(); i++)
+		{
+			int x = querySamplePoints.get(i).getIntX();
+			int y = querySamplePoints.get(i).getIntY();
+			if (flag[x][y] != FILLED)
+			{
+				Vector<Integer> colors = new Vector<Integer>();
+				for (int j = 0; j < OFFSET_POINTS.length; j++)
+				{
+					int x1 = x + OFFSET_POINTS[j].getIntX();
+					int y1 = y + OFFSET_POINTS[j].getIntY();
 
+					// if (flag[x1][y1] != FILLED)
+					// {
+					// // System.out.println("x: " + x + " y: " + y);
+					// colors.add(image.getRGB(x1, y1));
+					// }
+					colors.add(image.getRGB(x1, y1));
+				}
+
+				if (colors.size() > 0)
+				{
+					Color mergeColor = ColorUtil.getAlphaMergeColor(colors);
+					graphics2d.setColor(mergeColor);
+					graphics2d.fillRect(x, y, 1, 1);
+					flag[x][y] = FILLED;
+				}
+			}
+		}
+	}
+
+
+
+	/**
+	 * 抓到需要绘制的点
+	 * */
+	public static void setQuerySamplePoints(Segement segementInfo)
+	{
+
+		querySamplePoints.clear();
+		boolean[][] mask = new boolean[Global.width][Global.height];
+
+		for (int i = 0; i < segementInfo.coordDiffs.size() - 1; i++)
+		{
+			Point point1 = segementInfo.coordDiffs.get(i).getPoint2();
+			Point point2 = segementInfo.coordDiffs.get(i + 1).getPoint2();
+
+			Point point3 = segementInfo.coordDiffs.get(i + 1).getPoint2();
+			Point point4 = segementInfo.coordDiffs.get(i).getPoint2();
+
+			// 获取所有四个点的最大最小的x与y值
+			int minX = (int) Math.floor(Math.min(Math.min(Math.min(point1.x, point2.x), point3.x), point4.x));
+			int maxX = (int) Math.ceil(Math.max(Math.max(Math.max(point1.x, point2.x), point3.x), point4.x));
+			int minY = (int) Math.floor(Math.min(Math.min(Math.min(point1.y, point2.y), point3.y), point4.y));
+			int maxY = (int) Math.ceil(Math.max(Math.max(Math.max(point1.y, point2.y), point3.y), point4.y));
+
+			minX = minX < 0 ? 0 : minX;
+			maxX = maxX > Global.width - 1 ? Global.width - 1 : maxX;
+			minY = minY < 0 ? 0 : minY;
+			maxY = maxY > Global.height - 1 ? Global.height - 1 : maxY;
+
+			// 循环，判断是否在四边形内
+			for (int y = minY; y <= maxY; y++)
+			{
+				for (int x = minX; x <= maxX; x++)
+				{
+					if (!mask[x][y] && LibParser.maskImage.getRGB(x, y) != Global.BLACK_VALUE)
+					{
+						querySamplePoints.add(new Point(x, y));
+
+						mask[x][y] = true;
+
+					}
+				}
+			}
+		}
+	}
+
+	public static float getAlpha(Point point1, Point point2, Point point3, Point point4, Point point)
+	{
+		Point point5 = Point.getMidPoint(point1, point2);
+		Point point6 = Point.getMidPoint(point3, point4);
+		double dist1 = Point.getDistance(point1, point);
+		double dist2 = Point.getDistance(point2, point);
+		double dist3 = Point.getDistance(point3, point);
+		double dist4 = Point.getDistance(point4, point);
+		double dist5 = Point.getDistance(point5, point);
+		double dist6 = Point.getDistance(point6, point);
+		double min1 = Math.min(dist1, Math.min(dist2, dist3));
+		double min2 = Math.min(dist4, Math.min(dist5, dist6));
+		return (float) (min1 / (min1 + min2));
+		// + Point.getDistance(point2, point);
+		// double dist2 = Point.getDistance(point2, point) +
+		// Point.getDistance(point3, point);
+		// return (float) (dist1 / (dist1 + dist2));
+	}
 
 	/**
 	 * 抓到需要绘制的点
@@ -277,26 +381,4 @@ public class PixelGrabber
 			}
 		}
 	}
-
-	public static float getAlpha(Point point1, Point point2, Point point3, Point point4, Point point)
-	{
-		Point point5 = Point.getMidPoint(point1, point2);
-		Point point6 = Point.getMidPoint(point3, point4);
-		double dist1 = Point.getDistance(point1, point);
-		double dist2 = Point.getDistance(point2, point);
-		double dist3 = Point.getDistance(point3, point);
-		double dist4 = Point.getDistance(point4, point);
-		double dist5 = Point.getDistance(point5, point);
-		double dist6 = Point.getDistance(point6, point);
-		double min1 = Math.min(dist1, Math.min(dist2, dist3));
-		double min2 = Math.min(dist4, Math.min(dist5, dist6));
-		return (float) (min1 / (min1 + min2));
-		// + Point.getDistance(point2, point);
-		// double dist2 = Point.getDistance(point2, point) +
-		// Point.getDistance(point3, point);
-		// return (float) (dist1 / (dist1 + dist2));
-	}
-
-
-
 }

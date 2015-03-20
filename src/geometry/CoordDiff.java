@@ -38,4 +38,9 @@ public class CoordDiff extends Point
 		return (int) y2;
 	}
 
+	public Point getPoint2()
+	{
+		return new Point(x2, y2);
+	}
+
 }

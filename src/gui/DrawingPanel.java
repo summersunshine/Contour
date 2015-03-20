@@ -146,10 +146,10 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 		// points = UniformSample.normalize(points, 6);
 		// points = Geometry.removeClose(points, 6);
 
-		BufferedImage maskImage = MaskGenerator.getImage(spinePath);
-		ImageUtil.saveImage(maskImage, SampleConfig.OUTPUT_PATH + "After\\mask.jpg");
+		libParser.maskImage = MaskGenerator.getImage(spinePath);
+		ImageUtil.saveImage(libParser.maskImage, SampleConfig.OUTPUT_PATH + "After\\mask.jpg");
 
-		BufferedImage contourImage = EdgeDetector.getImage(maskImage);
+		BufferedImage contourImage = EdgeDetector.getImage(libParser.maskImage);
 		ImageUtil.saveImage(contourImage, SampleConfig.OUTPUT_PATH + "After\\contour.jpg");
 
 		EdgeDetector.getEdgePoints(contourImage, spinePath);
